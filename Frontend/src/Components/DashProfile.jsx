@@ -305,6 +305,18 @@ return (
         >
           {loading ? 'Loading..' : 'Update Account'}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to='/addmusic'>
+            <Button
+              type='button'
+               gradientDuoTone='purpleToBlue'
+              className='w-full , text-black bg-slate-400 '
+              outline
+            >
+              Add Music
+            </Button>
+          </Link>
+        )}   
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={() => setShowModel(true)} className='cursor-pointer'>

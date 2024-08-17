@@ -8,6 +8,8 @@ import ForgetPassword from './Pages/ForgetPassword'
 import ResetPassword from './Pages/ResetPassword'
 import DashBoard from './Pages/DashBoard'
 import PrivateRoute from './Components/PrivateRoute'
+import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateroute'
+import AddMusic from './Pages/AddMusic'
 
 export default function App() {
   return (
@@ -23,6 +25,10 @@ export default function App() {
         <Route element={<PrivateRoute/>}/>
           <Route path="/dashboard" element={<DashBoard/>}/> 
         <Route/> 
+
+        <Route element={<OnlyAdminPrivateRoute/>}>
+          <Route path="/addmusic" element={<AddMusic/>}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   )
