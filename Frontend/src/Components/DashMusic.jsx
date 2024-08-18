@@ -8,36 +8,34 @@ import html2pdf from 'html2pdf.js';
 export default function DashMusic() {
   const { currentUser } = useSelector((state) => state.user);
   const [userMusic, setUserMusic] = useState([]);
-  const [showModel, setShowModel] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [musicIdToDelete, setMusicIdToDelete] = useState('');
   const [totalMusic, setTotalMusic] = useState(0);
   const [lastMonthMusic, setLastMonthMusic] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // Added pagination state
-  const [totalPages, setTotalPages] = useState(0); // Added pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchMusic = async () => {
       try {
         const res = await fetch(`/api/music/music?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
         const data = await res.json();
-        console.log(data);
         if (res.ok) {
           setUserMusic(data.music);
           setTotalMusic(data.totalMusic);
           setLastMonthMusic(data.lastMonthMusic);
-          setTotalPages(data.totalPages); 
+          setTotalPages(data.totalPages);
         }
       } catch (error) {
         console.log(error.message);
       }
     };
-  
     fetchMusic();
   }, [searchTerm, currentPage]);
 
   const handleDeleteMusic = async () => {
-    setShowModel(false);
+    setShowModal(false);
     try {
       const res = await fetch(`/api/music/delete/${musicIdToDelete}/${currentUser._id}`, {
         method: 'DELETE',
@@ -73,10 +71,14 @@ export default function DashMusic() {
         }
         th {
           background-color: #f2f2f2;
-          font-size: 14px; /* Adjust font size */
+          font-size: 14px;
         }
         td {
-          font-size: 12px; /* Adjust font size */
+          font-size: 12px;
+        }
+        img {
+          max-width: 50px;
+          height: auto;
         }
       </style>
       <h1><b>Music Details Report</b></h1>
@@ -88,6 +90,7 @@ export default function DashMusic() {
         <thead>
           <tr>
             <th>Date Updated</th>
+            <th>Image</th>
             <th>Music Title</th>
             <th>Category</th>
             <th>Description</th>
@@ -98,6 +101,7 @@ export default function DashMusic() {
           ${userMusic.map((music) => `
             <tr>
               <td>${new Date(music.updatedAt).toLocaleDateString()}</td>
+              <td><img src="${music.image}" alt="Music Image"/></td>
               <td>${music.title}</td>
               <td>${music.category}</td>
               <td>${music.description}</td>
@@ -127,12 +131,10 @@ export default function DashMusic() {
           onChange={handleSearch}
           className="px-3 py-2 w-150 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-2 h-10 dark:bg-slate-800 placeholder-gray-500"
         />
-        <div></div>
         <Button
           gradientDuoTone='purpleToBlue'
           outline
           onClick={handleGenerateReport}
-          className=""
         >
           Generate Report
         </Button>
@@ -142,10 +144,8 @@ export default function DashMusic() {
         <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md'>
           <div className='flex justify-between'>
             <div className=''>
-            
               <h3 className='text-gray-500 text-md uppercase'>Total Music</h3>
               <p className='text-2xl'>{totalMusic}</p>
-              
             </div>
             <HiGift className='bg-red-600 text-white rounded-full text-5xl p-3 shadow-lg' />
           </div>
@@ -167,16 +167,21 @@ export default function DashMusic() {
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date Updated</Table.HeadCell>
+              <Table.HeadCell>Image</Table.HeadCell>
               <Table.HeadCell>Music Title</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Description</Table.HeadCell>
               <Table.HeadCell>Actions</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
+              <Table.HeadCell>Edit</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
               {userMusic.map((music) => (
                 <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800' key={music._id}>
                   <Table.Cell>{new Date(music.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell>
+                    {music.image && <img src={music.image} alt="Music" className="w-16 h-16 object-cover" />}
+                  </Table.Cell>
                   <Table.Cell>
                     <Link className='font-medium text-gray-900 dark:text-white' to={`/music/${music.slug}`}>
                       {music.title}
@@ -192,12 +197,20 @@ export default function DashMusic() {
                   <Table.Cell>
                     <span className='font-medium text-red-500 hover:underline cursor-pointer'
                       onClick={() => {
-                        setShowModel(true);
+                        setShowModal(true);
                         setMusicIdToDelete(music._id);
                       }}
                     >
                       Delete
                     </span>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Link
+                      to={`/update-music/${music._id}`}
+                      className='font-medium text-blue-500 hover:underline'
+                    >
+                      Edit
+                    </Link>
                   </Table.Cell>
                 </Table.Row>
               ))}
@@ -222,22 +235,22 @@ export default function DashMusic() {
       ) : (
         <p>You have no music to show</p>
       )}
-      <Modal show={showModel} onClose={() => setShowModel(false)} popup size='md'>
-        <Modal.Header />
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Header>Are you sure?</Modal.Header>
         <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-200">Are you sure you want to Delete this Music</h3>
-          </div>
-          <div className='flex justify-center gap-4'>
-            <Button color='failure' onClick={handleDeleteMusic}>
-              Yes, I am sure
-            </Button>
-            <Button color='gray' onClick={() => setShowModel(false)}>
-              No, cancel
-            </Button>
+          <div className="text-center flex flex-col items-center justify-center gap-4">
+            <HiOutlineExclamationCircle className='text-5xl text-red-500' />
+            <p>Do you really want to delete this music post? This action cannot be undone.</p>
           </div>
         </Modal.Body>
+        <Modal.Footer>
+          <Button color="gray" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={handleDeleteMusic}>
+            Delete
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

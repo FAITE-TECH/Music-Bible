@@ -10,6 +10,7 @@ import DashBoard from './Pages/DashBoard'
 import PrivateRoute from './Components/PrivateRoute'
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateroute'
 import AddMusic from './Pages/AddMusic'
+import UpdateMusic from './Pages/UpdateMusic'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
 
         <Route element={<OnlyAdminPrivateRoute/>}>
           <Route path="/addmusic" element={<AddMusic/>}/>
+          <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

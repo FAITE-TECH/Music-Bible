@@ -76,6 +76,23 @@ export const getAllMusic = async (req, res, next) => {
       next(error);
     }
   };
+
+  export const getMusicById = async (req, res, next) => {
+    try {
+        const { musicId } = req.params;
+        // Fetch the music by ID
+        const music = await Music.findById(musicId);
+        
+        // Check if music exists
+        if (!music) {
+            return next(errorHandler(404, 'Music not found'));
+        }
+
+        res.status(200).json(music);
+    } catch (error) {
+        next(error);
+    }
+};
   
 
 export const updateMusic = async (req, res, next) => {
