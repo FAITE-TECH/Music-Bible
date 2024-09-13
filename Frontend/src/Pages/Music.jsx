@@ -8,7 +8,7 @@ export default function Music() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState(''); 
 
-  // Function to fetch music data from the backend
+
   const fetchMusic = async () => {
     try {
       const response = await fetch('/api/music/music');
@@ -40,7 +40,6 @@ export default function Music() {
     filterMusic(searchTerm, e.target.value);
   };
 
-  // Filter music by title and album
   const filterMusic = (title, category) => {
     let filtered = musicList;
 
@@ -91,7 +90,7 @@ export default function Music() {
           <option value="Album1">Album 1</option>
           <option value="Album2">Album 2</option>
           <option value="Album3">Album 3</option>
-          {/* Add more albums as needed */}
+          
         </select>
       </div>
 
