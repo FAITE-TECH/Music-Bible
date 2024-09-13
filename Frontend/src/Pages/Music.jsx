@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MoonLoader} from 'react-spinners'; 
 
 export default function Music() {
   const [musicList, setMusicList] = useState([]);
@@ -7,7 +8,6 @@ export default function Music() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState(''); 
-
 
   const fetchMusic = async () => {
     try {
@@ -57,7 +57,12 @@ export default function Music() {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-black via-purple-950 to-black">
+        <MoonLoader color="#6b46c1" size={80} loading={loading} />
+        <p className="ml-4 text-white text-xl">Loading Music...</p>
+      </div>
+    );
   }
 
   if (error) {
@@ -80,7 +85,7 @@ export default function Music() {
       </div>
 
       {/* Album Dropdown */}
-      <div className="mb-6 ">
+      <div className="mb-6">
         <select
           className="w-100 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedAlbum}
@@ -90,7 +95,6 @@ export default function Music() {
           <option value="Album1">Album 1</option>
           <option value="Album2">Album 2</option>
           <option value="Album3">Album 3</option>
-          
         </select>
       </div>
 
@@ -98,7 +102,7 @@ export default function Music() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-gradient-to-r from-black via-purple-950 to-black">
         {filteredMusicList.length > 0 ? (
           filteredMusicList.map((music) => (
-            <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white ">
+            <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
                 src={music.image}
