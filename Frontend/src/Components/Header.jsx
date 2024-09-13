@@ -46,12 +46,12 @@ export default function Header() {
             New
           </NavLink>
           <NavLink 
-            to="/product-page" 
+            to="/musics" 
             className={({ isActive }) => 
               isActive ? "text-gray-300" : "text-white hover:text-gray-300"
             }
           >
-            Service
+            Musics
           </NavLink>
           <NavLink 
             to="/blogs" 

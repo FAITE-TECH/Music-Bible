@@ -11,6 +11,7 @@ import PrivateRoute from './Components/PrivateRoute'
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateroute'
 import AddMusic from './Pages/AddMusic'
 import UpdateMusic from './Pages/UpdateMusic'
+import Music from './Pages/Music'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path="/sign-in" element={<SignIn/>}/>
+        <Route path="/musics" element={<Music/>}/>
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>
         <Route path="/resetpassword/:id/:token" element={<ResetPassword/>} />
 
