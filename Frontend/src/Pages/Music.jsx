@@ -66,7 +66,7 @@ export default function Music() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 bg-gradient-to-r from-black via-purple-950 to-black ">
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
 
       {/* Search Bar */}
@@ -81,7 +81,7 @@ export default function Music() {
       </div>
 
       {/* Album Dropdown */}
-      <div className="mb-6">
+      <div className="mb-6 ">
         <select
           className="w-100 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedAlbum}
@@ -96,17 +96,17 @@ export default function Music() {
       </div>
 
       {/* Music List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-gradient-to-r from-black via-purple-950 to-black">
         {filteredMusicList.length > 0 ? (
           filteredMusicList.map((music) => (
-            <div key={music._id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white ">
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
                 src={music.image}
                 alt={music.title}
-                className="w-full h-48 object-cover rounded-lg mb-4"
+                className="w-full h-60 object-cover rounded-lg mb-4"
               />
-              <p className="text-gray-700 mb-4">{music.description}</p>
+              <p className="text-gray-100 mb-6">{music.description}</p>
               <audio controls className="w-full">
                 <source src={music.music} type="audio/mpeg" />
                 Your browser does not support the audio element.
