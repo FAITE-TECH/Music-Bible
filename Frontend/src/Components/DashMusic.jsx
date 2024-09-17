@@ -111,7 +111,8 @@ export default function DashMusic() {
             </tr>
           `).join('')}
         </tbody>
-      </table>
+      </table>  
+      
     `;
 
     html2pdf().from(content).set({ margin: 1, filename: 'music_report.pdf' }).save();
