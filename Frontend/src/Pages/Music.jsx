@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { MoonLoader} from 'react-spinners'; 
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'; 
+import { MoonLoader } from 'react-spinners';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default function Music() {
   const [musicList, setMusicList] = useState([]);
@@ -7,7 +11,10 @@ export default function Music() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAlbum, setSelectedAlbum] = useState(''); 
+  const [selectedAlbum, setSelectedAlbum] = useState('');
+
+  const { currentUser } = useSelector((state) => state.user); 
+  const navigate = useNavigate();
 
   const fetchMusic = async () => {
     try {
@@ -15,10 +22,9 @@ export default function Music() {
       if (!response.ok) {
         throw new Error('Failed to fetch music data');
       }
-
       const data = await response.json();
       setMusicList(data.music);
-      setFilteredMusicList(data.music); 
+      setFilteredMusicList(data.music);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -42,18 +48,42 @@ export default function Music() {
 
   const filterMusic = (title, category) => {
     let filtered = musicList;
-
     if (title) {
       filtered = filtered.filter((music) =>
         music.title.toLowerCase().includes(title.toLowerCase())
       );
     }
-
     if (category && category !== 'all') {
       filtered = filtered.filter((music) => music.category === category);
     }
-
     setFilteredMusicList(filtered);
+  };
+
+  const handleDownload = (music) => {
+    console.log('Current User:', currentUser); 
+    if (currentUser) {
+      // Handle download logic
+      const link = document.createElement('a');
+      link.href = music.music;
+      link.download = music.title;
+      link.click();
+    } else {
+      navigate('/sign-in');
+    }
+  };
+
+  const handleShare = (music) => {
+    if (navigator.share) {
+      navigator.share({
+        title: music.title,
+        url: music.music,
+      })
+      .then(() => console.log('Music shared successfully'))
+      .catch((error) => console.error('Error sharing music:', error));
+    } else {
+      // Fallback if the Web Share API is not supported
+      alert('Web Share API not supported in your browser.');
+    }
   };
 
   if (loading) {
@@ -70,24 +100,23 @@ export default function Music() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gradient-to-r from-black via-purple-950 to-black ">
+    <div className="container mx-auto p-4 bg-gradient-to-r from-black via-purple-950 to-black">
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
 
-      {/* Search Bar */}
-      <div className="mb-6">
+      {/* Search and Filter Section */}
+      <div className="flex justify-end mb-6 space-x-4">
+        {/* Search Bar */}
         <input
           type="text"
-          className="w-100 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Search by song name..."
           value={searchTerm}
           onChange={handleSearch}
         />
-      </div>
 
-      {/* Album Dropdown */}
-      <div className="mb-6">
+        {/* Album Dropdown */}
         <select
-          className="w-100 p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedAlbum}
           onChange={handleAlbumChange}
         >
@@ -99,7 +128,7 @@ export default function Music() {
       </div>
 
       {/* Music List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-gradient-to-r from-black via-purple-950 to-black">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gradient-to-r from-black via-purple-950 to-black">
         {filteredMusicList.length > 0 ? (
           filteredMusicList.map((music) => (
             <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
@@ -110,10 +139,29 @@ export default function Music() {
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />
               <p className="text-gray-100 mb-6">{music.description}</p>
-              <audio controls className="w-full">
+              <audio controls controlsList="nodownload" className="w-full">
                 <source src={music.music} type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
+              {/* Button Container */}
+              <div className="flex justify-between mt-4">
+                {/* Share Button */}
+                <button
+                  onClick={() => handleShare(music)}
+                  className="flex items-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
+                  Share
+                </button>
+                {/* Download Button */}
+                <button
+                  onClick={() => handleDownload(music)}
+                  className="flex items-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <FontAwesomeIcon icon={faDownload} className="mr-2" />
+                  {currentUser ? 'Download' : 'Sign in to Download'}
+                </button>
+              </div>
             </div>
           ))
         ) : (
