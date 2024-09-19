@@ -88,7 +88,7 @@ export default function Music() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-black via-purple-950 to-black">
+      <div className="flex justify-center items-center h-screen bg-black">
         <MoonLoader color="#6b46c1" size={80} loading={loading} />
         <p className="ml-4 text-white text-xl">Loading Music...</p>
       </div>
@@ -100,7 +100,7 @@ export default function Music() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gradient-to-r from-black via-purple-950 to-black">
+    <div className="container mx-auto p-4 bg-black">
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
 
       {/* Search and Filter Section */}
@@ -128,7 +128,7 @@ export default function Music() {
       </div>
 
       {/* Music List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-gradient-to-r from-black via-purple-950 to-black">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {filteredMusicList.length > 0 ? (
           filteredMusicList.map((music) => (
             <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">

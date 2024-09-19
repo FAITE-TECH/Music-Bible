@@ -12,6 +12,7 @@ import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateroute'
 import AddMusic from './Pages/AddMusic'
 import UpdateMusic from './Pages/UpdateMusic'
 import Music from './Pages/Music'
+import Album from './Pages/Album'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path="/sign-in" element={<SignIn/>}/>
         <Route path="/musics" element={<Music/>}/>
+        <Route path="/album" element={<Album/>} />
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>
         <Route path="/resetpassword/:id/:token" element={<ResetPassword/>} />
 

@@ -42,7 +42,7 @@ export default function SignIn() {
                 return;
             }
             dispatch(signInSuccess(data));
-            navigate('/');
+            navigate('/home');
         } catch (error) {
             dispatch(singInFailure(error.message));
         }
