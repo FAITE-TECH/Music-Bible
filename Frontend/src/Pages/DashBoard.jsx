@@ -24,7 +24,7 @@ export default function DashBoard() {
   },[location.search]);
   
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-r from-black via-purple-950 to-black text-white py-20 px-6">
+    <div className="min-h-screen flex flex-col md:flex-row bg-black text-white py-20 px-6">
       <div className="md:w-56">
         <DashSideBar/>
       </div>

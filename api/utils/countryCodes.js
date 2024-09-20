@@ -14,8 +14,8 @@ export const countryCodeMapping = {
 // Phone number formats for different countries
 export const phoneNumberFormats = {
     LK: {
-        national: /^(071|077|078|070|074|075|076|072)\d{7}$/,
-        international: /^\+947\d{9}$/
+        national: /^(07[0-9]{8})$/, 
+        international: /^\+94[0-9]{9}$/, 
     },
     US: {
         national: /^\d{10}$/,

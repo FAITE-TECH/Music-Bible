@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Alert, Button, Label, TextInput, Spinner, Select } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuthenticate from "../Components/OAuthenticate";
+import logo from '../assets/Logo/logo.png';
+import video from '../assets/Logo/design.mp4'; 
 
 const countryList = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", 
@@ -52,7 +54,7 @@ export default function SignUp() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.username || !formData.email || !formData.password || !formData.mobile || !formData.address || !formData.country || !formData.state || !formData.postalcode || !formData.city) {
-            return setError('Please Fill all Fields');
+            return setError('Please fill all fields');
         }
 
         try {
@@ -60,12 +62,9 @@ export default function SignUp() {
             setError(false);
             const res = await fetch('/api/auth/signup', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-
             const data = await res.json();
             console.log(data);
             setLoading(false);
@@ -85,22 +84,38 @@ export default function SignUp() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-black via-purple-950 to-black">
-            <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
-                {/* left */}
+        <div className="relative min-h-screen bg-black flex items-center justify-center">
+            {/* Background Video */}
+            <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover z-0"
+            >
+                <source src={video} type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+
+            <div className="relative z-10 flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
+                {/* Left: Logo and description */}
                 <div className="flex-1">
-                    <Link to="/" className="text-5xl font-bold dark:text-white font-tangerine">
-                        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via purple-500 to-pink-500 text-white rounded-lg size-10/12">Music</span>Bible
+                    <Link to="/" className="text-5xl font-bold text-white">
+                    <img
+                            src={logo}
+                            alt="MusicBible logo"
+                            className="h-60 sm:h-60 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
+                        />
                     </Link>
-                    <p className="text-sm mt-5 font-cinzel text-white font-extrabold">Music expresses that which cannot be said and on which it is impossible to be silent. 
-                        Music in itself is healing. It's an explosive expression of humanity. 
-                        It's something we are all touched by. No matter what culture we're from, 
-                        everyone loves music.</p>
+                    <p className="text-sm mt-1 font-extrabold text-white">
+                        Music expresses that which cannot be said and on which it is impossible to be silent. Music in itself is healing. It's an explosive expression of humanity.
+                    </p>
                 </div>
-                {/* right */}
-                <div className="flex-1 mt-20">
+
+                {/* Right: Sign-up form */}
+                <div className="flex-1 mt-2">
                     <p className="text-center text-2xl font-cinzel font-semibold text-white">Sign Up</p>
-                    <form className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5" onSubmit={handleSubmit}>
+                    <form className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-5" onSubmit={handleSubmit}>
                         <div>
                             <Label className="text-white" value="Your username"/>
                             <TextInput type="text" placeholder="Username" id="username" onChange={handleChange}/>
@@ -159,8 +174,8 @@ export default function SignUp() {
                                 </button>
                             </div>
                         </div>
-                        <div className="md:col-span-2">
-                            <Button disabled={loading} type="submit" className="bg-slate-500 w-full">
+                        <div className=" col-span-2 ">
+                            <Button disabled={loading} type="submit" className="bg-amber-600 w-full">
                                 {loading ? (
                                     <>
                                         <Spinner size="sm"/>
@@ -169,21 +184,23 @@ export default function SignUp() {
                                 ) : 'Sign Up'}
                             </Button>
                         </div>
-                        <div className="md:col-span-2 w-full">
+                        <div className=" col-span-2 w-full">
                             <OAuthenticate/>
                         </div>
                     </form>
-                    <div className="flex gap-2 text-sm mt-5 text-white">
-                        <span>Have an Account?</span>
-                        <Link to='/sign-in' className="text-blue-500">Sign In</Link>
+                    <div className="flex gap-2 text-sm justify-center mt-4 text-white">
+                        <span>Already have an account?</span>
+                        <Link to="/sign-in" className="font-medium text-blue-500 hover:underline">
+                            Sign In
+                        </Link>
                     </div>
-                    <div className="text-red-600 md:col-span-2">
-                        {error && (
-                            <Alert className="mt-5" color='failure'>
-                                {error} 
-                            </Alert>
-                        )}
-                    </div>
+                    
+                    {/* Error Message */}
+                    {error && (
+                        <Alert color="failure" className="mt-4">
+                            <span>{error}</span>
+                        </Alert>
+                    )}
                 </div>
             </div>
         </div>

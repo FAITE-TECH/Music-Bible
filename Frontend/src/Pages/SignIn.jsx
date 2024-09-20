@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, singInFailure } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import OAuthenticate from "../Components/OAuthenticate";
+import logo from '../assets/Logo/logo.png';
+import video from '../assets/Logo/design.mp4'; 
 
 export default function SignIn() {
     const [formData, setFormData] = useState({});
@@ -42,7 +44,7 @@ export default function SignIn() {
                 return;
             }
             dispatch(signInSuccess(data));
-            navigate('/home');
+            navigate('/');
         } catch (error) {
             dispatch(singInFailure(error.message));
         }
@@ -53,30 +55,50 @@ export default function SignIn() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-black via-purple-950 to-black">
-            <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
-                {/* Left */}
-                <div className="flex-1">
-                    <Link to="/" className="text-5xl font-bold dark:text-white font-tangerine">
-                        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-lg">Music</span>Bible
+        <div className="relative min-h-screen bg-black">
+            <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover z-0"
+            >
+                <source src={video} type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+
+            {/* Background Overlay for better visibility */}
+            <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+
+            {/* Content */}
+            <div className="relative flex p-6 max-w-5xl mx-auto flex-col md:flex-row items-center justify-between gap-20 z-10">
+                {/* Left Side */}
+                <div className="flex-1 text-center md:text-left">
+                    <Link to="/" className="text-5xl font-bold text-white">
+                        <img
+                            src={logo}
+                            alt="MusicBible logo"
+                            className="h-40 sm:h-28 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
+                        />
                     </Link>
-                    <p className="text-sm mt-5 font-cinzel font-gray font-semibold text-white">
+                    <p className="text-sm  font-cinzel text-gray-200">
                         Music expresses that which cannot be said and on which it is impossible to be silent. 
                         Music in itself is healing. It's an explosive expression of humanity. 
                         It's something we are all touched by. No matter what culture we're from, 
                         everyone loves music.
                     </p>
                 </div>
-                {/* Right */}
-                <div className="flex-1 mt-20">
+
+                {/* Right Side - Sign In Form */}
+                <div className="flex-1 mt-5 md:mt-0">
                     <p className="text-center text-2xl font-cinzel font-semibold text-white">Sign In</p>
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-5">
                         <div>
-                            <Label value="Your email" className="text-white"/>
+                            <Label value="Your email" className="text-white" />
                             <TextInput type="email" placeholder="name@company.com" id="email" onChange={handleChange} />
                         </div>
                         <div>
-                            <Label value="Your password" className="text-white"/>
+                            <Label value="Your password" className="text-white" />
                             <div className="relative">
                                 <TextInput
                                     type={showPassword ? "text" : "password"}
@@ -103,7 +125,7 @@ export default function SignIn() {
                                 </button>
                             </div>
                         </div>
-                        <Button className="bg-slate-500" disabled={loading} gradientDuoTone="purpleToBlue" type="submit">
+                        <Button className="bg-amber-600" disabled={loading}  type="submit">
                             {loading ? (
                                 <>
                                     <Spinner size="sm" />
@@ -133,3 +155,4 @@ export default function SignIn() {
         </div>
     );
 }
+

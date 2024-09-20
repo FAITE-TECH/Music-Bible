@@ -23,32 +23,27 @@ export const signup = async (req, res, next) => {
         return next(errorHandler(400, 'Username should be between 7 and 30 characters'));
     } else if (password.length < 8) {
         return next(errorHandler(400, 'Password should be at least 8 characters'));
-    } else {
+    } 
+    
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        mobile,
+        address,
+        country,
+        state,
+        city,
+        postalcode
+    });
         try {
-            const existingUser = await User.findOne({ email });
-            if (existingUser) {
-                return next(errorHandler(400, 'Email is already in use'));
-            }
-            
-            const hashedPassword = await bcryptjs.hash(password, 10);
-            const newUser = new User({
-                username,
-                email,
-                password: hashedPassword,
-                mobile,
-                address,
-                country,
-                state,
-                city,
-                postalcode
-            });
-            
             await newUser.save();
-            res.status(201).json({ token });
+            res.status(201).json({ message: "User created successfully" });
         } catch (error) {
-            return next(errorHandler(500, 'Server Error'));
+          next(error);
         }
-    }
+    
 };
 export const signin = async(req,res,next)=>{
     const {email,password} = req.body;

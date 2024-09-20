@@ -35,7 +35,7 @@ export default function DashSideBar() {
 
   return (
     
-    <Sidebar className="w-full md:w-56 bg-gradient-to-r from-purple-900 via-purple-700 to-pink-500">
+    <Sidebar className="w-full md:w-56 bg-black">
       <Sidebar.Items className="">
         <Sidebar.ItemGroup>
           <Link to='/dashboard?tab=profile' key="profile">
