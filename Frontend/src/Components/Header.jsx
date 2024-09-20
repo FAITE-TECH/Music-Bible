@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem } from 'flowbite-react';
 import { signOut } from '../redux/user/userSlice';
 import { motion } from 'framer-motion';
+import logo from '../assets/Logo/logo.png';
+
 
 export default function Header() {
     const { currentUser } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [showTitle, setShowTitle] = useState(false); // State to control title visibility
+    const [showTitle, setShowTitle] = useState(false);
 
     const handleSignOut = async () => {
         try {
@@ -49,15 +51,20 @@ export default function Header() {
                 {/* Sliding MusicBible Title, initially hidden */}
                 {showTitle && (
                     <motion.div
-                        className="flex items-center"
-                        initial={{ opacity: 0, x: -300 }}  // Start off-screen to the left
-                        animate={{ opacity: 1, x: 0 }}    // Slide in to position
-                        transition={{ type: "spring", stiffness: 80, duration: 1.6 }}
-                    >
-                        <NavLink to="/" className="text-2xl md:text-3xl font-bold text-white">
-                            MUSICBIBLE
-                        </NavLink>
-                    </motion.div>
+                    className="flex items-center"
+                    initial={{ opacity: 0, x: -300 }}
+                    animate={{ opacity: 5, x: 0 }}
+                    transition={{ type: "spring", stiffness: 60, duration: 1.6 }}
+                >
+                    <NavLink to="/" className="flex items-center text-2xl md:text-3xl font-bold text-white">
+                        <img 
+                            src={logo} 
+                            alt="MusicBible logo" 
+                            className="h-16 w-auto" 
+                        />
+                        <span className="ml-2">MusicBible</span>
+                    </NavLink>
+                </motion.div>
                 )}
 
                 {/* Animated Navigation Links */}
@@ -108,7 +115,7 @@ export default function Header() {
                             <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="bg-purple-600 hover:bg-pink-500 text-white py-2 px-4 md:px-6 rounded-full font-bold shadow-lg"
+                                className="bg-black-600 hover:bg-slate-900 text-white py-2 px-4 md:px-6 rounded-full font-bold shadow-lg"
                             >
                                 Sign In
                             </motion.button>

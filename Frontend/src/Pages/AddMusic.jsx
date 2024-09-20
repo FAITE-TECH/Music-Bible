@@ -95,6 +95,7 @@ export default function AddMusic() {
             <option value='Album1'>Album 1</option>
             <option value='Album2'>Album 2</option>
             <option value='Album3'>Album 3</option>
+            <option value='Album4'>Album 4</option>
           </Select>
         </div>
 

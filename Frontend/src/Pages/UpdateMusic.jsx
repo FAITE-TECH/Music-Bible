@@ -124,6 +124,7 @@ export default function UpdateMusic() {
           <option value='Album1'>Album 1</option>
           <option value='Album2'>Album 2</option>
           <option value='Album3'>Album 3</option>
+          <option value='Album4'>Album 4</option>
         </Select>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput
