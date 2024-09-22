@@ -120,11 +120,11 @@ export default function Music() {
           value={selectedAlbum}
           onChange={handleAlbumChange}
         >
-          <option value="all">All Albums</option>
-          <option value="Album1">Album 1</option>
-          <option value="Album2">Album 2</option>
-          <option value="Album3">Album 3</option>
-          <option value="Album4">Album 4</option>
+            <option value='All'>All Albums</option>
+            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
+            <option value='Album2'>BOOK OF ECCLESIASTES</option>
+            <option value='Album3'>BOOK OF PHILIPPIANS</option>
+            <option value='Album4'>BOOKS OF THE GOSPEL</option>
         </select>
       </div>
 

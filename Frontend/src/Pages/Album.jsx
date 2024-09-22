@@ -13,7 +13,12 @@ export default function Album({ defaultCategory = 'Album1' }) {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
-  const categories = ['Album1', 'Album2', 'Album3', 'Album4'];
+  const categories = [
+    { value: 'Album1', label: 'VAAZHVU THARUM VAARTHAIGAL' },
+    { value: 'Album2', label: 'BOOK OF ECCLESIASTES' },
+    { value: 'Album3', label: 'BOOK OF PHILIPPIANS' },
+    { value: 'Album4', label: 'BOOKS OF THE GOSPEL' },
+  ];
 
   const albumInfo = {
     Album1: {
@@ -132,8 +137,8 @@ export default function Album({ defaultCategory = 'Album1' }) {
           className="p-2 bg-purple-600 text-white rounded-lg"
         >
           {categories.map((album) => (
-            <option key={album} value={album}>
-              {album}
+            <option key={album.value} value={album.value}>
+              {album.label}
             </option>
           ))}
         </select>

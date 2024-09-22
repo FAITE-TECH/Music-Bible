@@ -74,7 +74,7 @@ export default function AddMusic() {
       }
   
       setPublishError(null);
-      navigate(`/music/${data.slug}`);
+      navigate(`/musics`);
     } catch (error) {
       setPublishError('Something went wrong');
       console.error(error);
@@ -92,10 +92,10 @@ export default function AddMusic() {
           } />
           <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
             <option value='uncategorized'>Select Album</option>
-            <option value='Album1'>Album 1</option>
-            <option value='Album2'>Album 2</option>
-            <option value='Album3'>Album 3</option>
-            <option value='Album4'>Album 4</option>
+            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
+            <option value='Album2'>BOOK OF ECCLESIASTES</option>
+            <option value='Album3'>BOOK OF PHILIPPIANS</option>
+            <option value='Album4'>BOOKS OF THE GOSPEL</option>
           </Select>
         </div>
 

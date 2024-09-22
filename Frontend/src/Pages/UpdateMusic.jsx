@@ -120,11 +120,11 @@ export default function UpdateMusic() {
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           value={formData.category || 'uncategorized'}
         >
-          <option value='uncategorized'>Select Album</option>
-          <option value='Album1'>Album 1</option>
-          <option value='Album2'>Album 2</option>
-          <option value='Album3'>Album 3</option>
-          <option value='Album4'>Album 4</option>
+           <option value='uncategorized'>Select Album</option>
+            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
+            <option value='Album2'>BOOK OF ECCLESIASTES</option>
+            <option value='Album3'>BOOK OF PHILIPPIANS</option>
+            <option value='Album4'>BOOKS OF THE GOSPEL</option>
         </Select>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput
