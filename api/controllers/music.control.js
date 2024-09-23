@@ -38,44 +38,42 @@ export const createMusic = async (req, res, next) => {
   };
   
 
-export const getAllMusic = async (req, res, next) => {
+  export const getAllMusic = async (req, res, next) => {
     try {
-      const { searchTerm = '', page = 1, limit = 10 } = req.query;
-      
+      const { searchTerm = '' } = req.query;
       const query = searchTerm ? { title: { $regex: searchTerm, $options: 'i' } } : {};
   
+     
       const totalMusic = await Music.countDocuments(query);
   
-      // Calculate the first and last date of the previous month
+   
       const firstDayLastMonth = new Date();
       firstDayLastMonth.setDate(1);
       firstDayLastMonth.setMonth(firstDayLastMonth.getMonth() - 1);
       firstDayLastMonth.setHours(0, 0, 0, 0);
       
       const lastDayLastMonth = new Date();
-      lastDayLastMonth.setDate(0); // Last day of previous month
+      lastDayLastMonth.setDate(0); 
       lastDayLastMonth.setHours(23, 59, 59, 999);
   
+      
       const lastMonthMusic = await Music.countDocuments({
         ...query,
         updatedAt: { $gte: firstDayLastMonth, $lte: lastDayLastMonth }
       });
   
-      const music = await Music.find(query)
-        .skip((page - 1) * limit)
-        .limit(Number(limit));
-      
+      const music = await Music.find(query);
+  
       res.status(200).json({
         music,
         totalMusic,
         lastMonthMusic,
-        totalPages: Math.ceil(totalMusic / limit),
-        currentPage: Number(page),
       });
     } catch (error) {
       next(error);
     }
   };
+  
 
   export const getMusicById = async (req, res, next) => {
     try {
@@ -136,28 +134,24 @@ export const deleteMusic = async (req, res, next) => {
   };
 
 
-export const getMusicByCategory = async (req, res, next) => {
-  try {
-    const { category, page = 1, limit = 9 } = req.query;
-
-    if (!category) {
-      return res.status(400).json({ message: 'Category is required' });
+  export const getMusicByCategory = async (req, res, next) => {
+    try {
+      const { category } = req.query;
+  
+      if (!category) {
+        return res.status(400).json({ message: 'Category is required' });
+      }
+  
+      const queryOptions = { category };
+      
+      const music = await Music.find(queryOptions);
+  
+      res.status(200).json({
+        music,
+        totalMusic: music.length, 
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const queryOptions = { category };
-
-    const totalMusic = await Music.countDocuments(queryOptions);
-    const music = await Music.find(queryOptions)
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
-
-    res.status(200).json({
-      music,
-      totalMusic,
-      totalPages: Math.ceil(totalMusic / limit),
-      currentPage: Number(page),
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
+  

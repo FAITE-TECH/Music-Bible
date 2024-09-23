@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; 
+import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -12,19 +12,23 @@ export default function Music() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState('');
+  const [currentPage, setCurrentPage] = useState(1); // Pagination: Track current page
+  const [totalPages, setTotalPages] = useState(1); // Pagination: Track total pages
 
   const { currentUser } = useSelector((state) => state.user); 
   const navigate = useNavigate();
 
-  const fetchMusic = async () => {
+  const fetchMusic = async (page = 1) => {
     try {
-      const response = await fetch('/api/music/music');
+      const response = await fetch(`/api/music/music`); 
       if (!response.ok) {
         throw new Error('Failed to fetch music data');
       }
       const data = await response.json();
       setMusicList(data.music);
       setFilteredMusicList(data.music);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -33,7 +37,7 @@ export default function Music() {
   };
 
   useEffect(() => {
-    fetchMusic();
+    fetchMusic(); // Fetch on component load
   }, []);
 
   const handleSearch = (e) => {
@@ -62,7 +66,6 @@ export default function Music() {
   const handleDownload = (music) => {
     console.log('Current User:', currentUser); 
     if (currentUser) {
-      // Handle download logic
       const link = document.createElement('a');
       link.href = music.music;
       link.download = music.title;
@@ -81,10 +84,11 @@ export default function Music() {
       .then(() => console.log('Music shared successfully'))
       .catch((error) => console.error('Error sharing music:', error));
     } else {
-      // Fallback if the Web Share API is not supported
       alert('Web Share API not supported in your browser.');
     }
   };
+
+  
 
   if (loading) {
     return (
@@ -120,11 +124,11 @@ export default function Music() {
           value={selectedAlbum}
           onChange={handleAlbumChange}
         >
-            <option value='All'>All Albums</option>
-            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
-            <option value='Album2'>BOOK OF ECCLESIASTES</option>
-            <option value='Album3'>BOOK OF PHILIPPIANS</option>
-            <option value='Album4'>BOOKS OF THE GOSPEL</option>
+          <option value="all">All Albums</option>
+          <option value="Album1">VAAZHVU THARUM VAARTHAIGAL</option>
+          <option value="Album2">BOOK OF ECCLESIASTES</option>
+          <option value="Album3">BOOK OF PHILIPPIANS</option>
+          <option value="Album4">BOOKS OF THE GOSPEL</option>
         </select>
       </div>
 
@@ -144,6 +148,7 @@ export default function Music() {
                 <source src={music.music} type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
+
               {/* Button Container */}
               <div className="flex justify-between mt-4">
                 {/* Share Button */}
@@ -169,6 +174,8 @@ export default function Music() {
           <p className="text-center text-gray-500 col-span-3">No music found</p>
         )}
       </div>
+
+      
     </div>
   );
 }

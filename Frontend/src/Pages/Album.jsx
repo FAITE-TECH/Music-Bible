@@ -4,6 +4,10 @@ import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
+import Album1 from '../assets/Logo/Album1.png';
+import Album2 from '../assets/Logo/Album2.png';
+import Album3 from '../assets/Logo/Album3.png';
+import Album4 from '../assets/Logo/Album4.png';
 
 export default function Album({ defaultCategory = 'Album1' }) {
   const [musicList, setMusicList] = useState([]);
@@ -22,20 +26,24 @@ export default function Album({ defaultCategory = 'Album1' }) {
 
   const albumInfo = {
     Album1: {
-      image: 'https://indiater.com/wp-content/uploads/2021/06/Free-Music-Album-Cover-Art-Banner-Photoshop-Template.jpg',
-      description: 'A collection of soulful and rhythmic tunes from Album 1.',
+      src: Album1,
+      label: 'VAAZHVU THARUM VAARTHAIGAL',
+      description: 'A collection of soulful and rhythmic tunes from VAAZHVU THARUM VAARTHAIGAL.',
     },
     Album2: {
-      image: 'https://img.freepik.com/free-vector/gradient-album-cover-template_23-2150597431.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1726617600&semt=ais_hybrid',
-      description: 'An energetic collection of tracks to keep you motivated.',
+      src: Album2,
+      label: 'BOOK OF ECCLESIASTES',
+      description: 'An energetic collection of tracks to keep you motivated from BOOK OF ECCLESIASTES.',
     },
     Album3: {
-      image: 'https://marketplace.canva.com/EAF00PkmbGU/1/0/1600w/canva-red-and-yellow-modern-rap-music-music-album-cover-IqU7hAqANz4.jpg',
-      description: 'Smooth beats and mellow vibes from Album 3.',
+      src: Album3,
+      label: 'BOOK OF PHILIPPIANS',
+      description: 'Smooth beats and mellow vibes from BOOK OF PHILIPPIANS.',
     },
     Album4: {
-      image: 'https://png.pngtree.com/thumb_back/fh260/background/20230417/pngtree-viking-music-mixtape-coverhighres-download-for-album-art-photo-image_51616326.jpg',
-      description: 'A vibrant mix of genres from Album 4.',
+      src: Album4,
+      label: 'BOOKS OF THE GOSPEL',
+      description: 'Smooth beats and mellow vibes from BOOKS OF THE GOSPEL.',
     },
   };
 
@@ -75,7 +83,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
       musicList.forEach((music) => {
         const link = document.createElement('a');
         link.href = music.music;
-        link.download = `${category} - ${music.title}`;
+        link.download = `${albumInfo[category]?.label} - ${music.title}`;
         link.click();
       });
     } else {
@@ -99,8 +107,8 @@ export default function Album({ defaultCategory = 'Album1' }) {
   const handleAlbumShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `${category} Album`,
-        url: `${window.location.href}`, // Share the current page URL
+        title: `${albumInfo[category]?.label} Album`,
+        url: `${window.location.href}`,
       })
         .then(() => console.log('Album shared successfully'))
         .catch((error) => console.error('Error sharing album:', error));
@@ -144,20 +152,17 @@ export default function Album({ defaultCategory = 'Album1' }) {
         </select>
       </div>
       <div className="flex">
-        {/* Left side: Album Image */}
         <div className="w-1/4 p-4">
           <img
-            src={albumInfo[category]?.image || 'https://via.placeholder.com/300'}
-            alt={category}
+            src={albumInfo[category]?.src || 'https://via.placeholder.com/300'}
+            alt={albumInfo[category]?.label}
             className="w-full h-auto object-cover rounded-lg"
           />
         </div>
 
-        {/* Right side: Album Details and Music List */}
         <div className="w-3/4 p-4 flex flex-col">
-          {/* Album Details */}
           <div className="flex flex-col mb-4">
-            <h2 className="text-2xl font-bold text-white mt-4">{category}</h2>
+            <h2 className="text-2xl font-bold text-white mt-4">{albumInfo[category]?.label}</h2>
             <p className="text-gray-300 mt-2">{albumInfo[category]?.description}</p>
             <div className="flex mt-4 gap-4">
               <button
@@ -176,51 +181,45 @@ export default function Album({ defaultCategory = 'Album1' }) {
               </button>
             </div>
           </div>
-
-          {/* Music List */}
-         
         </div>
-        
       </div>
       <h1 className="text-3xl font-bold text-center mb-6">Music</h1>
-          <div className="text-center text-gray-400 mb-4">Available music in {category}:</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
-            {musicList.length > 0 ? (
-              musicList.map((music) => (
-                <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
-                  <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
-                  <img
-                    src={music.image}
-                    alt={music.title}
-                    className="w-full h-60 object-cover rounded-lg mb-4"
-                  />
-                  <p className="text-gray-100 mb-6">{music.description}</p>
-                  <audio controls controlsList="nodownload" className="w-full">
-                    <source src={music.music} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                  <div className="flex justify-between mt-4">
-                    <button
-                      onClick={() => handleShare(music)}
-                      className="flex items-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
-                      Share
-                    </button>
-                    <button
-                      onClick={() => handleDownload(music)}
-                      className="flex items-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
-                    >
-                      <FontAwesomeIcon icon={faDownload} className="mr-2" />
-                      {currentUser ? 'Download' : 'Sign in to Download'}
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 col-span-2">No music found</p>
-            )}
-          </div>
+      <div className="text-center text-gray-400 mb-4">Available music in {albumInfo[category]?.label}:</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
+        {musicList.length > 0 ? (
+          musicList.map((music) => (
+            <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
+              <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
+              <img
+                src={music.image}
+                alt={music.title}
+                className="w-full h-60 object-cover rounded-lg mb-4"
+              />
+              <p className="text-gray-100 mb-6">{music.description}</p>
+              <audio controls controlsList="nodownload" className="w-full">
+                <source src={music.music} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  onClick={() => handleDownload(music)}
+                  className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Download
+                </button>
+                <button
+                  onClick={() => handleShare(music)}
+                  className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Share
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400 col-span-full text-center">No music found for this album.</p>
+        )}
+      </div>
     </div>
   );
 }
