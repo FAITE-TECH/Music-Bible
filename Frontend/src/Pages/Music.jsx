@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
@@ -12,23 +12,21 @@ export default function Music() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // Pagination: Track current page
-  const [totalPages, setTotalPages] = useState(1); // Pagination: Track total pages
+  const [currentSongIndex, setCurrentSongIndex] = useState(null); // Track current song index
+  const audioRef = useRef(null); // Ref for audio element
 
-  const { currentUser } = useSelector((state) => state.user); 
+  const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
-  const fetchMusic = async (page = 1) => {
+  const fetchMusic = async () => {
     try {
-      const response = await fetch(`/api/music/music`); 
+      const response = await fetch(`/api/music/music`);
       if (!response.ok) {
         throw new Error('Failed to fetch music data');
       }
       const data = await response.json();
       setMusicList(data.music);
       setFilteredMusicList(data.music);
-      setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
       setLoading(false);
     } catch (error) {
       setError(error.message);
@@ -64,7 +62,6 @@ export default function Music() {
   };
 
   const handleDownload = (music) => {
-    console.log('Current User:', currentUser); 
     if (currentUser) {
       const link = document.createElement('a');
       link.href = music.music;
@@ -88,7 +85,30 @@ export default function Music() {
     }
   };
 
-  
+  const handleNextSong = () => {
+    // Move to the next song, wrap around if needed
+    setCurrentSongIndex((prevIndex) =>
+      prevIndex === filteredMusicList.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handleSongEnd = () => {
+    handleNextSong();
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('ended', handleSongEnd);
+      return () => {
+        audioRef.current.removeEventListener('ended', handleSongEnd);
+      };
+    }
+  }, [currentSongIndex]);
+
+  const handlePlaySong = (index) => {
+    // Set the clicked song as the current song
+    setCurrentSongIndex(index);
+  };
 
   if (loading) {
     return (
@@ -135,8 +155,13 @@ export default function Music() {
       {/* Music List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {filteredMusicList.length > 0 ? (
-          filteredMusicList.map((music) => (
-            <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
+          filteredMusicList.map((music, index) => (
+            <div
+              key={music._id}
+              className={`p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white ${
+                index === currentSongIndex ? 'border-2 border-purple-500' : ''
+              }`}
+            >
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
                 src={music.image}
@@ -144,10 +169,26 @@ export default function Music() {
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />
               <p className="text-gray-100 mb-6">{music.description}</p>
-              <audio controls controlsList="nodownload" className="w-full">
-                <source src={music.music} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
+              {/* Conditionally render the audio element for the current song */}
+              {index === currentSongIndex ? (
+                <audio
+                 controls 
+                 controlsList="nodownload"
+                  ref={audioRef}
+                  className="w-full"
+                  autoPlay
+                >
+                  <source src={music.music} type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
+              ) : (
+                <button
+                  onClick={() => handlePlaySong(index)}
+                  className="bg-blue-600 text-white p-2 rounded-lg w-full hover:bg-blue-700 transition-colors"
+                >
+                  Play Song
+                </button>
+              )}
 
               {/* Button Container */}
               <div className="flex justify-between mt-4">
@@ -174,8 +215,6 @@ export default function Music() {
           <p className="text-center text-gray-500 col-span-3">No music found</p>
         )}
       </div>
-
-      
     </div>
   );
 }

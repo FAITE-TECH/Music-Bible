@@ -1,6 +1,7 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import logo from '../assets/Logo/logo.png';
 
 export default function ResetPassword() {
     const { id, token } = useParams();
@@ -83,13 +84,17 @@ export default function ResetPassword() {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-black via-purple-950 to-black">
+        <div className="min-h-screen bg-black">
             <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
-                <div className="flex-1 mt-48">
-                    <Link to="/" className="text-5xl font-bold dark:text-white font-tangerine">
-                        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via purple-500 to-pink-500 text-white rounded-lg size-10/12">MusicBible</span>Shop
+                <div className="flex-1 mt-18">
+                <Link to="/" className="text-5xl font-bold text-white">
+                        <img
+                            src={logo}
+                            alt="MusicBible logo"
+                            className="h-40 sm:h-28 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
+                        />
                     </Link>
-                    <p className="text-sm mt-5 font-cinzel font-gray font-semibold"> Music expresses that which cannot be said and on which it is impossible to be silent. 
+                    <p className="text-sm mt-5 font-cinzel font-gray font-semibold text-white"> Music expresses that which cannot be said and on which it is impossible to be silent. 
                         Music in itself is healing. It's an explosive expression of humanity. 
                         It's something we are all touched by. No matter what culture we're from, 
                         everyone loves music.</p>
@@ -117,7 +122,7 @@ export default function ResetPassword() {
 
                             </div>
                         </div>
-                        <Button gradientDuoTone="purpleToBlue" type="submit">
+                        <Button className="bg-amber-600"type="submit">
                             Submit
                         </Button>
                     </form>

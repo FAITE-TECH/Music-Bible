@@ -115,7 +115,7 @@ export default function Header() {
                             <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="bg-black-600 hover:bg-slate-900 text-white py-2 px-4 md:px-6 rounded-full font-bold shadow-lg"
+                                className="bg-black-600 hover:bg-amber-500 text-white py-2 px-4 md:px-6 rounded-full font-bold shadow-lg"
                             >
                                 Sign In
                             </motion.button>

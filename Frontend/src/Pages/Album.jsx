@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
@@ -16,6 +16,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
   const [category, setCategory] = useState(defaultCategory);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const audioRefs = useRef({}); // To store refs for each audio element
 
   const categories = [
     { value: 'Album1', label: 'VAAZHVU THARUM VAARTHAIGAL' },
@@ -66,6 +67,17 @@ export default function Album({ defaultCategory = 'Album1' }) {
   useEffect(() => {
     fetchMusicByCategory();
   }, [category]);
+
+  // Play next song automatically
+  const handleAudioEnded = (currentIndex) => {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < musicList.length) {
+      const nextAudio = audioRefs.current[musicList[nextIndex]._id];
+      if (nextAudio) {
+        nextAudio.play().catch((error) => console.error('Autoplay error:', error));
+      }
+    }
+  };
 
   const handleDownload = (music) => {
     if (currentUser) {
@@ -187,7 +199,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
       <div className="text-center text-gray-400 mb-4">Available music in {albumInfo[category]?.label}:</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {musicList.length > 0 ? (
-          musicList.map((music) => (
+          musicList.map((music, index) => (
             <div key={music._id} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white">
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
@@ -196,11 +208,18 @@ export default function Album({ defaultCategory = 'Album1' }) {
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />
               <p className="text-gray-100 mb-6">{music.description}</p>
-              <audio controls controlsList="nodownload" className="w-full">
-                <source src={music.music} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-              <div className="flex justify-between items-center mt-4">
+              <audio
+                ref={(el) => {
+                  audioRefs.current[music._id] = el;
+                  if (el) {
+                    el.addEventListener('ended', () => handleAudioEnded(index)); // Add event listener
+                  }
+                }}
+                src={music.music}
+                controls
+                className="w-full"
+              />
+              <div className="flex justify-between mt-4">
                 <button
                   onClick={() => handleDownload(music)}
                   className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
@@ -217,7 +236,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
             </div>
           ))
         ) : (
-          <p className="text-gray-400 col-span-full text-center">No music found for this album.</p>
+          <p className="text-red-500 text-center">No music available in this album.</p>
         )}
       </div>
     </div>
