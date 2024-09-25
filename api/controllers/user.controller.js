@@ -209,8 +209,6 @@ export const forgetpassword = async (req, res, next) => {
 
 export const resetpassword = async (req, res, next) => {
   const { id, token } = req.params;
-  
-  
 
   try {
     const validuser = await User.findOne({_id: id, verifytoken: token});
@@ -262,7 +260,7 @@ export const getUser = async (req, res, next) => {
     res.status(200).json(rest);
   } catch (error) {
     next(error);
-  }
+  }
 };
 
 export const getAdmins = async (req, res, next) => {

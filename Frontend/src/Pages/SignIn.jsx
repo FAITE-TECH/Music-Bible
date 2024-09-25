@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import OAuthenticate from "../Components/OAuthenticate";
 import logo from '../assets/Logo/logo.png';
 import video from '../assets/Logo/design.mp4'; 
+import { motion } from "framer-motion"; 
 
 export default function SignIn() {
     const [formData, setFormData] = useState({});
@@ -73,7 +74,12 @@ export default function SignIn() {
             {/* Content */}
             <div className="relative flex p-6 max-w-5xl mx-auto flex-col md:flex-row items-center justify-between gap-20 z-10">
                 {/* Left Side */}
-                <div className="flex-1 text-center md:text-left">
+                <motion.div
+                    className="flex-1 text-center md:text-left"
+                    initial={{ opacity: 0, x: -100 }} // Initial position (hidden to the left)
+                    animate={{ opacity: 1, x: 0 }} // Animate to visible and its position
+                    transition={{ duration: 1 }} // Animation duration
+                >
                     <Link to="/" className="text-5xl font-bold text-white">
                         <img
                             src={logo}
@@ -81,13 +87,13 @@ export default function SignIn() {
                             className="h-40 sm:h-28 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
                         />
                     </Link>
-                    <p className="text-sm  font-cinzel text-gray-200">
+                    <p className="text-sm font-cinzel text-gray-200 mt-5">
                         Music expresses that which cannot be said and on which it is impossible to be silent. 
                         Music in itself is healing. It's an explosive expression of humanity. 
                         It's something we are all touched by. No matter what culture we're from, 
                         everyone loves music.
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Right Side - Sign In Form */}
                 <div className="flex-1 mt-5 md:mt-0">
@@ -125,7 +131,7 @@ export default function SignIn() {
                                 </button>
                             </div>
                         </div>
-                        <Button className="bg-amber-600" disabled={loading}  type="submit">
+                        <Button className="bg-amber-600" disabled={loading} type="submit">
                             {loading ? (
                                 <>
                                     <Spinner size="sm" />
@@ -155,4 +161,3 @@ export default function SignIn() {
         </div>
     );
 }
-

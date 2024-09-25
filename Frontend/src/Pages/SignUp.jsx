@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import OAuthenticate from "../Components/OAuthenticate";
 import logo from '../assets/Logo/logo.png';
 import video from '../assets/Logo/design.mp4'; 
+import { motion } from "framer-motion"; 
 
 const countryList = [
     "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", 
@@ -99,18 +100,26 @@ export default function SignUp() {
 
             <div className="relative z-10 flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
                 {/* Left: Logo and description */}
-                <div className="flex-1">
+                <motion.div
+                    className="flex-1 text-center md:text-left"
+                    initial={{ opacity: 0, x: -100 }} // Initial position (hidden to the left)
+                    animate={{ opacity: 1, x: 0 }} // Animate to visible and its position
+                    transition={{ duration: 1 }} // Animation duration
+                >
                     <Link to="/" className="text-5xl font-bold text-white">
-                    <img
+                        <img
                             src={logo}
                             alt="MusicBible logo"
-                            className="h-60 sm:h-60 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
+                            className="h-40 sm:h-28 md:h-40 lg:h-72 xl:h-96 w-auto mx-auto md:mx-0"
                         />
                     </Link>
-                    <p className="text-sm mt-1 font-extrabold text-white">
-                        Music expresses that which cannot be said and on which it is impossible to be silent. Music in itself is healing. It's an explosive expression of humanity.
+                    <p className="text-sm font-cinzel text-gray-200 mt-5">
+                        Music expresses that which cannot be said and on which it is impossible to be silent. 
+                        Music in itself is healing. It's an explosive expression of humanity. 
+                        It's something we are all touched by. No matter what culture we're from, 
+                        everyone loves music.
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Right: Sign-up form */}
                 <div className="flex-1 mt-2">
