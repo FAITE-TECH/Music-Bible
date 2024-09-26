@@ -7,62 +7,68 @@ dotenv.config();
 const stripe = Stripe(process.env.CHECKOUT_API_KEY_SECRET);
 
 export const createSession = async (req, res) => {
-  const { musicId, title, price, userId } = req.body; // Destructure the needed data from the request body
+  const { musicId, title, price, userId, image } = req.body;
 
-  // Validate the required fields
-  if (!musicId || !title || !price || !userId) {
+  // Validate required fields
+  if (!musicId || !title || !price || !userId || !image) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
-    // Create customer with user ID metadata
+    // Create customer with metadata
     const customer = await stripe.customers.create({
       metadata: {
         userId: userId,
         musicId: musicId,
         title: title,
+        image: image, 
       },
     });
 
-    // Define the line item for the music purchase
+    // Create line item for music purchase
     const line_item = {
       price_data: {
-        currency: "lkr", // Set currency to LKR (Sri Lankan Rupees)
+        currency: "lkr", 
         product_data: {
-          name: title, // Name of the music item
-          description: `Purchase of ${title}`, // Simple description for the checkout page
+          name: title, 
+          images: [image],
+          description: `Purchase of ${title}`,
+         
           metadata: {
             id: musicId,
           },
         },
-        unit_amount: price * 100, // Convert the price to cents
+        unit_amount: price * 100, // Convert price to cents
       },
-      quantity: 1, // For single music purchase, the quantity is 1
+      quantity: 1, // Single music purchase
     };
 
-    // Check if the price is less than 50 cents in LKR
+    // Check if total is valid (>= 50 LKR)
     const totalAmount = line_item.price_data.unit_amount;
-    if (totalAmount < 50 * 100) { // Total amount must be at least 50 LKR cents
-      return res.status(400).json({ error: "Total amount must be at least 50 cents in LKR." });
+    if (totalAmount < 50 * 100) {
+      return res.status(400).json({ error: "Total amount must be at least 50 LKR." });
     }
 
-    // Create the checkout session
+    // Create checkout session
     const session = await stripe.checkout.sessions.create({
+      phone_number_collection: {
+        enabled: true,
+      },
       payment_method_types: ['card'],
-      customer: customer.id, // Link the customer to the session
-      line_items: [line_item], // Pass the single music item to line_items
-      mode: 'payment', // 'payment' mode for one-time purchases
-      success_url: `http://localhost:5173/order-pay-success`, // Redirect after successful payment
-      cancel_url: `http://localhost:5173/muiscs`, // Redirect if payment is canceled
+      customer: customer.id,
+      line_items: [line_item],
+      mode: 'payment',
+      success_url: `http://localhost:5173/order-pay-success`,
+      cancel_url: `http://localhost:5173/muiscs`,
     });
 
-    // Respond with the session URL for redirection to Stripe checkout
     res.json({ url: session.url });
   } catch (error) {
     console.error('Error creating Stripe session:', error);
     res.status(500).json({ error: 'Something went wrong with creating the payment session.' });
   }
 };
+
 
 
 

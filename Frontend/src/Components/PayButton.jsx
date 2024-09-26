@@ -12,12 +12,10 @@ const PayButton = ({ music }) => {
       return;
     }
 
-    if (!music || !music._id) {
-      console.error('Invalid music object or missing _id', music);
+    if (!music || !music._id || !music.image) {
+      console.error('Invalid music object or missing _id or image', music);
       return;
     }
-
-    console.log(music._id)
 
     try {
       const response = await fetch('/api/stripe/create-checkout-session', {
@@ -26,9 +24,10 @@ const PayButton = ({ music }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          musicId: music._id, 
+          musicId: music._id,
           title: music.title,
-          price: 500, 
+          price: 500, // Assuming a fixed price, change if needed
+          image: music.image, // Pass the image URL here
           userId: currentUser._id,
         }),
       });

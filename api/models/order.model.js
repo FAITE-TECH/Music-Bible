@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
     },
     musicId: [{
         title: { type: String, required: true },
-        mainImage: { type: String, required: true }, 
+        image: { type: String, required: true }, 
     }],
     first_name:{
         type:String,
