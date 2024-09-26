@@ -13,6 +13,7 @@ import AddMusic from './Pages/AddMusic'
 import UpdateMusic from './Pages/UpdateMusic'
 import Music from './Pages/Music'
 import Album from './Pages/Album'
+import OrderSummary from './Pages/Ordersummary'
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
 
         <Route element={<PrivateRoute/>}/>
           <Route path="/dashboard" element={<DashBoard/>}/> 
+          <Route path="/order-summary" element={<OrderSummary/>}/>
         <Route/> 
 
         <Route element={<OnlyAdminPrivateRoute/>}>

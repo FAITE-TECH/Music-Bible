@@ -12,9 +12,8 @@ export default function Music() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState('');
-  const [currentSongIndex, setCurrentSongIndex] = useState(null); // Track current song index
-  const audioRef = useRef(null); // Ref for audio element
-
+  const [currentSongIndex, setCurrentSongIndex] = useState(null);
+  const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -35,7 +34,7 @@ export default function Music() {
   };
 
   useEffect(() => {
-    fetchMusic(); // Fetch on component load
+    fetchMusic();
   }, []);
 
   const handleSearch = (e) => {
@@ -63,10 +62,7 @@ export default function Music() {
 
   const handleDownload = (music) => {
     if (currentUser) {
-      const link = document.createElement('a');
-      link.href = music.music;
-      link.download = music.title;
-      link.click();
+      navigate('/order-summary', { state: { musicItem: music } });
     } else {
       navigate('/sign-in');
     }
@@ -74,19 +70,19 @@ export default function Music() {
 
   const handleShare = (music) => {
     if (navigator.share) {
-      navigator.share({
-        title: music.title,
-        url: music.music,
-      })
-      .then(() => console.log('Music shared successfully'))
-      .catch((error) => console.error('Error sharing music:', error));
+      navigator
+        .share({
+          title: music.title,
+          url: music.music,
+        })
+        .then(() => console.log('Music shared successfully'))
+        .catch((error) => console.error('Error sharing music:', error));
     } else {
       alert('Web Share API not supported in your browser.');
     }
   };
 
   const handleNextSong = () => {
-    // Move to the next song, wrap around if needed
     setCurrentSongIndex((prevIndex) =>
       prevIndex === filteredMusicList.length - 1 ? 0 : prevIndex + 1
     );
@@ -106,7 +102,6 @@ export default function Music() {
   }, [currentSongIndex]);
 
   const handlePlaySong = (index) => {
-    // Set the clicked song as the current song
     setCurrentSongIndex(index);
   };
 
@@ -126,10 +121,7 @@ export default function Music() {
   return (
     <div className="container mx-auto p-4 bg-black">
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
-
-      {/* Search and Filter Section */}
       <div className="flex justify-end mb-6 space-x-4">
-        {/* Search Bar */}
         <input
           type="text"
           className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -137,8 +129,6 @@ export default function Music() {
           value={searchTerm}
           onChange={handleSearch}
         />
-
-        {/* Album Dropdown */}
         <select
           className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedAlbum}
@@ -151,8 +141,6 @@ export default function Music() {
           <option value="Album4">BOOKS OF THE GOSPEL</option>
         </select>
       </div>
-
-      {/* Music List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {filteredMusicList.length > 0 ? (
           filteredMusicList.map((music, index) => (
@@ -169,11 +157,10 @@ export default function Music() {
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />
               <p className="text-gray-100 mb-6">{music.description}</p>
-              {/* Conditionally render the audio element for the current song */}
               {index === currentSongIndex ? (
                 <audio
-                 controls 
-                 controlsList="nodownload"
+                  controls
+                  controlsList="nodownload"
                   ref={audioRef}
                   className="w-full"
                   autoPlay
@@ -189,10 +176,7 @@ export default function Music() {
                   Play Song
                 </button>
               )}
-
-              {/* Button Container */}
               <div className="flex justify-between mt-4">
-                {/* Share Button */}
                 <button
                   onClick={() => handleShare(music)}
                   className="flex items-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -200,7 +184,6 @@ export default function Music() {
                   <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
                   Share
                 </button>
-                {/* Download Button */}
                 <button
                   onClick={() => handleDownload(music)}
                   className="flex items-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
