@@ -14,6 +14,7 @@ import UpdateMusic from './Pages/UpdateMusic'
 import Music from './Pages/Music'
 import Album from './Pages/Album'
 import OrderSummary from './Pages/Ordersummary'
+import CheckoutSuccess from './Pages/CheckoutSuccess'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route element={<PrivateRoute/>}/>
           <Route path="/dashboard" element={<DashBoard/>}/> 
           <Route path="/order-summary" element={<OrderSummary/>}/>
+          <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess />} />
         <Route/> 
 
         <Route element={<OnlyAdminPrivateRoute/>}>

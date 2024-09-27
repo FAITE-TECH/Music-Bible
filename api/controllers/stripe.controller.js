@@ -58,7 +58,7 @@ export const createSession = async (req, res) => {
       customer: customer.id,
       line_items: [line_item],
       mode: 'payment',
-      success_url: `http://localhost:5173/order-pay-success`,
+      success_url: `http://localhost:5173/order-pay-success/${musicId}/${userId}`,
       cancel_url: `http://localhost:5173/muiscs`,
     });
 
@@ -73,39 +73,31 @@ export const createSession = async (req, res) => {
 
 
 // Create order (save successful payments in database)
+
+
 const createOrder = async (customer, data) => {
   try {
-    const cartItems = JSON.parse(customer.metadata.cartItems);
-    const items = cartItems.items.map(item => ({
-      _id: item._id,
-      title: item.title,
-      cartTotalQuantity: item.cartTotalQuantity,
-      mainImage: item.images[0],
-    }));
+    // Create an array of music details (from customer metadata)
+    const musicDetails = [{
+      musicId: customer.metadata.musicId, 
+      title: customer.metadata.title, 
+      image: customer.metadata.image
+    }];
 
+    // Create the new order document
     const newOrder = new Order({
-      orderId: data.id,
+      orderId: data.id, // Stripe session ID as order ID
       userId: customer.metadata.userId,
-      productsId: items.map(item => ({
-        id: item._id,
-        title: item.title,
-        mainImage: item.mainImage, 
-        quantity: item.cartTotalQuantity
-      })),
-      first_name: data.customer_details.name.split(' ')[0],
-      last_name: data.customer_details.name.split(' ')[1],
+      musicId: musicDetails, // Array of music details
       email: data.customer_details.email,
       phone: data.customer_details.phone,
-      address: data.customer_details.address.line1,
-      city: data.customer_details.address.city,
-      zip: data.customer_details.address.postal_code,
-      subtotal: data.amount_subtotal / 100,
-      deliveryfee: 300,
-      totalcost: data.amount_total / 100,
+      totalcost: data.amount_total / 100, // Convert from cents to currency format
+      
     });
 
+    // Save the order to the database
     const savedOrder = await newOrder.save();
-    console.log("Processed Order:", savedOrder);
+    console.log("Order successfully saved:", savedOrder);
   } catch (error) {
     console.error("Error creating order:", error);
     throw error;

@@ -12,17 +12,11 @@ const orderSchema = new mongoose.Schema({
         required : true,
     },
     musicId: [{
+        musicId: { type: String, required: true },
         title: { type: String, required: true },
         image: { type: String, required: true }, 
     }],
-    first_name:{
-        type:String,
-        required:true,
-    },
-    last_name:{
-        type:String,
-        required:true,
-    },
+    
     email:{
         type:String,  
         lowercase:true, 
@@ -30,28 +24,12 @@ const orderSchema = new mongoose.Schema({
     phone:{
         type:Number,
         required:true,
-    },
-    address:{
-        type:String,
-        required:true,
-    },
-    city:{
-        type:String,
-        required:true,
-    },
-    zip:{
-        type:Number,
-        required:true,
-    },
-    subtotal:{
-        type: Number,
-        default:0.00,
-    },
-    
+    },  
     totalcost:{
        type: Number,
        required:true,
     },
+  
     }, {timestamps: true}
 
 );
