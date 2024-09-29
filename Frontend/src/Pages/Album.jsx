@@ -81,10 +81,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
 
   const handleDownload = (music) => {
     if (currentUser) {
-      const link = document.createElement('a');
-      link.href = music.music;
-      link.download = music.title;
-      link.click();
+      navigate('/order-summary', { state: { musicItem: music } });
     } else {
       navigate('/sign-in');
     }
@@ -178,7 +175,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
             <p className="text-gray-300 mt-2">{albumInfo[category]?.description}</p>
             <div className="flex mt-4 gap-4">
               <button
-                onClick={handleAlbumDownload}
+                onClick={handleDownload}
                 className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
               >
                 <FontAwesomeIcon icon={faDownload} className="mr-2" />
@@ -220,11 +217,12 @@ export default function Album({ defaultCategory = 'Album1' }) {
                 className="w-full"
               />
               <div className="flex justify-between mt-4">
-                <button
+              <button
                   onClick={() => handleDownload(music)}
-                  className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+                  className="flex items-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
                 >
-                  Download
+                  <FontAwesomeIcon icon={faDownload} className="mr-2" />
+                  {currentUser ? 'Download' : 'Sign in to Download'}
                 </button>
                 <button
                   onClick={() => handleShare(music)}
