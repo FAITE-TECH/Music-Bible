@@ -4,27 +4,28 @@ import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
 
 export default function Music() {
-  const [musicList, setMusicList] = useState([]); // Initialize to empty array
-  const [filteredMusicList, setFilteredMusicList] = useState([]); // Initialize to empty array
+  const [musicList, setMusicList] = useState([]);
+  const [filteredMusicList, setFilteredMusicList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAlbum, setSelectedAlbum] = useState('all');
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
-  const [categories, setCategories] = useState([]); // New state for categories
+  const [categories, setCategories] = useState([]);
+  const [hoveredIndex, setHoveredIndex] = useState(null); // State for hovered index
   const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const [category, setCategory] = useState('');
 
   const fetchMusic = async () => {
     try {
       const response = await fetch(`/api/music/music`);
       const data = await response.json();
-      console.log("Music data:", data); // Log the music data
-      setMusicList(data.music || []); // Fallback to empty array if undefined
+      console.log("Music data:", data);
+      setMusicList(data.music || []);
       setFilteredMusicList(data.music || []);
       setLoading(false);
     } catch (error) {
@@ -38,19 +39,17 @@ export default function Music() {
       try {
         const res = await fetch('/api/category/getAlbum');
         const data = await res.json();
-
         if (!res.ok) {
           throw new Error('Failed to load categories');
         } else {
           setCategories(data);
-          setCategory(data[0]?.albumName || ''); // Set default category
+          setSelectedAlbum(data[0]?.albumName || ''); // Set default category
         }
       } catch (error) {
         setError('Error fetching categories');
         console.error(error);
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -69,7 +68,7 @@ export default function Music() {
   };
 
   const filterMusic = (title, category) => {
-    let filtered = musicList; // Ensure musicList is an array
+    let filtered = musicList;
     if (title) {
       filtered = filtered.filter((music) =>
         music.title.toLowerCase().includes(title.toLowerCase())
@@ -126,6 +125,20 @@ export default function Music() {
     setCurrentSongIndex(index);
   };
 
+  const handleMouseEnter = (index) => {
+    setHoveredIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+  };
+
+  // Animation variants for rotation and scroll effect
+  const animationVariants = {
+    hidden: { opacity: 0, rotate: 20, translateY: 20 },
+    visible: { opacity: 1, rotate: 0, translateY: 0 },
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-black">
@@ -166,15 +179,21 @@ export default function Music() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {Array.isArray(filteredMusicList) && filteredMusicList.length > 0 ? (
           filteredMusicList.map((music, index) => (
-            <div
+            <motion.div
               key={music._id}
               className={`p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white ${
                 index === currentSongIndex ? 'border-2 border-purple-500' : ''
               }`}
+              initial="hidden"
+              whileInView="visible" // Trigger animation when in view
+              variants={animationVariants}
+              transition={{ duration: 0.5 }} // Animation duration
+              onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
             >
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
-                src={music.image}
+                src={music.image || 'https://via.placeholder.com/150'} // Fallback to placeholder if image is not available
                 alt={music.title}
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />
@@ -214,10 +233,10 @@ export default function Music() {
                   {currentUser ? 'Download' : 'Sign in to Download'}
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-3">No music found</p>
+          <p className="text-gray-400 text-center">No music found.</p>
         )}
       </div>
     </div>

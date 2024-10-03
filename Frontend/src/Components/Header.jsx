@@ -62,7 +62,7 @@ export default function Header() {
                             alt="MusicBible logo" 
                             className="h-16 w-auto" 
                         />
-                        <span className="ml-2">MusicBible</span>
+                        <span className="ml-2">aMusicBible</span>
                     </NavLink>
                 </motion.div>
                 )}
