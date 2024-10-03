@@ -6,32 +6,53 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default function Music() {
-  const [musicList, setMusicList] = useState([]);
-  const [filteredMusicList, setFilteredMusicList] = useState([]);
+  const [musicList, setMusicList] = useState([]); // Initialize to empty array
+  const [filteredMusicList, setFilteredMusicList] = useState([]); // Initialize to empty array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAlbum, setSelectedAlbum] = useState('');
+  const [selectedAlbum, setSelectedAlbum] = useState('all');
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
+  const [categories, setCategories] = useState([]); // New state for categories
   const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const [category, setCategory] = useState('');
 
   const fetchMusic = async () => {
     try {
       const response = await fetch(`/api/music/music`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch music data');
-      }
       const data = await response.json();
-      setMusicList(data.music);
-      setFilteredMusicList(data.music);
+      console.log("Music data:", data); // Log the music data
+      setMusicList(data.music || []); // Fallback to empty array if undefined
+      setFilteredMusicList(data.music || []);
       setLoading(false);
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/category/getAlbum');
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error('Failed to load categories');
+        } else {
+          setCategories(data);
+          setCategory(data[0]?.albumName || ''); // Set default category
+        }
+      } catch (error) {
+        setError('Error fetching categories');
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     fetchMusic();
@@ -48,7 +69,7 @@ export default function Music() {
   };
 
   const filterMusic = (title, category) => {
-    let filtered = musicList;
+    let filtered = musicList; // Ensure musicList is an array
     if (title) {
       filtered = filtered.filter((music) =>
         music.title.toLowerCase().includes(title.toLowerCase())
@@ -135,14 +156,15 @@ export default function Music() {
           onChange={handleAlbumChange}
         >
           <option value="all">All Albums</option>
-          <option value="Album1">VAAZHVU THARUM VAARTHAIGAL</option>
-          <option value="Album2">BOOK OF ECCLESIASTES</option>
-          <option value="Album3">BOOK OF PHILIPPIANS</option>
-          <option value="Album4">BOOKS OF THE GOSPEL</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category.albumName}>
+              {category.albumName}
+            </option>
+          ))}
         </select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
-        {filteredMusicList.length > 0 ? (
+        {Array.isArray(filteredMusicList) && filteredMusicList.length > 0 ? (
           filteredMusicList.map((music, index) => (
             <div
               key={music._id}

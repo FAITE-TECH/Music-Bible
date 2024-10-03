@@ -135,6 +135,7 @@ export const deleteMusic = async (req, res, next) => {
   };
 
 
+ 
   export const getMusicByCategory = async (req, res, next) => {
     try {
       const { category } = req.query;
@@ -155,5 +156,3 @@ export const deleteMusic = async (req, res, next) => {
       next(error);
     }
   };
-
- 

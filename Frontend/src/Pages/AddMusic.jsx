@@ -1,5 +1,5 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
@@ -13,8 +13,30 @@ export default function AddMusic() {
   const [uploadProgress, setUploadProgress] = useState({ image: null, music: null });
   const [uploadError, setUploadError] = useState({ image: null, music: null });
   const [formData, setFormData] = useState({});
+  const [categories, setCategories] = useState([]); 
+  const [categoriesError, setCategoriesError] = useState(null); 
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/category/getAlbum'); 
+        const data = await res.json();
+
+        if (!res.ok) {
+          setCategoriesError('Failed to load categories');
+        } else {
+          setCategories(data); 
+        }
+      } catch (error) {
+        setCategoriesError('Error fetching categories');
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleFileChange = (file, type) => {
     setFile({ ...file, [type]: file });
@@ -80,7 +102,6 @@ export default function AddMusic() {
       console.error(error);
     }
   };
-  
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -92,12 +113,13 @@ export default function AddMusic() {
           } />
           <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
             <option value='uncategorized'>Select Album</option>
-            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
-            <option value='Album2'>BOOK OF ECCLESIASTES</option>
-            <option value='Album3'>BOOK OF PHILIPPIANS</option>
-            <option value='Album4'>BOOKS OF THE GOSPEL</option>
+            {categories.length > 0 && categories.map((category) => (
+              <option key={category.id} value={category.albumName}>{category.albumName}</option>
+            ))}
           </Select>
         </div>
+
+        {categoriesError && <Alert color="failure">{categoriesError}</Alert>}
 
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput type='file' accept='image/*' onChange={(e) => handleFileChange(e.target.files[0], 'image')} />
@@ -122,7 +144,6 @@ export default function AddMusic() {
             setFormData({ ...formData, description: sanitizedValue });
           }}
         />
-
 
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput type='file' accept='audio/*' onChange={(e) => handleFileChange(e.target.files[0], 'music')} />

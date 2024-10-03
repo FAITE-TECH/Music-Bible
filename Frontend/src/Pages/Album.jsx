@@ -4,51 +4,42 @@ import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt, faDownload } from '@fortawesome/free-solid-svg-icons';
-import Album1 from '../assets/Logo/Album1.png';
-import Album2 from '../assets/Logo/Album2.png';
-import Album3 from '../assets/Logo/Album3.png';
-import Album4 from '../assets/Logo/Album4.png';
 
-export default function Album({ defaultCategory = 'Album1' }) {
+export default function Album() {
   const [musicList, setMusicList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [category, setCategory] = useState(defaultCategory);
+  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const audioRefs = useRef({}); // To store refs for each audio element
 
-  const categories = [
-    { value: 'Album1', label: 'VAAZHVU THARUM VAARTHAIGAL' },
-    { value: 'Album2', label: 'BOOK OF ECCLESIASTES' },
-    { value: 'Album3', label: 'BOOK OF PHILIPPIANS' },
-    { value: 'Album4', label: 'BOOKS OF THE GOSPEL' },
-  ];
+  // Fetch categories and set the default category
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/category/getAlbum');
+        const data = await res.json();
 
-  const albumInfo = {
-    Album1: {
-      src: Album1,
-      label: 'VAAZHVU THARUM VAARTHAIGAL',
-      description: 'A collection of soulful and rhythmic tunes from VAAZHVU THARUM VAARTHAIGAL.',
-    },
-    Album2: {
-      src: Album2,
-      label: 'BOOK OF ECCLESIASTES',
-      description: 'An energetic collection of tracks to keep you motivated from BOOK OF ECCLESIASTES.',
-    },
-    Album3: {
-      src: Album3,
-      label: 'BOOK OF PHILIPPIANS',
-      description: 'Smooth beats and mellow vibes from BOOK OF PHILIPPIANS.',
-    },
-    Album4: {
-      src: Album4,
-      label: 'BOOKS OF THE GOSPEL',
-      description: 'Smooth beats and mellow vibes from BOOKS OF THE GOSPEL.',
-    },
-  };
+        if (!res.ok) {
+          throw new Error('Failed to load categories');
+        } else {
+          setCategories(data);
+          setCategory(data[0]?.albumName || ''); // Set default category
+        }
+      } catch (error) {
+        setError('Error fetching categories');
+        console.error(error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
+
+  // Fetch music by category
   const fetchMusicByCategory = async () => {
+    if (!category) return; // Skip if no category selected
     try {
       setLoading(true);
       const response = await fetch(`/api/music/category?category=${category}`);
@@ -65,7 +56,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
   };
 
   useEffect(() => {
-    fetchMusicByCategory();
+    fetchMusicByCategory(); // Fetch music when category changes
   }, [category]);
 
   // Play next song automatically
@@ -87,19 +78,6 @@ export default function Album({ defaultCategory = 'Album1' }) {
     }
   };
 
-  const handleAlbumDownload = () => {
-    if (currentUser) {
-      musicList.forEach((music) => {
-        const link = document.createElement('a');
-        link.href = music.music;
-        link.download = `${albumInfo[category]?.label} - ${music.title}`;
-        link.click();
-      });
-    } else {
-      navigate('/sign-in');
-    }
-  };
-
   const handleShare = (music) => {
     if (navigator.share) {
       navigator.share({
@@ -112,7 +90,6 @@ export default function Album({ defaultCategory = 'Album1' }) {
       alert('Web Share API not supported in your browser.');
     }
   };
-
   const handleAlbumShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -143,6 +120,9 @@ export default function Album({ defaultCategory = 'Album1' }) {
     return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
   }
 
+  // Find the selected album info
+  const selectedAlbum = categories.find((cat) => cat.albumName === category) || {};
+
   return (
     <div className="container mx-auto p-4 bg-black">
       <div className="flex justify-end mb-6">
@@ -154,26 +134,25 @@ export default function Album({ defaultCategory = 'Album1' }) {
           className="p-2 bg-purple-600 text-white rounded-lg"
         >
           {categories.map((album) => (
-            <option key={album.value} value={album.value}>
-              {album.label}
+            <option key={album._id} value={album.albumName}>
+              {album.albumName}
             </option>
           ))}
         </select>
       </div>
-      <div className="flex">
+
+      <div className="flex  ml-10">
         <div className="w-1/4 p-4">
           <img
-            src={albumInfo[category]?.src || 'https://via.placeholder.com/300'}
-            alt={albumInfo[category]?.label}
-            className="w-full h-auto object-cover rounded-lg"
+            src={selectedAlbum.image || 'https://via.placeholder.com/300'} 
+            alt={selectedAlbum.albumName}
+             className="w-full h-auto object-cover rounded-lg"
           />
         </div>
-
-        <div className="w-3/4 p-4 flex flex-col">
-          <div className="flex flex-col mb-4">
-            <h2 className="text-2xl font-bold text-white mt-4">{albumInfo[category]?.label}</h2>
-            <p className="text-gray-300 mt-2">{albumInfo[category]?.description}</p>
-            <div className="flex mt-4 gap-4">
+        <div className="w-3/4 flex flex-col mt-3">
+          <h2 className="text-xl font-semibold mb-2 text-gray-300">{selectedAlbum.albumName}</h2>
+          <p className="text-gray-100">{selectedAlbum.description}</p>
+          <div className="flex mt-4 gap-4">
               <button
                 onClick={handleDownload}
                 className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
@@ -189,11 +168,10 @@ export default function Album({ defaultCategory = 'Album1' }) {
                 Share Album
               </button>
             </div>
-          </div>
         </div>
       </div>
+
       <h1 className="text-3xl font-bold text-center mb-6">Music</h1>
-      <div className="text-center text-gray-400 mb-4">Available music in {albumInfo[category]?.label}:</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
         {musicList.length > 0 ? (
           musicList.map((music, index) => (
@@ -209,7 +187,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
                 ref={(el) => {
                   audioRefs.current[music._id] = el;
                   if (el) {
-                    el.addEventListener('ended', () => handleAudioEnded(index)); // Add event listener
+                    el.addEventListener('ended', () => handleAudioEnded(index)); 
                   }
                 }}
                 src={music.music}
@@ -217,7 +195,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
                 className="w-full"
               />
               <div className="flex justify-between mt-4">
-              <button
+                <button
                   onClick={() => handleDownload(music)}
                   className="flex items-center bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
                 >
@@ -234,7 +212,7 @@ export default function Album({ defaultCategory = 'Album1' }) {
             </div>
           ))
         ) : (
-          <p className="text-red-500 text-center">No music available in this album.</p>
+          <div className="text-center text-gray-400">No music available in this category.</div>
         )}
       </div>
     </div>

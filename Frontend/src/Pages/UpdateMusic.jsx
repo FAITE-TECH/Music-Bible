@@ -16,6 +16,28 @@ export default function UpdateMusic() {
   const { musicId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
+  const [categories, setCategories] = useState([]); 
+  const [categoriesError, setCategoriesError] = useState(null); 
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/category/getAlbum'); 
+        const data = await res.json();
+
+        if (!res.ok) {
+          setCategoriesError('Failed to load categories');
+        } else {
+          setCategories(data); 
+        }
+      } catch (error) {
+        setCategoriesError('Error fetching categories');
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchMusic = async () => {
@@ -116,16 +138,12 @@ export default function UpdateMusic() {
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           value={formData.description || ''}
         />
-        <Select
-          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          value={formData.category || 'uncategorized'}
-        >
-           <option value='uncategorized'>Select Album</option>
-            <option value='Album1'> VAAZHVU THARUM VAARTHAIGAL</option>
-            <option value='Album2'>BOOK OF ECCLESIASTES</option>
-            <option value='Album3'>BOOK OF PHILIPPIANS</option>
-            <option value='Album4'>BOOKS OF THE GOSPEL</option>
-        </Select>
+         <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+            <option value='uncategorized'>Select Album</option>
+            {categories.length > 0 && categories.map((category) => (
+              <option key={category.id} value={category.albumName}>{category.albumName}</option>
+            ))}
+          </Select>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput
             type='file'

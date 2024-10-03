@@ -316,6 +316,22 @@ return (
               Add Music
             </Button>
           </Link>
+          
+          
+        )}   
+        {currentUser.isAdmin && (
+          <Link to='/addalbum'>
+            <Button
+              type='button'
+               gradientDuoTone='purpleToBlue'
+              className='w-full , text-black bg-slate-400 '
+              outline
+            >
+              Add New Album
+            </Button>
+          </Link>
+          
+          
         )}   
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
