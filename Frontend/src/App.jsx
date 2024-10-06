@@ -16,6 +16,7 @@ import Album from './Pages/Album'
 import OrderSummary from './Pages/Ordersummary'
 import CheckoutSuccess from './Pages/CheckoutSuccess'
 import AddAlbum from './Pages/AddAlbum'
+import Membership from './Pages/Membership'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path="/sign-in" element={<SignIn/>}/>
         <Route path="/musics" element={<Music/>}/>
+        <Route path="/membership" element={<Membership/>}/>
         <Route path="/album" element={<Album/>} />
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>
         <Route path="/resetpassword/:id/:token" element={<ResetPassword/>} />

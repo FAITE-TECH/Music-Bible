@@ -4,6 +4,7 @@ import DashProfile from "../Components/DashProfile";
 import DashSideBar from "../Components/DashSideBar";
 import DashUsers from "../Components/DashUsers";
 import DashMusic from "../Components/DashMusic";
+import DashMembership from "../Components/DashMembership";
 
 
 
@@ -31,6 +32,7 @@ export default function DashBoard() {
       {tab==='profile' && <DashProfile/>}
       {tab === 'users' && <DashUsers/>}
       {tab === 'music' && <DashMusic/>}
+      {tab === 'membership' && <DashMembership/>}
      
 
    

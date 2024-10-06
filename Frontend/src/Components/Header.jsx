@@ -69,7 +69,7 @@ export default function Header() {
 
                 {/* Animated Navigation Links */}
                 <nav className="flex flex-col md:flex-row md:space-x-6 items-center mt-4 md:mt-0">
-                    {["Home", "New", "Musics","Album", "Contact"].map((text, index) => (
+                    {["Home", "Musics","Album","Membership"].map((text, index) => (
                         <motion.div
                             key={text}
                             custom={index}
