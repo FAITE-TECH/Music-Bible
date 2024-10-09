@@ -126,7 +126,7 @@ export default function DashMembership() {
               <td>${membership.email}</td>
               <td>${membership.country}</td>
               <td>${membership.mobile}</td>
-              <td>${member.subscriptionPeriod}</td>
+              <td>${membership.subscriptionPeriod}</td>
               <td>${membership.isMember}</td>
             </tr>
           `).join('')}

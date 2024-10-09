@@ -94,7 +94,7 @@ export const getAllMembership = async (req, res, next) => {
 
         
         const emailContent = membershipAcceptedEmail(updatedMembership.name);
-        await sendEmail(updatedMembership.email, 'Welcome to AmusicBible!', 'Your membership has been accepted.', emailContent);
+        await sendEmail(updatedMembership.email, 'Welcome to amusic Bible!', 'Your membership has been accepted.', emailContent);
 
         res.status(200).json({
             success: true,
