@@ -1,9 +1,8 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
-const PayButton = ({ music }) => {
+const PayButton = ({ music, price }) => {
   const { currentUser } = useSelector((state) => state.user);
 
   const handleCheckout = async () => {
@@ -26,8 +25,8 @@ const PayButton = ({ music }) => {
         body: JSON.stringify({
           musicId: music._id,
           title: music.title,
-          price: 500, // Assuming a fixed price, change if needed
-          image: music.image, // Pass the image URL here
+          price: price, // Pass the selected price
+          image: music.image,
           userId: currentUser._id,
         }),
       });
