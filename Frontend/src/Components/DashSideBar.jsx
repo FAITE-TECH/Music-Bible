@@ -72,6 +72,16 @@ export default function DashSideBar() {
                 </Sidebar.Item>
               </Link>
 
+              <Link to='/dashboard?tab=contact' key="contact">
+                <Sidebar.Item
+                  active={tab === 'contact'}
+                  icon={HiOutlineMail}
+                  as='div'
+                >
+                  Contatc Req
+                </Sidebar.Item>
+              </Link>
+
               <Link to='/dashboard?tab=membership' key="memebership">
                 <Sidebar.Item
                   active={tab === 'membership'}

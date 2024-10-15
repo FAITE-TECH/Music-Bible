@@ -10,44 +10,41 @@ export const createSession = async (req, res) => {
   const { musicId, title, price, userId, image } = req.body;
 
   // Validate required fields
-  if (!musicId || !title || !price || !userId || !image) {
-    return res.status(400).json({ error: "Missing required fields" });
+  if (!musicId || !title || price == null || !userId || !image) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
+    // Log inputs for debugging
+    console.log('Music Data:', { musicId, title, price, userId, image });
+
     // Create customer with metadata
     const customer = await stripe.customers.create({
       metadata: {
         userId: userId,
         musicId: musicId,
         title: title,
-        image: image, 
+        image: image,
+        price: price,
       },
     });
 
     // Create line item for music purchase
     const line_item = {
       price_data: {
-        currency: "lkr", 
+        currency: 'usd', // Changed to USD
         product_data: {
-          name: title, 
+          name: title,
           images: [image],
           description: `Purchase of ${title}`,
-         
           metadata: {
             id: musicId,
           },
         },
-        unit_amount: price * 100, // Convert price to cents
+        unit_amount: Math.round(price * 100), // USD requires the amount in cents
       },
-      quantity: 1, // Single music purchase
+      quantity: 1,
     };
-
-    // Check if total is valid (>= 50 LKR)
-    const totalAmount = line_item.price_data.unit_amount;
-    if (totalAmount < 50 * 100) {
-      return res.status(400).json({ error: "Total amount must be at least 50 LKR." });
-    }
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -59,21 +56,17 @@ export const createSession = async (req, res) => {
       line_items: [line_item],
       mode: 'payment',
       success_url: `http://localhost:5173/order-pay-success/${musicId}/${userId}`,
-      cancel_url: `http://localhost:5173/muiscs`,
+      cancel_url: `http://localhost:5173/musics`,
     });
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Error creating Stripe session:', error);
-    res.status(500).json({ error: 'Something went wrong with creating the payment session.' });
+    console.error('Error creating Stripe session:', error.message);
+    res.status(500).json({ error: error.message });
   }
 };
 
-
-
-
 // Create order (save successful payments in database)
-
 
 const createOrder = async (customer, data) => {
   try {
@@ -91,7 +84,7 @@ const createOrder = async (customer, data) => {
       musicId: musicDetails, // Array of music details
       email: data.customer_details.email,
       phone: data.customer_details.phone,
-      totalcost: data.amount_total / 100, // Convert from cents to currency format
+      totalcost: data.amount_total / 100, // Convert from cents to dollars
       
     });
 
@@ -104,7 +97,8 @@ const createOrder = async (customer, data) => {
   }
 };
 
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
+// Webhook and handling events
+
 let endpointSecret;
 
 export const handleWebhook = async (req, res) => {

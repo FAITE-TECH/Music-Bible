@@ -9,6 +9,7 @@ import musicRoute from "./routes/music.route.js";
 import categoryRoute from "./routes/category.route.js";
 import stripe from "./routes/stripe.route.js";
 import membership from "./routes/membership.route.js";
+import contactRoutes from "./routes/contact.route.js";
 
 dotenv.config();
 
@@ -37,7 +38,8 @@ app.use("/api/user",userRoute);
 app.use("/api/music", musicRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/stripe",stripe);
-app.use("/api/membership",membership)
+app.use("/api/membership",membership);
+app.use('/api/contact', contactRoutes);
 
 app.use((err,req,res,next)=>{
     const statusCode = err.statusCode || 500;

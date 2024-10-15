@@ -17,6 +17,8 @@ import OrderSummary from './Pages/Ordersummary'
 import CheckoutSuccess from './Pages/CheckoutSuccess'
 import AddAlbum from './Pages/AddAlbum'
 import Membership from './Pages/Membership'
+import ContactUs from './Pages/ContactUs'
+import AboutUs from './Pages/AboutUs'
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
         <Route path="/musics" element={<Music/>}/>
         <Route path="/membership" element={<Membership/>}/>
         <Route path="/album" element={<Album/>} />
+        <Route path="/contactus" element={<ContactUs/>}/>
+        <Route path="/aboutus" element={<AboutUs/>}/>
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>
         <Route path="/resetpassword/:id/:token" element={<ResetPassword/>} />
 

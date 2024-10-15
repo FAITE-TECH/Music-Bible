@@ -31,3 +31,23 @@ export const membershipRejectedEmail = (name) => {
         </div>
     `;
 };
+
+export const contactSubmissionEmail = (name, message) => {
+    return `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #1d72b8;">Hello ${name},</h2>
+            <p>Thank you for getting in touch with us!</p>
+            <p>We have received your message and will get back to you shortly. Here is a copy of your message for your reference:</p>
+            <blockquote style="background-color: #f9f9f9; padding: 10px; border-left: 4px solid #1d72b8; color: #555;">
+                ${message}
+            </blockquote>
+            <p>If you have any further questions or updates, feel free to contact us at <a href="mailto:support@amusicbible.com">support@amusicbible.com</a>.</p>
+            <br>
+            <p>Best regards,</p>
+            <p>The amusic Bible Team</p>
+            <hr>
+            <p style="font-size: 12px; color: #555;">This is an automated message. Please do not reply directly to this email.</p>
+        </div>
+    `;
+};
+
