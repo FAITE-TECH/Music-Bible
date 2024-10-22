@@ -138,12 +138,17 @@ export default function UpdateMusic() {
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           value={formData.description || ''}
         />
-         <Select onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-            <option value='uncategorized'>Select Album</option>
-            {categories.length > 0 && categories.map((category) => (
-              <option key={category.id} value={category.albumName}>{category.albumName}</option>
-            ))}
-          </Select>
+        <Select 
+          value={formData.category || 'uncategorized'} 
+          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+        >
+          <option value='uncategorized'>Select Album</option>
+          {categories.length > 0 && categories.map((category) => (
+            <option key={category.id} value={category.albumName}>
+              {category.albumName}
+            </option>
+          ))}
+        </Select>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
           <FileInput
             type='file'

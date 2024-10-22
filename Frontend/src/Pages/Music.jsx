@@ -43,7 +43,7 @@ export default function Music() {
           throw new Error('Failed to load categories');
         } else {
           setCategories(data);
-          setSelectedAlbum(data[0]?.albumName || ''); // Set default category
+          setSelectedAlbum(data[0]?.albumName || ''); 
         }
       } catch (error) {
         setError('Error fetching categories');
@@ -165,7 +165,6 @@ export default function Music() {
         />
         <select
           className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={selectedAlbum}
           onChange={handleAlbumChange}
         >
           <option value="all">All Albums</option>
@@ -185,15 +184,15 @@ export default function Music() {
                 index === currentSongIndex ? 'border-2 border-purple-500' : ''
               }`}
               initial="hidden"
-              whileInView="visible" // Trigger animation when in view
+              whileInView="visible" 
               variants={animationVariants}
-              transition={{ duration: 0.5 }} // Animation duration
+              transition={{ duration: 0.5 }} 
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
             >
               <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
               <img
-                src={music.image || 'https://via.placeholder.com/150'} // Fallback to placeholder if image is not available
+                src={music.image || 'https://via.placeholder.com/150'} 
                 alt={music.title}
                 className="w-full h-60 object-cover rounded-lg mb-4"
               />

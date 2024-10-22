@@ -200,7 +200,7 @@ export default function Album() {
               whileHover={{ scale: 1.05 }}
             >
               <FontAwesomeIcon icon={faDownload} className="mr-2" />
-              Download Full Album
+              Download Songs Below
             </motion.button>
             <motion.button
               onClick={handleAlbumShare}

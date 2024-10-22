@@ -97,17 +97,6 @@ export default function DashSideBar() {
             </>
           )}
 
-              <Link to='/dashboard?tab=myorders' key="myorders">
-                <Sidebar.Item
-                  active={tab === 'myorders'}
-                  icon={HiOutlineMusicNote}
-                  as='div'
-                >
-                  My Musics
-                </Sidebar.Item>
-              </Link>
-             
-
               
           <Sidebar.Item 
             icon={HiArrowSmRight} 
