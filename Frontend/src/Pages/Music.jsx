@@ -15,7 +15,7 @@ export default function Music() {
   const [selectedAlbum, setSelectedAlbum] = useState('all');
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [hoveredIndex, setHoveredIndex] = useState(null); // State for hovered index
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -155,16 +155,16 @@ export default function Music() {
   return (
     <div className="container mx-auto p-4 bg-black">
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
-      <div className="flex justify-end mb-6 space-x-4">
+      <div className="flex flex-col md:flex-row justify-end md:space-x-4 mb-6">
         <input
           type="text"
-          className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 mb-4 md:mb-0 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
           placeholder="Search by song name..."
           value={searchTerm}
           onChange={handleSearch}
         />
         <select
-          className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
           onChange={handleAlbumChange}
         >
           <option value="all">All Albums</option>
@@ -175,7 +175,7 @@ export default function Music() {
           ))}
         </select>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {Array.isArray(filteredMusicList) && filteredMusicList.length > 0 ? (
           filteredMusicList.map((music, index) => (
             <motion.div
@@ -190,11 +190,11 @@ export default function Music() {
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
             >
-              <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
+              <h2 className="text-lg font-semibold mb-2">{music.title}</h2>
               <img
                 src={music.image || 'https://via.placeholder.com/150'} 
                 alt={music.title}
-                className="w-full h-60 object-cover rounded-lg mb-4"
+                className="w-full h-48 sm:h-60 object-cover rounded-lg mb-4"
               />
               <p className="text-gray-100 mb-6">{music.description}</p>
               {index === currentSongIndex ? (
@@ -216,10 +216,10 @@ export default function Music() {
                   Play Song
                 </button>
               )}
-              <div className="flex justify-between mt-4">
+              <div className="flex flex-col sm:flex-row justify-between mt-4">
                 <button
                   onClick={() => handleShare(music)}
-                  className="flex items-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors mb-2 sm:mb-0 sm:mr-2"
                 >
                   <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
                   Share
