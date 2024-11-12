@@ -18,6 +18,7 @@ import AddAlbum from './Pages/AddAlbum'
 import Membership from './Pages/Membership'
 import ContactUs from './Pages/ContactUs'
 import AboutUs from './Pages/AboutUs'
+import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute'
 
 export default function App() {
   return (
@@ -41,11 +42,11 @@ export default function App() {
           <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess />} />
         <Route/> 
 
-       
+        <Route element={<OnlyAdminPrivateRoute/>}/>
           <Route path="/addmusic" element={<AddMusic/>}/>
           <Route path="/addalbum" element={<AddAlbum/>}/>
           <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
-      
+        <Route/>
       </Routes>
     </BrowserRouter>
   )
