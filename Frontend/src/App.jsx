@@ -8,7 +8,6 @@ import ForgetPassword from './Pages/ForgetPassword'
 import ResetPassword from './Pages/ResetPassword'
 import DashBoard from './Pages/DashBoard'
 import PrivateRoute from './Components/PrivateRoute'
-import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateroute'
 import AddMusic from './Pages/AddMusic'
 import UpdateMusic from './Pages/UpdateMusic'
 import Music from './Pages/Music'
@@ -42,11 +41,11 @@ export default function App() {
           <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess />} />
         <Route/> 
 
-        <Route element={<OnlyAdminPrivateRoute/>}>
+       
           <Route path="/addmusic" element={<AddMusic/>}/>
           <Route path="/addalbum" element={<AddAlbum/>}/>
           <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
-        </Route>
+      
       </Routes>
     </BrowserRouter>
   )
