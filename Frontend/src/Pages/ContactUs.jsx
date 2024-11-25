@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useSelector } from 'react-redux';
-import { Button } from 'flowbite-react';
 
 export default function ContactUs() {
   const { currentUser } = useSelector((state) => state.user);
-  const [name, setName] = useState(currentUser.username || ''); // Initialize with user's current username
-  const [email, setEmail] = useState(currentUser.email || ''); // Initialize with user's current email
-  const [message, setMessage] = useState(''); 
-
+  const [name, setName] = useState(currentUser?.username || '');
+  const [email, setEmail] = useState(currentUser?.email || '');
+  const [message, setMessage] = useState('');
   const [formStatus, setFormStatus] = useState(null);
 
   useEffect(() => {
-    AOS.init({ duration: 1000 }); // Initialize AOS for animations
+    AOS.init({ duration: 1000 });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -23,7 +21,7 @@ export default function ContactUs() {
       name,
       email,
       message,
-      userId: currentUser._id
+      userId: currentUser?._id || null, // Include userId only if logged in
     };
 
     try {
@@ -76,23 +74,6 @@ export default function ContactUs() {
         {/* Right: Contact Form */}
         <div className="lg:w-2/3 w-full" data-aos="fade-left">
           <form className="bg-gray-800 p-4 lg:p-8 rounded-lg shadow-lg" onSubmit={handleSubmit}>
-          <div className="mb-4 lg:mb-6">
-                <label htmlFor="message" className="block text-sm lg:text-lg mb-2">
-                Message
-                </label>
-                <textarea
-                id="message"
-                name="message"
-                rows="4"
-                className="w-full p-2 lg:p-3 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-                placeholder="Your Message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)} 
-                required  
-                data-aos="fade-up"
-                data-aos-delay="200"
-                ></textarea>
-            </div>
             <div className="mb-4 lg:mb-6">
               <label htmlFor="name" className="block text-sm lg:text-lg mb-2">
                 Name
@@ -102,8 +83,9 @@ export default function ContactUs() {
                 id="name"
                 name="name"
                 className="w-full p-2 lg:p-3 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                placeholder="Your Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)} // Make this field editable
+                onChange={(e) => setName(e.target.value)}
                 data-aos="fade-up"
               />
             </div>
@@ -116,15 +98,30 @@ export default function ContactUs() {
                 id="email"
                 name="email"
                 className="w-full p-2 lg:p-3 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                placeholder="Your Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)} // Make this field editable
+                onChange={(e) => setEmail(e.target.value)}
                 data-aos="fade-up"
                 data-aos-delay="100"
               />
             </div>
-            
-            
-
+            <div className="mb-4 lg:mb-6">
+              <label htmlFor="message" className="block text-sm lg:text-lg mb-2">
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                className="w-full p-2 lg:p-3 rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                placeholder="Your Message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                data-aos="fade-up"
+                data-aos-delay="200"
+              ></textarea>
+            </div>
             <button
               type="submit"
               className="bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-lg p-3 hover:scale-105 transition-transform"
