@@ -224,7 +224,7 @@ export default function Album() {
             <motion.div
               key={music._id}
               ref={(el) => (cardRefs.current[index] = el)} // Store reference to each card
-              className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white transform transition-transform duration-500" // Added transform and transition
+              className="p-4 rounded-lg shadow-md hover:shadow-lg  bg-gradient-to-r from-black via-purple-950 to-black text-white transform transition-transform duration-500" // Added transform and transition
               initial={{ rotateY: 90, opacity: 0 }} // Start with rotateY and opacity
               animate={{ rotateY: 0, opacity: 1 }} // Animate to normal position
               transition={{ delay: index * 0.2, duration: 0.5 }} 
