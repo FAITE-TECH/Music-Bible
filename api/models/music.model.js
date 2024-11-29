@@ -2,9 +2,7 @@ import mongoose from 'mongoose';
 
 const musicSchema = new mongoose.Schema(
   {
-    userId: {
-      type: String,
-    },
+    
 
     title: {
       type: String,
