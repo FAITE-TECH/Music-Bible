@@ -108,6 +108,7 @@ export default function DashUsers() {
     try {
       const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
         method: 'DELETE',
+        credentials: "include",
       });
       const data = await res.json();
       if (res.ok) {
@@ -202,7 +203,9 @@ export default function DashUsers() {
     try {
       const res = await fetch(`/api/user/assignadmin/${userIdToAssignAdmin}`, {
         method: 'PUT',
+        credentials: "include",
       });
+      
       const data = await res.json();
       if (res.ok) {
        
@@ -224,6 +227,7 @@ export default function DashUsers() {
     try {
       const res = await fetch(`/api/user/resignadmin/${userIdToResignAdmin}`, {
         method: 'PUT',
+        credentials: "include",
       });
       const data = await res.json();
       if (res.ok) {

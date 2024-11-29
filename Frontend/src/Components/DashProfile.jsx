@@ -122,6 +122,7 @@ export default function DashProfile() {
         headers: {
           'Content-Type':'application/json',
         },
+        credentials: "include",
         body:JSON.stringify(formData),
       });
       const data = await res.json();
@@ -146,7 +147,8 @@ export default function DashProfile() {
     try {
       dispatch (deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`,{
-        method : "DELETE"
+        method : "DELETE",
+        credentials: "include",
       });
       const data  = await res.json();
       if(data.success === false){
