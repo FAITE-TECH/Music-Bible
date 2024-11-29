@@ -13,10 +13,7 @@ const ContactSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    userId: {
-        type: String,
-        required: true
-    },
+    
     responded: {
         type: Boolean,
         default: false
