@@ -39,7 +39,12 @@ export default function DashMusic() {
     try {
       const res = await fetch(`/api/music/delete/${musicIdToDelete}/${currentUser._id}`, {
         method: 'DELETE',
+        credentials: 'include', 
+        headers: {
+          'Content-Type': 'application/json', 
+        },
       });
+      
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
@@ -52,6 +57,7 @@ export default function DashMusic() {
       console.log(error.message);
     }
   };
+  
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);

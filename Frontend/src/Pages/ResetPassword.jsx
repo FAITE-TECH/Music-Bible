@@ -15,9 +15,11 @@ export default function ResetPassword() {
         const res = await fetch(`/api/user/resetpassword/${id}/${token}`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
-            }
-        });
+              "Content-Type": "application/json",
+            },
+            credentials: "include", 
+          });
+          
 
         if (!res.ok) {
             throw new Error(`Error: ${res.status} ${res.statusText}`);
@@ -61,8 +63,11 @@ export default function ResetPassword() {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include", 
                 body: JSON.stringify({ password })
             });
+
+            
 
             const data = await res.json();
 
