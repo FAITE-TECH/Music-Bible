@@ -8,10 +8,10 @@ import { acceptMembership, rejectMembership } from '../controllers/membership.co
 
 const router = express.Router();
 
-router.post('/create', verifyToken, createMembership);
+router.post('/create', createMembership);
 router.get('/membership', getAllMembership); 
-router.put('/accept/:membershipId', verifyToken, acceptMembership);
-router.put('/reject/:membershipId', verifyToken, rejectMembership);
+router.put('/accept/:membershipId', acceptMembership);
+router.put('/reject/:membershipId',  rejectMembership);
 
 
 

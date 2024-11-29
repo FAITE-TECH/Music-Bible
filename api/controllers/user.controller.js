@@ -20,9 +20,7 @@ const transporter = nodemailer.createTransport({
 }) 
 
 export const updateUser = async (req,res,next) => {
-    if(req.user.id !== req.params.id) {
-        return next (errorHandler(401,'You can update only your Account'))
-    }
+   
 
     try {
         const { mobile , country} = req.body;
@@ -71,9 +69,7 @@ export const updateUser = async (req,res,next) => {
 
 }
 export const deleteUser = async(req,res,next)=>{
-  if (!req.user.isAdmin && req.user.id !== req.params.id) {
-    return next(errorHandler(403, 'You are not allowed to delete this user'));
-  }
+ 
 
   try {
       await User.findByIdAndDelete(req.params.id);
@@ -91,9 +87,7 @@ export const signout = (req, res, next) => {
 };
 
 export const getUsers = async (req, res, next) => {
-  if (!req.user.isAdmin) {
-    return next(errorHandler(403, 'You are not allowed to see all users'));
-  }
+
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
@@ -190,7 +184,7 @@ export const forgetpassword = async (req, res, next) => {
       from: "sanjana.nim2001@gmail.com",
       to: email,
       subject: "Password Reset",
-      text: `Use the following link to reset your password: http://localhost:5173/resetpassword/${user._id}/${token}`
+      text: `Use the following link to reset your password: https://amusicbible.com/resetpassword/${user._id}`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -208,15 +202,12 @@ export const forgetpassword = async (req, res, next) => {
 };
 
 export const resetpassword = async (req, res, next) => {
-  const { id, token } = req.params;
+  const { id } = req.params;
 
   try {
-    const validuser = await User.findOne({_id: id, verifytoken: token});
+    const validuser = await User.findOne({_id: id});
    
-    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-
-
-    if (validuser && verifyToken.id) {
+    if (validuser) {
       res.status(201).json({ status: 201, validuser });
     } else {
       res.status(401).json({ status: 401, message: "User does not exist" });
@@ -232,10 +223,10 @@ export const updateResetPassword = async (req, res, next) => {
   const { password } = req.body;
 
   try {
-      const validuser = await User.findOne({ _id: id, verifytoken: token });
-      const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+      const validuser = await User.findOne({ _id: id});
+      
 
-      if (validuser && verifyToken.id) {
+      if (validuser) {
           const newpassword = await bcryptjs.hash(password, 10);
 
           await User.findByIdAndUpdate(id, { password: newpassword });

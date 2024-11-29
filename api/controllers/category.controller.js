@@ -4,11 +4,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const createAlbum = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin) {
-      return next(errorHandler(403, 'You are not allowed to create a music post'));
-    }
-
-    const { albumName , description  } = req.body;
+     const { albumName , description  } = req.body;
 
     if (!albumName|| !description) {
       return next(errorHandler(400, 'Please provide all required fields'));

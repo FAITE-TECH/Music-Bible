@@ -5,9 +5,7 @@ import mongoose from 'mongoose';
 
 export const createMusic = async (req, res, next) => {
     try {
-      if (!req.user.isAdmin) {
-        return next(errorHandler(403, 'You are not allowed to create a music post'));
-      }
+     
   
       const { title, description, category, music} = req.body;
   
@@ -96,9 +94,7 @@ export const createMusic = async (req, res, next) => {
 
 export const updateMusic = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin || req.user.id !== req.params.userId) {
-      return next(errorHandler(403, 'You are not allowed to update this music'));
-    }
+    
 
     const updatedMusic = await Music.findByIdAndUpdate(
       req.params.musicId,
@@ -124,9 +120,7 @@ export const updateMusic = async (req, res, next) => {
 
 export const deleteMusic = async (req, res, next) => {
     try {
-      if (!req.user.isAdmin || req.user.id !== req.params.userId) {
-        return next(errorHandler(403, 'You are not allowed to delete this post'));
-      }
+     
       await Music.findByIdAndDelete(req.params.musicId);
       res.status(200).json('The product has been deleted');
     } catch (error) {
