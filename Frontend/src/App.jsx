@@ -34,12 +34,12 @@ export default function App() {
         <Route path="/contactus" element={<ContactUs/>}/>
         <Route path="/aboutus" element={<AboutUs/>}/>
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>
-        <Route path="/resetpassword/:id" element={<ResetPassword/>} />
+        <Route path="/resetpassword/:id/:token" element={<ResetPassword/>}/>
 
         <Route element={<PrivateRoute/>}/>
           <Route path="/dashboard" element={<DashBoard/>}/> 
           <Route path="/order-summary" element={<OrderSummary/>}/>
-          <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess />} />
+          <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess/>}/>
         <Route/> 
 
         <Route element={<OnlyAdminPrivateRoute/>}/>
