@@ -91,7 +91,7 @@ export default function Home() {
         Discover spiritual teachings with melodies and sacred words. Enrich your soul.
       </p>
       <motion.a
-        href="#"
+        href="/album"
         className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
@@ -251,7 +251,89 @@ export default function Home() {
         </div>
       </div>
     </section>
+    <section className="bg-gradient-to-r from-blue-900 via-black to-black py-16">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+        {/* Left Content */}
+        <div
+          className="md:w-1/2 text-white"
+          data-aos="fade-right"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            Reading Bible with better preference
+          </h1>
+          <p className="text-lg text-gray-300">
+            Reading HolyBible will touch your mouth with sweet verses.
+          </p>
+        </div>
 
+        {/* Right Image */}
+        <div
+          className="md:w-1/2 flex justify-center mt-8 md:mt-0"
+          data-aos="fade-left"
+        >
+          <img
+            src="/path-to-your-image.png" // Replace with your actual image path
+            alt="Bible App UI"
+            className="rounded-xl shadow-lg w-4/5 sm:w-3/5 md:w-auto"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section className="bg-gradient-to-r from-blue-400 to-green-500 py-16">
+      <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
+        {/* Left Image */}
+        <div
+          className="lg:w-1/2 flex justify-center mb-8 lg:mb-0"
+          data-aos="fade-right"
+        >
+          <img
+            src="/path-to-your-image.png" // Replace with your actual image path
+            alt="Research Student"
+            className="rounded-xl shadow-xl w-4/5 sm:w-3/5 lg:w-full"
+          />
+        </div>
+
+        {/* Right Content */}
+        <div
+          className="lg:w-1/2 text-white text-center lg:text-left"
+          data-aos="fade-left"
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-snug">
+            Are you the Research student about Christianity?
+          </h2>
+          <p className="text-lg text-gray-300">
+            Come with your valuable Questions and get the more knowledge from
+            aMusicBible
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      className="relative w-full min-h-screen flex justify-center items-center px-4 py-12 bg-gradient-to-r from-yellow-900 via-black to-blue-500 text-white"
+      data-aos="fade-up"
+    >
+      <div className="max-w-4xl text-center">
+        {/* Title */}
+        <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+          About the <span className="text-blue-300">aMusicBible</span>
+        </h2>
+
+        {/* Content */}
+        <p className="text-lg sm:text-xl leading-relaxed">
+          aMusicBible is a revolutionary app designed for everyone, offering a
+          unique way to experience the Bible. This innovative platform
+          transforms the Scriptures into a musical journey, presenting the Bible
+          in a beautifully composed music format. With aMusicBible, users can
+          immerse themselves in the Word of God through melodies that inspire
+          worship, reflection, and spiritual growth. Perfect for personal
+          devotion, group studies, or simply enjoying the uplifting power of
+          Scripture-based music, aMusicBible makes the Bible more accessible and
+          engaging for believers worldwide.
+        </p>
+      </div>
+    </section>
 
     </>
   );
