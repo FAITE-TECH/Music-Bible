@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import video from '../assets/Logo/design.mp4';
 import logo from '../assets/Logo/logo.png';
+import img1 from '../assets/Logo/1.png';
+import img2 from '../assets/Logo/2.png';
+import img3 from '../assets/Logo/3.png';
+import first from '../assets/Logo/firstpage.png';
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaUser, FaCogs, FaShieldAlt } from 'react-icons/fa';
@@ -77,7 +81,7 @@ export default function Home() {
       <img
         src={logo}
         alt="Logo"
-        className="h-12 mr-4"
+        className="h-12 mr-4 ml-2"
       />
       <h2 className="text-2xl text-white font-bold">aMusicBible</h2>
     </div>
@@ -109,7 +113,7 @@ export default function Home() {
       data-aos="zoom-in"
     >
       <img
-        src="/path-to-phone-image.jpg" 
+        src={first} 
         alt="App Screenshot"
         className="w-80 md:w-96"
       />
@@ -135,9 +139,9 @@ export default function Home() {
     <div className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0" data-aos="fade-up">
       <div className="relative rounded-2xl overflow-hidden shadow-2xl">
         <img
-          src="/path-to-your-image.png" 
+          src={img2} 
           alt="Partnership Screenshot"
-          className="w-full h-auto"
+          className="w-full h-96"
         />
       </div>
     </div>
@@ -259,7 +263,7 @@ export default function Home() {
           data-aos="fade-right"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            Reading Bible with better preference
+          Reading Bible with better preference
           </h1>
           <p className="text-lg text-gray-300">
             Reading HolyBible will touch your mouth with sweet verses.
@@ -272,7 +276,7 @@ export default function Home() {
           data-aos="fade-left"
         >
           <img
-            src="/path-to-your-image.png" // Replace with your actual image path
+            src={img3}
             alt="Bible App UI"
             className="rounded-xl shadow-lg w-4/5 sm:w-3/5 md:w-auto"
           />
@@ -288,7 +292,7 @@ export default function Home() {
           data-aos="fade-right"
         >
           <img
-            src="/path-to-your-image.png" // Replace with your actual image path
+            src={img1}
             alt="Research Student"
             className="rounded-xl shadow-xl w-4/5 sm:w-3/5 lg:w-full"
           />
