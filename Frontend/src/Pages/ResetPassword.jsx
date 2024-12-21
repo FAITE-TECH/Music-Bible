@@ -1,7 +1,7 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import logo from '../assets/Logo/logo.png';
+import logo from '../assets/Logo/newlogo.jpg';
 
 export default function ResetPassword() {
     const { id, token } = useParams();

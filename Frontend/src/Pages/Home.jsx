@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import video from '../assets/Logo/design.mp4';
-import logo from '../assets/Logo/logo.png';
+import logo from '../assets/Logo/newlogo.jpg';
 import img1 from '../assets/Logo/1.png';
 import img2 from '../assets/Logo/2.png';
 import img3 from '../assets/Logo/3.png';
@@ -285,34 +285,35 @@ export default function Home() {
     </section>
 
     <section className="bg-gradient-to-r from-blue-400 to-green-500 py-16">
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
-        {/* Left Image */}
-        <div
-          className="lg:w-1/2 flex justify-center mb-8 lg:mb-0"
-          data-aos="fade-right"
-        >
-          <img
-            src={img1}
-            alt="Research Student"
-            className="rounded-xl shadow-xl w-4/5 sm:w-3/5 lg:w-full"
-          />
-        </div>
+  <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
+    {/* Left Image */}
+    <div
+      className="lg:w-1/2 flex justify-center mb-8 lg:mb-0 lg:pr-8"
+      data-aos="fade-right"
+    >
+      <img
+        src={img1}
+        alt="Research Student"
+        className="rounded-xl shadow-xl w-3/5 sm:w-2/5 lg:w-3/5"
+      />
+    </div>
 
-        {/* Right Content */}
-        <div
-          className="lg:w-1/2 text-white text-center lg:text-left"
-          data-aos="fade-left"
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-snug">
-            Are you the Research student about Christianity?
-          </h2>
-          <p className="text-lg text-gray-300">
-            Come with your valuable Questions and get the more knowledge from
-            aMusicBible
-          </p>
-        </div>
-      </div>
-    </section>
+    {/* Right Content */}
+    <div
+      className="lg:w-1/2 text-white text-center lg:text-left"
+      data-aos="fade-left"
+    >
+      <h2 className="text-3xl sm:text-4xl font-bold mb-4 leading-snug">
+        Are you the Research student about Christianity?
+      </h2>
+      <p className="text-lg text-gray-300">
+        Come with your valuable Questions and get the more knowledge from
+        aMusicBible
+      </p>
+    </div>
+  </div>
+</section>
+
 
     <section
       className="relative w-full min-h-screen flex justify-center items-center px-4 py-12 bg-gradient-to-r from-yellow-900 via-black to-blue-500 text-white"

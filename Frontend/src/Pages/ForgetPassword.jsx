@@ -1,7 +1,7 @@
 import { Button, Label, TextInput, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { Link, } from "react-router-dom";
-import logo from '../assets/Logo/logo.png';
+import logo from '../assets/Logo/newlogo.jpg';
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState("");
