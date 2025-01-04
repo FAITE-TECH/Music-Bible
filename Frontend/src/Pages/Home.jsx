@@ -8,7 +8,7 @@ import first from "../assets/Logo/firstpage.png";
 import img1 from "../assets/Logo/1.png";
 import img2 from "../assets/Logo/2.png";
 import img3 from "../assets/Logo/3.png";
-import txtLogo from "../assets/Logo/txtLogobgrem.png";
+import txtLogo from '../assets/Logo/txtnewlogo.png';
 import historycreator from "../assets/Logo/historycreatorremovebg.png";
 import network from "../assets/Logo/netwokremovebg.png";
 import AOS from "aos";
@@ -134,8 +134,8 @@ export default function Home() {
           className="absolute top-6 left-6 flex items-center"
           data-aos="fade-right"
         >
-          <img src={logo} alt="Logo" className="h-12 mr-4 ml-2" />
-          <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2 " />
+          <img src={logo} alt="Logo" className="h-12 mr-1 ml-2" />
+          <img src={txtLogo} alt="Logo" className="h-10 mr-4 ml-1 mt-5 " />
         </div>
 
         {/* Text Content */}
