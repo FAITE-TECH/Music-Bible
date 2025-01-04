@@ -57,7 +57,7 @@ export default function Header() {
                 >
                     <NavLink to="/" className="flex items-center text-2xl md:text-3xl font-bold text-white">
                         <img src={logo} alt="MusicBible logo" className="h-16 w-auto" />
-                        <img src={txtLogo} alt="MusicBible logo" className="h-14 w-auto" />
+                        <img src={txtLogo} alt="MusicBible logo" className="h-14  w-auto mt-8" />
                         
                     </NavLink>
                 </motion.div>

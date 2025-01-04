@@ -9,8 +9,8 @@ import img1 from "../assets/Logo/1.png";
 import img2 from "../assets/Logo/2.png";
 import img3 from "../assets/Logo/3.png";
 import txtLogo from "../assets/Logo/txtLogobgrem.png";
-import historycreator from "../assets/Logo/historycreator.jpg";
-import network from "../assets/Logo/netwok.jpg";
+import historycreator from "../assets/Logo/historycreatorremovebg.png";
+import network from "../assets/Logo/netwokremovebg.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { FaCogs, FaShieldAlt, FaUser } from "react-icons/fa";
@@ -107,10 +107,10 @@ export default function Home() {
         alt="History Creator"
         initial={{ x: "100vw", opacity: 0 }}
         animate={historyControls}
-        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[500px] history-creator-image"
+        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[450px] history-creator-image"
         style={{
           top: "65%",
-          right: "33%",
+          right: "34.5%",
           transform: "translateY(-50%)",
         }}
       />
@@ -135,7 +135,7 @@ export default function Home() {
           data-aos="fade-right"
         >
           <img src={logo} alt="Logo" className="h-12 mr-4 ml-2" />
-          <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2" />
+          <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2 " />
         </div>
 
         {/* Text Content */}
@@ -420,7 +420,7 @@ export default function Home() {
           }
           .history-creator-image {
             top: 52% !important;
-            right: 15% !important;
+            right: 11% !important;
             width: 300px !important;
           }
           .logo-image {
