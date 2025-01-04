@@ -1,25 +1,66 @@
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import video from '../assets/Logo/design.mp4';
-import logo from '../assets/Logo/newlogo.jpg';
-import img1 from '../assets/Logo/1.png';
-import img2 from '../assets/Logo/2.png';
-import img3 from '../assets/Logo/3.png';
-import first from '../assets/Logo/firstpage.png';
+import React, { useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import video from "../assets/Logo/design.mp4";
+import logo from "../assets/Logo/newlogo.jpg";
+import logo1 from "../assets/Logo/logo.png";
+import first from "../assets/Logo/firstpage.png";
+import txtLogo from "../assets/Logo/txtLogobgrem.png";
+import historycreator from "../assets/Logo/historycreator.jpg";
+import network from "../assets/Logo/netwok.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { FaUser, FaCogs, FaShieldAlt } from 'react-icons/fa';
-
 
 export default function Home() {
+  const [ref, inView] = useInView({ threshold: 0.2 });
+  const logoControls = useAnimation();
+  const networkControls = useAnimation();
+  const historyControls = useAnimation();
+
   useEffect(() => {
-    AOS.init({ duration: 1000 });
-    AOS.refresh();
+    AOS.init({
+      duration: 1000,
+      easing: "ease-in-out",
+    });
   }, []);
+
+  useEffect(() => {
+    if (inView) {
+      // Start logo animation
+      logoControls.start({
+        opacity: 1,
+        scale: 1,
+        transition: { duration: 1 },
+      });
+
+      // Start network image animation
+      networkControls.start({
+        x: 0,
+        opacity: 1,
+        transition: { duration: 3, ease: "easeInOut" },
+      });
+
+      // Start history creator image animation
+      historyControls.start({
+        x: 0,
+        opacity: 1,
+        transition: { duration: 3, ease: "easeInOut" },
+      });
+    } else {
+      // Reset animations when out of view
+      logoControls.start({ opacity: 0, scale: 0.5 });
+      networkControls.start({ x: "-100vw", opacity: 0 });
+      historyControls.start({ x: "100vw", opacity: 0 });
+    }
+  }, [inView, logoControls, networkControls, historyControls]);
+
   return (
     <>
       {/* Main Section */}
-      <section className="relative bg-black text-white py-20 px-6 min-h-screen flex flex-col items-center justify-center">
+      <section
+        className="relative bg-black text-white py-20 px-6 min-h-screen flex flex-col items-center justify-center"
+        ref={ref}
+      >
         {/* Background Video */}
         <video
           autoPlay
@@ -32,99 +73,123 @@ export default function Home() {
           Your browser does not support the video tag.
         </video>
 
+       
+        <motion.img
+          src={logo1}
+          alt="Logo"
+          className="absolute z-40"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={logoControls}
+          style={{
+            width: "500px",
+            height: "500px",
+            top: "3%",
+            left: "35%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+
+     
+        <motion.img
+          src={network}
+          alt="Network"
+          initial={{ x: "-100vw", opacity: 0 }}
+          animate={networkControls}
+          className="absolute z-10"
+          style={{
+            width: "400px",
+            height: "auto",
+            top: "60%",
+            left: "38%",
+            transform: "translateY(-50%)",
+          }}
+        />
 
        
-
-        {/* Bottom Animated Images */}
-        <motion.div
-          className="fixed bottom-4 left-4 flex flex-col space-y-4 z-10"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 80, duration: 0.1 }}
-        >
-          {/* Google Play Badge */}
-          <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer">
-            <motion.img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
-              alt="Google Play"
-              className="w-[150px] h-auto"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            />
-          </a>
-
-          {/* Apple Store Badge */}
-          <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer">
-            <motion.img
-              src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
-              alt="Apple Store"
-              className="w-[150px] h-auto"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            />
-          </a>
-        </motion.div>
+        <motion.img
+          src={historycreator}
+          alt="History Creator"
+          initial={{ x: "100vw", opacity: 0 }}
+          animate={historyControls}
+          className="absolute z-10"
+          style={{
+            width: "500px",
+            height: "auto",
+            top: "65%",
+            right: "33%",
+            transform: "translateY(-50%)",
+          }}
+        />
       </section>
 
       {/* Second Section */}
-      <section className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6" data-aos="fade-up">
-  <div className="container mx-auto flex flex-wrap items-center">
-    {/* History Text */}
-    <div className="absolute top-6 right-6" data-aos="fade-down">
-      <p className="text-yellow-400 text-lg font-semibold">
-        THE HISTORY CREATORS
-      </p>
-    </div>
-
-    
-    <div className="absolute top-6 left-6 flex items-center" data-aos="fade-right">
-      <img
-        src={logo}
-        alt="Logo"
-        className="h-12 mr-4 ml-2"
-      />
-      <h2 className="text-2xl text-white font-bold">aMusicBible</h2>
-    </div>
-
-    
-    <div className="w-full md:w-1/2 text-center md:text-left" data-aos="fade-up">
-      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-        Enjoy your <span className="text-orange-400">Music version</span> Holy Bible
-      </h1>
-      <p className="text-lg text-gray-200 mb-8">
-        Discover spiritual teachings with melodies and sacred words. Enrich your soul.
-      </p>
-      <motion.a
-        href="/album"
-        className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+      <section
+        className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6"
+        data-aos="fade-up"
       >
-        Visit here
-      </motion.a>
-    </div>
+        <div className="container mx-auto flex flex-wrap items-center">
+          {/* History Text */}
+          <div className="absolute top-6 right-6" data-aos="fade-down">
+            <p className="text-yellow-400 text-lg font-semibold">
+              THE HISTORY CREATORS
+            </p>
+          </div>
 
-    {/* Phone Image */}
-    <motion.div
-      className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0"
-      initial={{ x: 100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
-      data-aos="zoom-in"
-    >
-      <img
-        src={first} 
-        alt="App Screenshot"
-        className="w-80 md:w-96"
-      />
-    </motion.div>
-  </div>
-</section>
+          {/* Logos */}
+          <div
+            className="absolute top-6 left-6 flex items-center"
+            data-aos="fade-right"
+          >
+            <img src={logo} alt="Logo" className="h-12 mr-4 ml-2" />
+            <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2" />
+          </div>
 
-<section className="relative min-h-screen flex items-center justify-center px-6" style={{ backgroundImage: 'radial-gradient(circle, #ffa500 20%, #000000 90%)' }}>
+          {/* Text Content */}
+          <div
+            className="w-full md:w-1/2 text-center md:text-left"
+            data-aos="fade-up"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Enjoy your <span className="text-orange-400">Music version</span>{" "}
+              Holy Bible
+            </h1>
+            <p className="text-lg text-gray-200 mb-8">
+              Discover spiritual teachings with melodies and sacred words.
+              Enrich your soul.
+            </p>
+            <motion.a
+              href="/album"
+              className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Visit here
+            </motion.a>
+          </div>
+
+          {/* Phone Image */}
+          <motion.div
+            className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0"
+            initial={{ x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            data-aos="zoom-in"
+          >
+            <img src={first} alt="App Screenshot" className="w-80 md:w-96" />
+          </motion.div>
+        </div>
+      </section>
+      <section
+  className="relative min-h-screen flex items-center justify-center px-6"
+  style={{
+    backgroundImage: 'radial-gradient(circle, #ffa500 20%, #000000 90%)',
+  }}
+>
   <div className="container mx-auto flex flex-wrap items-center justify-between">
-   
-    <div className="w-full md:w-1/2 p-8 bg-white bg-opacity-10 rounded-2xl shadow-2xl" data-aos="fade-right">
+    <div
+      className="w-full md:w-1/2 p-8 pb-20 bg-white bg-opacity-10 rounded-2xl shadow-2xl relative"
+      data-aos="fade-right"
+    >
       <h2 className="text-4xl font-bold text-white mb-4">What is the Partnership?</h2>
       <p className="text-lg text-gray-300 leading-relaxed">
         We warmly invite you to continue your spiritual journey with us. At <strong>aMusicBible</strong>,
@@ -133,13 +198,21 @@ export default function Home() {
         the true essence of a Christian life. We’d also love to hear from you—share your testimonies and
         feedback with us, and let’s grow together in faith and love. Your journey is our joy!
       </p>
+      <motion.a
+        href="/membership"
+        className="absolute bottom-4 right-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 px-6 md:px-8 rounded-full text-sm md:text-lg shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Visit here
+      </motion.a>
     </div>
 
     {/* Image */}
     <div className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0" data-aos="fade-up">
       <div className="relative rounded-2xl overflow-hidden shadow-2xl">
         <img
-          src={img2} 
+          src={img2}
           alt="Partnership Screenshot"
           className="w-full h-96"
         />
@@ -147,6 +220,8 @@ export default function Home() {
     </div>
   </div>
 </section>
+
+
 
 <section className="relative min-h-screen flex items-center justify-center px-6" style={{ backgroundImage: 'radial-gradient(circle at bottom, #60a5fa, #000000 50%)' }}>
   <div className="w-full md:w-3/4 bg-black bg-opacity-70 rounded-3xl shadow-2xl p-8 md:p-12 backdrop-blur-md flex flex-col md:flex-row justify-between" data-aos="fade-up">
@@ -278,7 +353,7 @@ export default function Home() {
           <img
             src={img3}
             alt="Bible App UI"
-            className="rounded-xl shadow-lg w-4/5 sm:w-3/5 md:w-auto"
+             className="rounded-xl shadow-xl w-3/5 sm:w-2/5 lg:w-3/5"
           />
         </div>
       </div>
@@ -339,7 +414,6 @@ export default function Home() {
         </p>
       </div>
     </section>
-
     </>
   );
 }

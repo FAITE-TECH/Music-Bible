@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from '../redux/user/userSlice';
 import { motion } from 'framer-motion';
 import logo from '../assets/Logo/newlogo.jpg';
+import txtLogo from '../assets/Logo/txtnewlogo.png';
 import { HiMenu, HiX } from 'react-icons/hi';
 
 export default function Header() {
@@ -56,7 +57,8 @@ export default function Header() {
                 >
                     <NavLink to="/" className="flex items-center text-2xl md:text-3xl font-bold text-white">
                         <img src={logo} alt="MusicBible logo" className="h-16 w-auto" />
-                        <span className="ml-2">aMusicBible</span>
+                        <img src={txtLogo} alt="MusicBible logo" className="h-14 w-auto" />
+                        
                     </NavLink>
                 </motion.div>
 
@@ -150,6 +152,11 @@ export default function Header() {
                     )}
                 </nav>
             </div>
+
         </header>
+        
     );
 }
+
+
+
