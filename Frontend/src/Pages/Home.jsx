@@ -80,11 +80,11 @@ export default function Home() {
         initial={{ opacity: 0, scale: 0.5 }}
         animate={logoControls}
         style={{
-          top: "3%",
-          left: "35%",
+          top: "-9%",
+          left: "30%",
           transform: "translate(-50%, -50%)",
         }}
-        className="absolute z-40 w-56 h-56 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-[500px] lg:h-[500px] logo-image"
+        className="absolute z-40 w-56 h-56 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-[600px] lg:h-[600px] logo-image"
       />
 
       {/* Network Image */}
@@ -93,10 +93,10 @@ export default function Home() {
         alt="Network"
         initial={{ x: "-100vw", opacity: 0 }}
         animate={networkControls}
-        className="absolute z-10 w-40 h-auto sm:w-96 sm:h-auto md:w-[200px] lg:w-[400px] network-image"
+        className="absolute z-10 w-40 h-auto sm:w-96 sm:h-auto md:w-[200px] lg:w-[760px] network-image"
         style={{
           top: "60%",
-          left: "38%",
+          left: "22%",
           transform: "translateY(-50%)",
         }}
       />
@@ -107,10 +107,10 @@ export default function Home() {
         alt="History Creator"
         initial={{ x: "100vw", opacity: 0 }}
         animate={historyControls}
-        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[450px] history-creator-image"
+        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[800px] history-creator-image"
         style={{
-          top: "65%",
-          right: "34.5%",
+          top: "70%",
+          right: "26.5%",
           transform: "translateY(-50%)",
         }}
       />
