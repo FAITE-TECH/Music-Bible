@@ -5,11 +5,15 @@ import video from "../assets/Logo/design.mp4";
 import logo from "../assets/Logo/newlogo.jpg";
 import logo1 from "../assets/Logo/logo.png";
 import first from "../assets/Logo/firstpage.png";
+import img1 from "../assets/Logo/1.png";
+import img2 from "../assets/Logo/2.png";
+import img3 from "../assets/Logo/3.png";
 import txtLogo from "../assets/Logo/txtLogobgrem.png";
 import historycreator from "../assets/Logo/historycreator.jpg";
 import network from "../assets/Logo/netwok.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { FaCogs, FaShieldAlt, FaUser } from "react-icons/fa";
 
 export default function Home() {
   const [ref, inView] = useInView({ threshold: 0.2 });
@@ -26,28 +30,24 @@ export default function Home() {
 
   useEffect(() => {
     if (inView) {
-      // Start logo animation
       logoControls.start({
         opacity: 1,
         scale: 1,
         transition: { duration: 1 },
       });
 
-      // Start network image animation
       networkControls.start({
         x: 0,
         opacity: 1,
         transition: { duration: 3, ease: "easeInOut" },
       });
 
-      // Start history creator image animation
       historyControls.start({
         x: 0,
         opacity: 1,
         transition: { duration: 3, ease: "easeInOut" },
       });
     } else {
-      // Reset animations when out of view
       logoControls.start({ opacity: 0, scale: 0.5 });
       networkControls.start({ x: "-100vw", opacity: 0 });
       historyControls.start({ x: "100vw", opacity: 0 });
@@ -56,130 +56,125 @@ export default function Home() {
 
   return (
     <>
-      {/* Main Section */}
-      <section
-        className="relative bg-black text-white py-20 px-6 min-h-screen flex flex-col items-center justify-center"
-        ref={ref}
+    {/* Main Section */}
+    <section
+      className="relative bg-black text-white py-10 px-4 min-h-screen flex flex-col items-center justify-center"
+      ref={ref}
+    >
+      {/* Background Video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
       >
-        {/* Background Video */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
-          <source src={video} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <source src={video} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
-       
-        <motion.img
-          src={logo1}
-          alt="Logo"
-          className="absolute z-40"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={logoControls}
-          style={{
-            width: "500px",
-            height: "500px",
-            top: "3%",
-            left: "35%",
-            transform: "translate(-50%, -50%)",
-          }}
-        />
+      {/* Centered Logo */}
+      <motion.img
+        src={logo1}
+        alt="Logo"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={logoControls}
+        style={{
+          top: "3%",
+          left: "35%",
+          transform: "translate(-50%, -50%)",
+        }}
+        className="absolute z-40 w-56 h-56 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-[500px] lg:h-[500px] logo-image"
+      />
 
-     
-        <motion.img
-          src={network}
-          alt="Network"
-          initial={{ x: "-100vw", opacity: 0 }}
-          animate={networkControls}
-          className="absolute z-10"
-          style={{
-            width: "400px",
-            height: "auto",
-            top: "60%",
-            left: "38%",
-            transform: "translateY(-50%)",
-          }}
-        />
+      {/* Network Image */}
+      <motion.img
+        src={network}
+        alt="Network"
+        initial={{ x: "-100vw", opacity: 0 }}
+        animate={networkControls}
+        className="absolute z-10 w-40 h-auto sm:w-96 sm:h-auto md:w-[200px] lg:w-[400px] network-image"
+        style={{
+          top: "60%",
+          left: "38%",
+          transform: "translateY(-50%)",
+        }}
+      />
 
-       
-        <motion.img
-          src={historycreator}
-          alt="History Creator"
-          initial={{ x: "100vw", opacity: 0 }}
-          animate={historyControls}
-          className="absolute z-10"
-          style={{
-            width: "500px",
-            height: "auto",
-            top: "65%",
-            right: "33%",
-            transform: "translateY(-50%)",
-          }}
-        />
-      </section>
+      {/* History Creator Image */}
+      <motion.img
+        src={historycreator}
+        alt="History Creator"
+        initial={{ x: "100vw", opacity: 0 }}
+        animate={historyControls}
+        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[500px] history-creator-image"
+        style={{
+          top: "65%",
+          right: "33%",
+          transform: "translateY(-50%)",
+        }}
+      />
+    </section>
 
-      {/* Second Section */}
-      <section
-        className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6"
-        data-aos="fade-up"
-      >
-        <div className="container mx-auto flex flex-wrap items-center">
-          {/* History Text */}
-          <div className="absolute top-6 right-6" data-aos="fade-down">
-            <p className="text-yellow-400 text-lg font-semibold">
-              THE HISTORY CREATORS
-            </p>
-          </div>
-
-          {/* Logos */}
-          <div
-            className="absolute top-6 left-6 flex items-center"
-            data-aos="fade-right"
-          >
-            <img src={logo} alt="Logo" className="h-12 mr-4 ml-2" />
-            <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2" />
-          </div>
-
-          {/* Text Content */}
-          <div
-            className="w-full md:w-1/2 text-center md:text-left"
-            data-aos="fade-up"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Enjoy your <span className="text-orange-400">Music version</span>{" "}
-              Holy Bible
-            </h1>
-            <p className="text-lg text-gray-200 mb-8">
-              Discover spiritual teachings with melodies and sacred words.
-              Enrich your soul.
-            </p>
-            <motion.a
-              href="/album"
-              className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Visit here
-            </motion.a>
-          </div>
-
-          {/* Phone Image */}
-          <motion.div
-            className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0"
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            data-aos="zoom-in"
-          >
-            <img src={first} alt="App Screenshot" className="w-80 md:w-96" />
-          </motion.div>
+    {/* Second Section */}
+    <section
+      className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6"
+      data-aos="fade-up"
+    >
+      <div className="container mx-auto flex flex-wrap items-center">
+        {/* History Text */}
+        <div className="absolute top-6 right-6" data-aos="fade-down">
+          <p className="text-yellow-400 text-lg font-semibold">
+            THE HISTORY CREATORS
+          </p>
         </div>
-      </section>
-      <section
+
+        {/* Logos */}
+        <div
+          className="absolute top-6 left-6 flex items-center"
+          data-aos="fade-right"
+        >
+          <img src={logo} alt="Logo" className="h-12 mr-4 ml-2" />
+          <img src={txtLogo} alt="Logo" className="h-12 mr-4 ml-2" />
+        </div>
+
+        {/* Text Content */}
+        <div
+          className="w-full md:w-1/2 text-center md:text-left"
+          data-aos="fade-up"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Enjoy your <span className="text-orange-400">Music version</span>{" "}
+            Holy Bible
+          </h1>
+          <p className="text-lg text-gray-200 mb-8">
+            Discover spiritual teachings with melodies and sacred words.
+            Enrich your soul.
+          </p>
+          <motion.a
+            href="/album"
+            className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Visit here
+          </motion.a>
+        </div>
+
+        {/* Phone Image */}
+        <motion.div
+          className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0"
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          data-aos="zoom-in"
+        >
+          <img src={first} alt="App Screenshot" className="w-80 md:w-96" />
+        </motion.div>
+      </div>
+    </section>
+
+    <section
   className="relative min-h-screen flex items-center justify-center px-6"
   style={{
     backgroundImage: 'radial-gradient(circle, #ffa500 20%, #000000 90%)',
@@ -414,6 +409,27 @@ export default function Home() {
         </p>
       </div>
     </section>
-    </>
+
+    {/* Responsive Styling */}
+    <style jsx>{`
+        @media (max-width: 640px) {
+          .network-image {
+            top: 48% !important;
+            left: 25% !important;
+            width: 300px !important;
+          }
+          .history-creator-image {
+            top: 52% !important;
+            right: 15% !important;
+            width: 300px !important;
+          }
+          .logo-image {
+            top: 20% !important;
+            left: 30% !important;
+            width: 250px !important;
+          }
+        }
+      `}</style>
+  </>
   );
 }
