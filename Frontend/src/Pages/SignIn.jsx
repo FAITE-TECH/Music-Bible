@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, singInFailure } from '../redux/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import OAuthenticate from "../Components/OAuthenticate";
-import logo from '../assets/Logo/newlogo.jpg';
+import logo from '../assets/Logo/newlogo.png';
 import video from '../assets/Logo/design.mp4'; 
 import { motion } from "framer-motion"; 
 

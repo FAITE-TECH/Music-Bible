@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import video from "../assets/Logo/design.mp4";
-import logo from "../assets/Logo/newlogo.jpg";
+import logo from "../assets/Logo/newlogo.png";
 import logo1 from "../assets/Logo/logo.png";
 import first from "../assets/Logo/firstpage.png";
 import img1 from "../assets/Logo/1.png";
@@ -75,16 +75,16 @@ export default function Home() {
 
       {/* Centered Logo */}
       <motion.img
-        src={logo1}
+        src={logo}
         alt="Logo"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={logoControls}
         style={{
-          top: "-9%",
-          left: "30%",
+          top: "-2%",
+          left: "33%",
           transform: "translate(-50%, -50%)",
         }}
-        className="absolute z-40 w-56 h-56 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-[600px] lg:h-[600px] logo-image"
+        className="absolute z-40 w-56 h-56 sm:w-72 sm:h-72 md:w-72 md:h-72 lg:w-[530px] lg:h-[470px] logo-image"
       />
 
       {/* Network Image */}
@@ -93,10 +93,10 @@ export default function Home() {
         alt="Network"
         initial={{ x: "-100vw", opacity: 0 }}
         animate={networkControls}
-        className="absolute z-10 w-40 h-auto sm:w-96 sm:h-auto md:w-[200px] lg:w-[760px] network-image"
+        className="absolute z-10 w-40 h-auto sm:w-96 sm:h-auto md:w-[200px] lg:w-[800px] network-image"
         style={{
-          top: "60%",
-          left: "22%",
+          top: "64%",
+          left: "21.5%",
           transform: "translateY(-50%)",
         }}
       />
@@ -107,10 +107,10 @@ export default function Home() {
         alt="History Creator"
         initial={{ x: "100vw", opacity: 0 }}
         animate={historyControls}
-        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[800px] history-creator-image"
+        className="absolute z-10 w-40 h-auto sm:w-100 md:w-100 lg:w-[820px] history-creator-image"
         style={{
-          top: "70%",
-          right: "26.5%",
+          top: "72%",
+          right: "24%",
           transform: "translateY(-50%)",
         }}
       />
@@ -414,18 +414,18 @@ export default function Home() {
     <style jsx>{`
         @media (max-width: 640px) {
           .network-image {
-            top: 48% !important;
-            left: 15% !important;
-            width: 350px !important;
+            top: 57% !important;
+            left: 6% !important;
+            width: 410px !important;
           }
           .history-creator-image {
-            top: 52% !important;
-            right: 11% !important;
-            width: 350px !important;
+            top: 61.2% !important;
+            right: 4% !important;
+            width: 483px !important;
           }
           .logo-image {
             top: 2% !important;
-            left: 15% !important;
+            left: 10% !important;
             width: 400px !important;
             height:400px !important;
           }

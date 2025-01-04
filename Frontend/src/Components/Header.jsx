@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from '../redux/user/userSlice';
 import { motion } from 'framer-motion';
-import logo from '../assets/Logo/newlogo.jpg';
+import logo from '../assets/Logo/newlogo.png';
 import txtLogo from '../assets/Logo/txtnewlogo.png';
 import { HiMenu, HiX } from 'react-icons/hi';
 
