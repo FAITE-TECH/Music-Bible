@@ -415,18 +415,19 @@ export default function Home() {
         @media (max-width: 640px) {
           .network-image {
             top: 48% !important;
-            left: 25% !important;
-            width: 300px !important;
+            left: 15% !important;
+            width: 350px !important;
           }
           .history-creator-image {
             top: 52% !important;
             right: 11% !important;
-            width: 300px !important;
+            width: 350px !important;
           }
           .logo-image {
-            top: 20% !important;
-            left: 30% !important;
-            width: 250px !important;
+            top: 2% !important;
+            left: 15% !important;
+            width: 400px !important;
+            height:400px !important;
           }
         }
       `}</style>
