@@ -14,8 +14,9 @@ export default function Album() {
   const [categories, setCategories] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const audioRefs = useRef({});
+   const audioRef = useRef(null);
   const cardRefs = useRef([]);
+   const [currentSongIndex, setCurrentSongIndex] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -59,15 +60,34 @@ export default function Album() {
     fetchMusicByCategory();
   }, [category]);
 
-  const handleAudioEnded = (currentIndex) => {
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < musicList.length) {
-      const nextAudio = audioRefs.current[musicList[nextIndex]._id];
-      if (nextAudio) {
-        nextAudio.play().catch((error) => console.error('Autoplay error:', error));
-      }
-    }
+  const handleNextSong = () => {
+    setCurrentSongIndex((prevIndex) =>
+      prevIndex === musicList.length - 1 ? 0 : prevIndex + 1
+    );
   };
+  
+  const handleSongEnd = () => {
+    handleNextSong();
+  };
+  
+    useEffect(() => {
+      const audioElement = audioRef.current;
+    
+      if (audioElement) {
+        audioElement.addEventListener('ended', handleSongEnd);
+      }
+    
+      return () => {
+        if (audioElement) {
+          audioElement.removeEventListener('ended', handleSongEnd);
+        }
+      };
+    }, [currentSongIndex]);
+  
+    const handlePlaySong = (index) => {
+      setCurrentSongIndex(index);
+    };
+  
 
   const handleDownload = (music) => {
     if (currentUser) {
@@ -215,50 +235,72 @@ export default function Album() {
       </div>
 
       {/* Music Cards with Rotation Animation */}
-      <h1 className="text-3xl font-bold text-center mb-6">Music</h1>
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-black"
+      <h1 className="text-3xl font-bold text-center mb-6 text-white"></h1>
+<motion.div
+  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+>
+  {musicList.length > 0 ? (
+    musicList.map((music, index) => (
+      <motion.div
+        key={music._id}
+        ref={(el) => (cardRefs.current[index] = el)} // Store reference to each card
+        className="p-4 bg-gradient-to-r from-black via-purple-950 to-black text-white rounded-lg shadow-md hover:shadow-lg transform transition-transform duration-500"
+        initial={{ rotateY: 90, opacity: 0 }} // Start with rotateY and opacity
+        animate={{ rotateY: 0, opacity: 1 }} // Animate to normal position
+        transition={{ delay: index * 0.2, duration: 0.5 }}
       >
-        {musicList.length > 0 ? (
-          musicList.map((music, index) => (
-            <motion.div
-              key={music._id}
-              ref={(el) => (cardRefs.current[index] = el)} // Store reference to each card
-              className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white transform transition-transform duration-500" // Added transform and transition
-              initial={{ rotateY: 90, opacity: 0 }} // Start with rotateY and opacity
-              animate={{ rotateY: 0, opacity: 1 }} // Animate to normal position
-              transition={{ delay: index * 0.2, duration: 0.5 }} 
+        <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
+        <img
+          src={music.image}
+          alt={music.title}
+          className="w-full h-40 sm:h-60 object-cover rounded-lg mb-4"
+        />
+        <div className="flex flex-col space-y-4">
+          {index === currentSongIndex ? (
+            <audio
+              controls
+              controlsList="nodownload"
+              ref={audioRef}
+              className="w-full"
+              autoPlay
             >
-              <h2 className="text-xl font-semibold mb-2">{music.title}</h2>
-              <img
-                src={music.image}
-                alt={music.title}
-                className="w-full h-60 object-cover rounded-lg mb-4"
-              />
-              <div className="flex justify-between items-center">
-                <motion.button
-                  onClick={() => handleDownload(music)}
-                  className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <FontAwesomeIcon icon={faDownload} className="mr-2" />
-                  Download
-                </motion.button>
-                <motion.button
-                  onClick={() => handleShare(music)}
-                  className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
-                  Share
-                </motion.button>
-              </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-white text-lg">No music available for this category.</p>
-        )}
+              <source src={music.music} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          ) : (
+            <motion.button
+              onClick={() => handlePlaySong(index)}
+              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+              whileHover={{ scale: 1.05 }}
+            >
+              Play Song
+            </motion.button>
+          )}
+          <div className="flex justify-between gap-4">
+            <motion.button
+              onClick={() => handleDownload(music)}
+              className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center"
+              whileHover={{ scale: 1.05 }}
+            >
+              <FontAwesomeIcon icon={faDownload} className="mr-2" />
+              Download
+            </motion.button>
+            <motion.button
+              onClick={() => handleShare(music)}
+              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+              whileHover={{ scale: 1.05 }}
+            >
+              <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
+              Share
+            </motion.button>
+          </div>
+        </div>
       </motion.div>
+    ))
+  ) : (
+    <p className="text-white text-lg">No music available for this category.</p>
+  )}
+</motion.div>
     </motion.div>
   );
 }
