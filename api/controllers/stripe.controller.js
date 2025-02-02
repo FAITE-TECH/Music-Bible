@@ -55,8 +55,8 @@ export const createSession = async (req, res) => {
       customer: customer.id,
       line_items: [line_item],
       mode: 'payment',
-      success_url: `http://localhost:5173/order-pay-success/${musicId}/${userId}`,
-      cancel_url: `http://localhost:5173/musics`,
+      success_url: `https://amusicbible.com/order-pay-success/${musicId}/${userId}`,
+      cancel_url: `https://amusicbible.com/musics`,
     });
 
     res.json({ url: session.url });

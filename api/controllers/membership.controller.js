@@ -29,7 +29,7 @@ export const createMembership = async (req, res, next) => {
             country,            
             city,               
             subscriptionPeriod,
-         
+       
         });
 
         // Save the new membership to the database

@@ -6,7 +6,6 @@ import mongoose from 'mongoose';
 export const createMusic = async (req, res, next) => {
     try {
      
-  
       const { title, description, category, music} = req.body;
   
       console.log(description);

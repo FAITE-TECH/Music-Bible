@@ -17,8 +17,7 @@ export const submitContactForm = async (req, res, next) => {
     const newContact = new Contact({
       name,
       email,
-      message,
-     
+      message, 
     });
 
     // Save the new contact to the database
