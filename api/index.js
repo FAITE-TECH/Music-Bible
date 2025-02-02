@@ -69,6 +69,6 @@ process.on('SIGTERM', () => {
 });
 
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server is running on Port ${process.env.PORT || 3000}`);
+app.listen(8080, '0.0.0.0', () => {
+  console.log('Server running on port 8080');
 });
