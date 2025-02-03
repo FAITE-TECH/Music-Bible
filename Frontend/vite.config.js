@@ -9,8 +9,8 @@ export default defineConfig({
     proxy:{
       '/api':{
         target:'http://46.202.163.146:5000',
-        secure:false,
-       
+        secure:true,
+        changeOrigin:true
       }
     }
   }
