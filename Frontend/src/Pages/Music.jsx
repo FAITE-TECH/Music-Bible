@@ -22,7 +22,7 @@ export default function Music() {
 
   const fetchMusic = async () => {
     try {
-      const response = await fetch(`http://46.202.163.146:5000/api/music/music`);
+      const response = await fetch(`/api/music/music`);
       const data = await response.json();
       console.log("Music data:", data);
       setMusicList(data.music || []);
@@ -37,7 +37,7 @@ export default function Music() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('https://amusicbible.com/api/category/getAlbum');
+        const res = await fetch('/api/category/getAlbum');
         const data = await res.json();
         if (!res.ok) {
           throw new Error('Failed to load categories');
@@ -153,7 +153,8 @@ export default function Music() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-black">
+    <div className="container mx-auto p-4 bg-black overflow-hidden">
+
       <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
       <div className="flex flex-col md:flex-row justify-end md:space-x-4 mb-6">
         <input

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import cir1 from "../assets/Logo/cir1.png";
 import cir2 from "../assets/Logo/cir2.png";
@@ -7,29 +7,30 @@ import cir4 from "../assets/Logo/cir4.png";
 
 export default function ScrollSection() {
   const [currentImage, setCurrentImage] = useState(0);
-  const [isInSection, setIsInSection] = useState(false); // Tracks if we are within the section
+  const [isInSection, setIsInSection] = useState(false);
   const images = [cir1, cir2, cir3, cir4];
 
+  const sectionRef = useRef(null);
+
   const handleScroll = () => {
-    const scrollPosition = window.scrollY; // Current scroll position
-    const windowHeight = window.innerHeight; // Height of the viewport
-    const sectionTop = document.querySelector("section")?.offsetTop || 0; // Top of the section
-    const sectionHeight = windowHeight * images.length; // Total height of the section (100vh per image)
+    if (!sectionRef.current) return;
+
+    const scrollPosition = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const sectionTop = sectionRef.current.offsetTop;
+    const sectionHeight = windowHeight * images.length;
     const sectionBottom = sectionTop + sectionHeight;
 
-    // Check if we are within the section's scrollable area
     if (scrollPosition >= sectionTop - windowHeight && scrollPosition < sectionBottom) {
       setIsInSection(true);
-
-      // Calculate the image index based on scroll position
       const imageIndex = Math.min(
-        Math.floor(((scrollPosition - sectionTop) / sectionHeight) * images.length),
+        Math.floor(((scrollPosition - sectionTop + windowHeight / 3) / sectionHeight) * images.length),
         images.length - 1
       );
       setCurrentImage(imageIndex);
     } else {
-      setIsInSection(false); // Outside the section, hide all images
-      setCurrentImage(0); // Reset the image index
+      setIsInSection(false);
+      setCurrentImage(0);
     }
   };
 
@@ -40,8 +41,9 @@ export default function ScrollSection() {
 
   return (
     <section
-      className="relative bg-black text-white"
-      style={{ height: `${images.length * 100}vh` }} // Total height based on number of images
+      ref={sectionRef}
+      className="relative bg-black text-white min-h-screen py-40"
+      style={{ height: `${images.length * 100}vh` }}
     >
       <div className="fixed inset-0 flex items-center justify-center">
         {isInSection &&
@@ -50,7 +52,7 @@ export default function ScrollSection() {
               key={index}
               src={image}
               alt={`Circular Image ${index + 1}`}
-              initial={{ opacity: 0, scale: 0.5 }} // Initially scaled down and invisible
+              initial={{ opacity: 0, scale: 0.5 }}
               animate={
                 currentImage === index
                   ? { opacity: 1, scale: 1, rotate: [0, 360] }
@@ -58,14 +60,14 @@ export default function ScrollSection() {
               }
               transition={{
                 opacity: { duration: 0.5 },
-                scale: { duration: 0.5, ease: "easeOut" }, // Smooth scaling
+                scale: { duration: 0.5, ease: "easeOut" },
                 rotate: {
                   repeat: currentImage === index ? Infinity : 0,
                   duration: 10,
                   ease: "linear",
                 },
               }}
-              className="absolute items-center w-[670px] h-[670px]" // Use Tailwind to control size
+              className="fixed w-[400px] h-[400px] sm:w-[400px] sm:h-[400px] md:w-[400px] md:h-[400px] lg:w-[670px] lg:h-[670px]"
             />
           ))}
       </div>

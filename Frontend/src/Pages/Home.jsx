@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <>
 <section
-  className="relative bg-black text-white py-6 px-4 min-h-screen flex flex-col items-center justify-center"
+  className="relative bg-black text-white py-6 px-4 min-h-screen flex flex-col items-center justify-center overflow-hidden h-full  "
   ref={ref}
 >
   <video
@@ -141,14 +141,14 @@ export default function Home() {
 
     {/* Scrolling Section */}
     <section
-       className=""
+       className="overflow-hidden "
       >
         <ScrollSection/>
       </section>
 
      {/* Second Section */}
      <section
-      className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6"
+      className="relative bg-gradient-to-br from-black via-orange-600 to-blue-800 min-h-screen flex items-center px-6 overflow-hidden"
       data-aos="fade-up"
     >
       <div className="container mx-auto flex flex-wrap items-center">
@@ -205,7 +205,7 @@ export default function Home() {
     </section>
 
     <section
-  className="relative min-h-screen flex items-center justify-center px-6"
+  className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
   style={{
     backgroundImage: 'radial-gradient(circle, #ffa500 20%, #000000 90%)',
   }}
@@ -248,7 +248,7 @@ export default function Home() {
 
 
 
-<section className="relative min-h-screen flex items-center justify-center px-6" style={{ backgroundImage: 'radial-gradient(circle at bottom, #60a5fa, #000000 50%)' }}>
+<section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden" style={{ backgroundImage: 'radial-gradient(circle at bottom, #60a5fa, #000000 50%)' }}>
   <div className="w-full md:w-3/4 bg-black bg-opacity-70 rounded-3xl shadow-2xl p-8 md:p-12 backdrop-blur-md flex flex-col md:flex-row justify-between" data-aos="fade-up">
     
     <div className="flex flex-col justify-center mb-8 md:mb-0 md:w-1/2">
@@ -293,7 +293,7 @@ export default function Home() {
   </div>
 </section>
 
-<section className="bg-black text-white py-16">
+<section className="bg-black text-white py-16 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-4xl font-bold  mb-12">Reviews</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -355,7 +355,7 @@ export default function Home() {
         </div>
       </div>
     </section>
-    <section className="bg-gradient-to-r from-blue-900 via-black to-black py-16">
+    <section className="bg-gradient-to-r from-blue-900 via-black to-black py-16 overflow-hidden">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         {/* Left Content */}
         <div
@@ -384,7 +384,7 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="bg-gradient-to-r from-blue-400 to-green-500 py-16">
+    <section className="bg-gradient-to-r from-blue-400 to-green-500 py-16 overflow-hidden">
   <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
     {/* Left Image */}
     <div
@@ -416,7 +416,7 @@ export default function Home() {
 
 
     <section
-      className="relative w-full min-h-screen flex justify-center items-center px-4 py-12 bg-gradient-to-r from-yellow-900 via-black to-blue-500 text-white"
+      className="relative w-full min-h-screen flex justify-center items-center px-4 py-12 bg-gradient-to-r from-yellow-900 via-black to-blue-500 text-white overflow-hidden"
       data-aos="fade-up"
     >
       <div className="max-w-4xl text-center">
