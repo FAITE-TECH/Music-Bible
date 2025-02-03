@@ -31,7 +31,7 @@ export default function MembershipForm() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/membership/create", {
+      const res = await fetch("https://amusicbible.com/api/membership/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

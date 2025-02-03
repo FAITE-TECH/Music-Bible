@@ -25,7 +25,7 @@ export default function ContactUs() {
     };
 
     try {
-      const response = await fetch('/api/contact/submit', {
+      const response = await fetch('https://amusicbible.com/api/contact/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

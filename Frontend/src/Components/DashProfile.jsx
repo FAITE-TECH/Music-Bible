@@ -117,7 +117,7 @@ export default function DashProfile() {
    
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`,{
+      const res = await fetch(`https://amusicbible.com/api/user/update/${currentUser._id}`,{
         method: 'PUT',
         headers: {
           'Content-Type':'application/json',
@@ -146,7 +146,7 @@ export default function DashProfile() {
   const handleDeleteUser = async ()=>{
     try {
       dispatch (deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`,{
+      const res = await fetch(`https://amusicbible.com/api/user/delete/${currentUser._id}`,{
         method : "DELETE",
         credentials: "include",
       });
@@ -163,7 +163,7 @@ export default function DashProfile() {
   }
   const handleSignOut = async () => {
     try {
-      await fetch('/api/user/signout');
+      await fetch('https://amusicbible.com/api/user/signout');
       dispatch(signOut());
       navigate('/');
     } catch (error) {

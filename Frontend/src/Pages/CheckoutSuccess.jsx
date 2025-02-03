@@ -12,7 +12,7 @@ const CheckoutSuccess = () => {
     // Fetch music details based on musicId
     const fetchMusicDetails = async () => {
       try {
-        const response = await fetch(`/api/music/getmusic/${musicId}`); // Ensure the endpoint matches your backend route
+        const response = await fetch(`https://amusicbible.com/api/music/getmusic/${musicId}`); // Ensure the endpoint matches your backend route
         if (!response.ok) {
           throw new Error('Failed to fetch music details');
         }

@@ -20,7 +20,7 @@ export default function DashMembership() {
   useEffect(() => {
     const fetchMemberships = async () => {
       try {
-        const res = await fetch(`/api/membership/membership?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
+        const res = await fetch(`https://amusicbible.com/api/membership/membership?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
         const data = await res.json();
         if (res.ok) {
           setMemberships(data.membership);
@@ -37,7 +37,7 @@ export default function DashMembership() {
 
   const handleAcceptMembership = async (membershipId) => {
     try {
-      const res = await fetch(`/api/membership/accept/${membershipId}`, {
+      const res = await fetch(`https://amusicbible.com/api/membership/accept/${membershipId}`, {
         method: 'PUT',
       });
       const data = await res.json();
@@ -61,7 +61,7 @@ export default function DashMembership() {
 
   const handleRejectMembership = async (membershipId) => {
     try {
-      const res = await fetch(`/api/membership/reject/${membershipId}`, {
+      const res = await fetch(`https://amusicbible.com/api/membership/reject/${membershipId}`, {
         method: 'PUT',
       });
       const data = await res.json();

@@ -56,7 +56,7 @@ export default function AddAlbum() {
     console.log('Form Data:', formData); 
   
     try {
-      const res = await fetch('/api/category/create', {
+      const res = await fetch('https://amusicbible.com/api/category/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

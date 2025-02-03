@@ -19,7 +19,7 @@ export default function DashMusic() {
   useEffect(() => {
     const fetchMusic = async () => {
       try {
-        const res = await fetch(`/api/music/music?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
+        const res = await fetch(`https://amusicbible.com/api/music/music?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
         const data = await res.json();
         if (res.ok) {
           setUserMusic(data.music);
@@ -37,7 +37,7 @@ export default function DashMusic() {
   const handleDeleteMusic = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/music/delete/${musicIdToDelete}/${currentUser._id}`, {
+      const res = await fetch(`https://amusicbible.com/api/music/delete/${musicIdToDelete}/${currentUser._id}`, {
         method: 'DELETE',
         credentials: 'include', 
         headers: {

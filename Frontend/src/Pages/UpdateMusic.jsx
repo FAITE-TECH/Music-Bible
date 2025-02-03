@@ -22,7 +22,7 @@ export default function UpdateMusic() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('/api/category/getAlbum'); 
+        const res = await fetch('https://amusicbible.com/api/category/getAlbum'); 
         const data = await res.json();
 
         if (!res.ok) {
@@ -42,7 +42,7 @@ export default function UpdateMusic() {
   useEffect(() => {
     const fetchMusic = async () => {
       try {
-        const res = await fetch(`/api/music/getmusic/${musicId}`);
+        const res = await fetch(`https://amusicbible.com/api/music/getmusic/${musicId}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -100,7 +100,7 @@ export default function UpdateMusic() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`/api/music/update/${musicId}/${currentUser._id}`, {
+      const res = await fetch(`https://amusicbible.com/api/music/update/${musicId}/${currentUser._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

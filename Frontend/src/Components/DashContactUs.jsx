@@ -15,7 +15,7 @@ export default function DashContactUs() {
   useEffect(() => {
     const fetchMessages = async () => {
         try {
-            const res = await fetch(`/api/contact/messages?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
+            const res = await fetch(`https://amusicbible.com/api/contact/messages?searchTerm=${searchTerm}&page=${currentPage}&limit=10`);
             const data = await res.json();
             if (res.ok) {
                 setContactMessages(data.messages || []);
@@ -35,7 +35,7 @@ export default function DashContactUs() {
   const handleDeleteMessage = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/contact/delete/${messageIdToDelete}`, {
+      const res = await fetch(`https://amusicbible.com/api/contact/delete/${messageIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {

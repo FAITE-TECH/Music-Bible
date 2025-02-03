@@ -29,7 +29,7 @@ export default function DashUsers() {
     if (showAdminsOnly) {
       const fetchAdmins = async () => {
         try {
-          const res = await fetch('/api/user/getadmins');
+          const res = await fetch('https://amusicbible.com/api/user/getadmins');
           const data = await res.json();
           if (res.ok) {
             setUsers(data.admins);
@@ -43,7 +43,7 @@ export default function DashUsers() {
        } else if (showCustomersOnly) {
       const fetchCustomers = async () => {
         try {
-          const res = await fetch('/api/user/getcustomers');
+          const res = await fetch('https://amusicbible.com/api/user/getcustomers');
           const data = await res.json();
           if (res.ok) {
             setUsers(data.admins);
@@ -58,7 +58,7 @@ export default function DashUsers() {
       
       const fetchAllUsers = async () => {
         try {
-          const res = await fetch(`/api/user/getusers?searchTerm=${searchTerm}`);
+          const res = await fetch(`https://amusicbible.com/api/user/getusers?searchTerm=${searchTerm}`);
           const data = await res.json();
           if (res.ok) {
             setUsers(data.users);
@@ -91,7 +91,7 @@ export default function DashUsers() {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`, {
+      const res = await fetch(`https://amusicbible.com/api/user/getusers?startIndex=${startIndex}`, {
         method: 'GET', 
         credentials: 'include', 
         headers: {
@@ -113,7 +113,7 @@ export default function DashUsers() {
   
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+      const res = await fetch(`https://amusicbible.com/api/user/delete/${userIdToDelete}`, {
         method: 'DELETE',
         credentials: "include",
       });
@@ -208,7 +208,7 @@ export default function DashUsers() {
 
   const handleAssignAdmin = async () => {
     try {
-      const res = await fetch(`/api/user/assignadmin/${userIdToAssignAdmin}`, {
+      const res = await fetch(`https://amusicbible.com/api/user/assignadmin/${userIdToAssignAdmin}`, {
         method: 'PUT',
         credentials: "include",
       });
@@ -232,7 +232,7 @@ export default function DashUsers() {
 
   const handleResignAdmin = async () => {
     try {
-      const res = await fetch(`/api/user/resignadmin/${userIdToResignAdmin}`, {
+      const res = await fetch(`https://amusicbible.com/api/user/resignadmin/${userIdToResignAdmin}`, {
         method: 'PUT',
         credentials: "include",
       });

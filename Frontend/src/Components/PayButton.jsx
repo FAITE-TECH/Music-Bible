@@ -17,7 +17,7 @@ const PayButton = ({ music, price }) => {
     }
 
     try {
-      const response = await fetch('/api/stripe/create-checkout-session', {
+      const response = await fetch('https://amusicbible.com/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

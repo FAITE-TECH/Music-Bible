@@ -25,7 +25,7 @@ export default function DashSideBar() {
 
   const handleSignOut = async () => {
     try {
-      await fetch('/api/user/signout');
+      await fetch('https://amusicbible.com/api/user/signout');
       dispatch(signOut());
       navigate('/');
     } catch (error) {

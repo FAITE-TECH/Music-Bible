@@ -21,7 +21,7 @@ export default function Album() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('/api/category/getAlbum');
+        const res = await fetch('https://amusicbible.com/api/category/getAlbum');
         const data = await res.json();
 
         if (!res.ok) {
@@ -43,7 +43,7 @@ export default function Album() {
     if (!category) return;
     try {
       setLoading(true);
-      const response = await fetch(`/api/music/category?category=${category}`);
+      const response = await fetch(`https://amusicbible.com/api/music/category?category=${category}`);
       if (!response.ok) {
         throw new Error('Failed to fetch music data');
       }
