@@ -6,11 +6,14 @@ import { motion } from "framer-motion";
 import searchIcon from "../assets/Logo/searchIcon.png";
 import shareIcon from "../assets/Logo/shareIcon.png";
 import copyIcon from "../assets/Logo/copyIcon.png";
+import { useNavigate } from 'react-router-dom';
+
 const ChatAI = () => {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [shareClicked, setSharedClicked] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (shareClicked) {
@@ -45,6 +48,41 @@ const ChatAI = () => {
       setLoading(false);
     }
   };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Bible AI",
+          url: "https://amusicbible.com/bible/ai",
+        })
+        .then(() => console.log('Link successfully'))
+        .catch((error) => console.error('Error sharing link:', error));
+    } else {
+      alert('Web Share API not supported in your browser.');
+    }
+  };
+
+  const ParseText = ( text )=> {
+  const formatText = (text) => {
+    const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
+    const paragraphs = [];
+
+    for (let i = 0; i < sentences.length; i += 2) {
+      paragraphs.push(sentences.slice(i, i + 2).join(' '));
+    }
+
+    return paragraphs;
+  };
+
+  return (
+    <div className="space-y-4 p-4">
+      {formatText(text).map((para, index) => (
+        <p key={index} className="text-md leading-relaxed">{para}</p>
+      ))}
+    </div>
+  );
+}
 
   return (
     <>
@@ -147,7 +185,7 @@ const ChatAI = () => {
               
               <div className="mt-2 text-gray-800 font-medium flex-grow break-words">
                 <div className="  h-[400px] overflow-y-auto text-gray-600">
-                  {answer}
+                  {answer && answer!=="" && ParseText(answer)}
                 </div>
               </div>
               
@@ -158,16 +196,7 @@ const ChatAI = () => {
                 }
                 <button
                   className="text-gray-500 hover:text-gray-700 text-2xl hover:scale-110 transition"
-                  onClick={() => {
-                    setSharedClicked(true);
-                    const textArea = document.createElement("textarea");
-                    textArea.value = "https://amusicbible.com/bible/ai";
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand("copy"); // Copies text
-                    document.body.removeChild(textArea);
-                    console.log("Copied to clipboard");
-                  }}
+                  onClick={handleShare}
                 >
                   <div className="w-8 h-8 flex items-center ">
                 <img src={shareIcon} alt="Share" className="" />
