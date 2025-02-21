@@ -10,6 +10,7 @@ import categoryRoute from "./routes/category.route.js";
 import stripe from "./routes/stripe.route.js";
 import membership from "./routes/membership.route.js";
 import contactRoutes from "./routes/contact.route.js";
+import ai from "./routes/ai.route.js";
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ const corsOptions = {
     credentials: true, 
 };
 app.use(cors(corsOptions));
-
+// app.use(cors());
 
 app.use(cookieParser());
 app.use(express.json());
@@ -42,6 +43,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/stripe", stripe);
 app.use("/api/membership", membership);
 app.use('/api/contact', contactRoutes);
+app.use('/api/ai', ai);
 
 // Root Route
 app.get("/", (req, res) => {
