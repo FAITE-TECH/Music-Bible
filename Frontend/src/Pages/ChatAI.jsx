@@ -154,7 +154,7 @@ const ChatAI = () => {
               <img src={searchIcon} alt="send" className="w-14 h-12 -mt-2" onClick={sendQuery}/>
             </div>
           </div>
-          <div className="flex gap-4 mt-6 mb-4 -ml-12">
+          <div className="flex gap-4 mt-6 mb-4 ">
             <a
               href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share
 "
