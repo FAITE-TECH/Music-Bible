@@ -13,6 +13,7 @@ import categoryRoute from "./routes/category.route.js";
 import stripe from "./routes/stripe.route.js";
 import membership from "./routes/membership.route.js";
 import contactRoutes from "./routes/contact.route.js";
+import ai from "./routes/ai.route.js";
 
 dotenv.config();
 

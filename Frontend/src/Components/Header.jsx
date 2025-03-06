@@ -77,7 +77,7 @@ export default function Header() {
                 <nav
                     className={`flex-col md:flex-row md:space-x-6 items-center mt-4 md:mt-0 ${menuOpen ? 'flex' : 'hidden'} md:flex absolute md:relative top-full md:top-auto left-0 w-full md:w-auto bg-black md:bg-transparent p-4 md:p-0 transition-all duration-300 md:justify-center`}
                 >
-                    {["Home", "Musics", "Album", "Membership", "AboutUs", "ContactUs"].map((text, index) => (
+                    {["Home", "Musics", "Album", "Membership", "Bible/AI", "ContactUs"].map((text, index) => (
                         <motion.div
                             key={text}
                             custom={index}

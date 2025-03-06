@@ -2,3 +2,112 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@-webkit-keyframes zoomIn {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0.0;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0.0;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes typing{
+    0%{
+        background-color: rgba(255,255,255, 1);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,0.2), 
+                    24px 0px 0px 0px rgba(255,255,255,0.2);
+      }
+    25%{ 
+        background-color: rgba(255,255,255, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,2), 
+                    24px 0px 0px 0px rgba(255,255,255,0.2);
+    }
+    75%{ background-color: rgba(255,255,255, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,0.2), 
+                    24px 0px 0px 0px rgba(255,255,255,1);
+      }
+}
+
+@-moz-keyframes typing{
+   0%{
+        background-color: rgba(255,255,255, 1);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,0.2), 
+                    24px 0px 0px 0px rgba(255,255,255,0.2);
+      }
+    25%{ 
+        background-color: rgba(255,255,255, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,2), 
+                    24px 0px 0px 0px rgba(255,255,255,0.2);
+    }
+    75%{ background-color: rgba(255,255,255, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,0.2), 
+                    24px 0px 0px 0px rgba(255,255,255,1);
+      }
+}
+
+@keyframes typing{
+   0%{
+        background-color: rgb(207, 0, 222);
+        box-shadow: 12px 0px 0px 0px rgba(207, 82, 209, 0.2), 
+                    24px 0px 0px 0px rgba(207, 82, 209, 0.2);
+      }
+    25%{ 
+        background-color: rgba(207, 82, 209, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(255,255,255,2), 
+                    24px 0px 0px 0px rgba(207, 82, 209, 0.2);
+    }
+    75%{ background-color: rgba(207, 82, 209, 0.4);
+        box-shadow: 12px 0px 0px 0px rgba(207, 82, 209, 0.2), 
+                    24px 0px 0px 0px rgb(207, 0, 222);
+      }
+}
+
+  @keyframes viewContent {
+    0% {
+        opacity: 0;
+        
+        
+    }
+    100% {
+        opacity: 1;
+        
+    }
+  }
+.animate-view-content {
+  animation: viewContent 0.2s ease-in-out forwards;
+}
+.type_loader_container{
+    -webkit-animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+  animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+}
+
+.typing_loader{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    -webkit-animation: typing 1.5s linear infinite alternate;
+       -moz-animation: Typing 1.5s linear infinite alternate;
+            animation: typing 1.5s linear infinite alternate;
+            
+    margin: 8px 2px; /* Not necessary- its only for layouting*/  
+    position: relative;
+   
+}
