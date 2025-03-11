@@ -18,7 +18,7 @@ export default function Header() {
 
     const handleSignOut = async () => {
         try {
-            await fetch("https://api.amusicbible.com/api/user/signout");
+            await fetch("/api/user/signout");
             dispatch(signOut());
             navigate("/");
         } catch (error) {
@@ -63,7 +63,7 @@ export default function Header() {
                                 onClick={() => { navigate(item.path); setMenuOpen(false); }}
                                 onMouseEnter={() => setHoveredNav(item.name)}
                                 onMouseLeave={() => setHoveredNav(null)}
-                                className="relative flex items-center justify-center p-3 rounded-full text-white bg-gray-800 transition-all duration-300 hover:bg-amber-500"
+                                className="relative flex items-center justify-center p-3 rounded-full text-white bg-gray-800 transition-all duration-300 hover:bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
                             >
                                 {hoveredNav === item.name ? (
                                     <motion.span 
@@ -145,7 +145,7 @@ export default function Header() {
                                 onClick={() => { navigate(item.path); }}
                                 onMouseEnter={() => setHoveredNav(item.name)}
                                 onMouseLeave={() => setHoveredNav(null)}
-                                className="relative flex items-center justify-center p-3 rounded-full bg-gray-800 transition-all duration-300 hover:bg-amber-500"
+                                className="relative flex items-center justify-center p-3 rounded-full bg-gray-800 transition-all duration-300 hover:bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
                             >
                                 {hoveredNav === item.name ? (
                                     <motion.span 
@@ -190,7 +190,8 @@ export default function Header() {
                                 <motion.button
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
-                                    className="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-full font-bold shadow-lg"
+                                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-full font-bold shadow-lg"
+
                                 >
                                     Sign In
                                 </motion.button>

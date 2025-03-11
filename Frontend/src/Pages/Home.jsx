@@ -91,7 +91,7 @@ export default function Home() {
       alt="Network"
       initial={{ x: "-100vw", opacity: 0 }}
       animate={networkControls}
-      className="  lg:w-[800px]"
+      className="  lg:w-[770px]"
     />
 
     {/* History Creator */}
@@ -101,41 +101,36 @@ export default function Home() {
       alt="History Creator"
       initial={{ x: "100vw", opacity: 0 }}
       animate={historyControls}
-      className="lg:w-[840px]"
+      className="lg:w-[880px]"
     />
     </div>
     
   </div>
 
-  <motion.div
-          className="fixed bottom-4 left-4 flex flex-col space-y-4 z-10"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 80, duration: 0.1 }}
-        >
-          {/* First image (Google Play) */}
-          <a href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share
-" target="_blank" rel="noopener noreferrer">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
-                alt="Google Play"
-                className="w-[150px] h-auto"
-              />
-            </motion.div>
-          </a>
+  <motion.div className="fixed bottom-4 left-4 z-10">
+  <a href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share" target="_blank" rel="noopener noreferrer">
+    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
+        alt="Google Play"
+        className="w-[150px] h-auto"
+      />
+    </motion.div>
+  </a>
+</motion.div>
 
-          {/* Second image (Apple Store) */}
-          <a href="https://apps.apple.com/app/id6618135650 " target="_blank" rel="noopener noreferrer">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <img
-                src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
-                alt="Apple Store"
-                className="w-[150px] h-auto"
-              />
-            </motion.div>
-          </a>
-        </motion.div>
+<motion.div className="fixed bottom-4 right-4 z-10">
+  <a href="https://apps.apple.com/app/id6618135650" target="_blank" rel="noopener noreferrer">
+    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+      <img
+        src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
+        alt="Apple Store"
+        className="w-[150px] h-auto"
+      />
+    </motion.div>
+  </a>
+</motion.div>
+
 </section>
 
 
