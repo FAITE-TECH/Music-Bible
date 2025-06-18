@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import video from "../assets/Logo/design.mp4";
+import video from "../assets/Logo/Designs.mp4";
 import logo from "../assets/Logo/newlogo.png";
 import first from "../assets/Logo/firstpage.png";
 import img1 from "../assets/Logo/1.png";
@@ -69,6 +69,7 @@ export default function Home() {
     muted
     loop
     playsInline
+    preload="auto"
     className="absolute inset-0 w-full h-full object-cover z-0"
   >
     <source src={video} type="video/mp4" />

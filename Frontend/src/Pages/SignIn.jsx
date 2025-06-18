@@ -62,23 +62,20 @@ export default function SignIn() {
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover z-0"
+                className="absolute inset-0 w-full h-full object-cover z-0 opacity-50"
             >
                 <source src={video} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
-            {/* Background Overlay for better visibility */}
-            <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
-
             {/* Content */}
-            <div className="relative flex p-6 max-w-5xl mx-auto flex-col md:flex-row items-center justify-between gap-20 z-10">
+            <div className="relative flex p-6 max-w-6xl mx-auto flex-col md:flex-row items-center justify-between gap-12 z-10">
                 {/* Left Side */}
                 <motion.div
                     className="flex-1 text-center md:text-left"
-                    initial={{ opacity: 0, x: -100 }} // Initial position (hidden to the left)
-                    animate={{ opacity: 1, x: 0 }} // Animate to visible and its position
-                    transition={{ duration: 1 }} // Animation duration
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1 }}
                 >
                     <Link to="/" className="text-5xl font-bold text-white">
                         <img
@@ -96,14 +93,24 @@ export default function SignIn() {
                 </motion.div>
 
                 {/* Right Side - Sign In Form */}
-                <div className="flex-1 mt-5 md:mt-0">
-                    <p className="text-center text-2xl font-cinzel font-semibold text-white">Sign In</p>
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-5">
-                        <div>
+                <div className="flex-1 w-full max-w-md mt-8 md:mt-0">
+                    <p className="text-center text-2xl font-cinzel font-semibold text-white mb-8">Sign In</p>
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Email Field */}
+                        <div className="space-y-2">
                             <Label value="Your email" className="text-white" />
-                            <TextInput type="email" placeholder="name@company.com" id="email" onChange={handleChange} />
+                            <TextInput 
+                                type="email" 
+                                placeholder="name@company.com" 
+                                id="email" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+
+                        {/* Password Field */}
+                        <div className="space-y-2">
                             <Label value="Your password" className="text-white" />
                             <div className="relative">
                                 <TextInput
@@ -111,6 +118,7 @@ export default function SignIn() {
                                     placeholder="Password"
                                     id="password"
                                     onChange={handleChange}
+                                    className="w-full"
                                 />
                                 <button
                                     type="button"
@@ -130,8 +138,19 @@ export default function SignIn() {
                                     )}
                                 </button>
                             </div>
+                            <div className="flex justify-end">
+                                <Link to='/forgetPassword' className="text-sm text-blue-500 hover:underline">
+                                    Forgot Password?
+                                </Link>
+                            </div>
                         </div>
-                        <Button className="bg-amber-600" disabled={loading} type="submit">
+
+                        {/* Submit Button */}
+                        <Button 
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] w-3/4 mx-auto py-1"
+                            disabled={loading} 
+                            type="submit"
+                        >
                             {loading ? (
                                 <>
                                     <Spinner size="sm" />
@@ -139,23 +158,32 @@ export default function SignIn() {
                                 </>
                             ) : 'Sign In'}
                         </Button>
-                        <OAuthenticate />
+
+                        {/* Divider */}
+                        <div className="flex items-center w-full my-4">
+                            <div className="flex-grow h-px bg-gray-300"></div>
+                            <span className="px-4 text-gray-400 text-sm">or </span>
+                            <div className="flex-grow h-px bg-gray-300"></div>
+                        </div>
+
+                        {/* OAuth */}
+                        <OAuthenticate className="w-full" />
+
+                        {/* Sign Up Link */}
+                        <div className="text-center text-sm text-white">
+                            <span>Don't have an account? </span>
+                            <Link to='/sign-up' className="text-blue-500 hover:underline">
+                                Sign Up
+                            </Link>
+                        </div>
                     </form>
-                    <div className="flex gap-2 text-sm mt-5 text-white">
-                        <span>Forget Password?</span>
-                        <Link to='/forgetPassword' className="text-blue-500">Click Here</Link>
-                    </div>
-                    <div className="flex gap-2 text-sm mt-5 text-white">
-                        <span>Don't have an account?</span>
-                        <Link to='/sign-up' className="text-blue-500">Sign Up</Link>
-                    </div>
-                    <div className="text-red-600">
-                        {error && (
-                            <Alert className="mt-5" color='failure'>
-                                {error}
-                            </Alert>
-                        )}
-                    </div>
+
+                    {/* Error Message */}
+                    {error && (
+                        <Alert className="mt-6" color='failure'>
+                            {error}
+                        </Alert>
+                    )}
                 </div>
             </div>
         </div>

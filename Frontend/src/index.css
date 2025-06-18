@@ -1,4 +1,5 @@
 @import 'flowbite';
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -110,4 +111,8 @@
     margin: 8px 2px; /* Not necessary- its only for layouting*/  
     position: relative;
    
+}
+
+.tamil-font {
+  font-family: 'Noto Sans Tamil', sans-serif;
 }

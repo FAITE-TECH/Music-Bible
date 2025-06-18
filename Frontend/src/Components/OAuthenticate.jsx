@@ -41,7 +41,7 @@ export default function OAuthenticate() {
         }
     } 
   return (
-    <Button type='button' className='bg-slate-400 text-black w-full'outline onClick={handleGoogleClick}>
+    <Button type='button' className='bg-slate-400 text-black w-3/4 mx-auto'outline onClick={handleGoogleClick}>
         <AiFillGoogleCircle className='w-6 h-6 mr-2'/>
         Continue with Google
     </Button>

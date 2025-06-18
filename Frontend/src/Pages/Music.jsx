@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShareAlt, faDownload, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faShareAlt, faDownload, faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
 export default function Music() {
@@ -12,10 +12,8 @@ export default function Music() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAlbum, setSelectedAlbum] = useState('all');
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -34,25 +32,6 @@ export default function Music() {
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch('/api/category/getAlbum');
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error('Failed to load categories');
-        } else {
-          setCategories(data);
-          setSelectedAlbum('all');
-        }
-      } catch (error) {
-        setError('Error fetching categories');
-        console.error(error);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
     fetchMusic();
   }, []);
 
@@ -66,10 +45,22 @@ export default function Music() {
       setFilteredMusicList(filtered);
     }
   }, [searchTerm, musicList]);
-  
 
   const handlePlaySong = (index) => {
-    setCurrentSongIndex(index);
+    if (currentSongIndex === index) {
+      setIsPlaying(!isPlaying);
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+    } else {
+      setCurrentSongIndex(index);
+      setIsPlaying(true);
+      setTimeout(() => {
+        audioRef.current.play();
+      }, 0);
+    }
   };
 
   const handleDownload = (music) => {
@@ -87,10 +78,9 @@ export default function Music() {
           title: music.title,
           url: music.music,
         })
-        .then(() => console.log('Music shared successfully'))
         .catch((error) => console.error('Error sharing music:', error));
     } else {
-      alert('Web Share API not supported in your browser.');
+      alert(`Share this song: ${music.title}\n${music.music}`);
     }
   };
 
@@ -108,71 +98,108 @@ export default function Music() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-black overflow-hidden">
-      <h1 className="text-3xl font-bold text-center mb-6">All Music</h1>
-      <div className="flex flex-col md:flex-row justify-end md:space-x-4 mb-6">
-        <input
-          type="text"
-          className="p-2 mb-4 md:mb-0 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
-          placeholder="Search by song name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredMusicList.length > 0 ? (
-          filteredMusicList.map((music, index) => (
-            <motion.div
+    <div className="min-h-screen bg-black text-white p-4 md:p-8">
+      <motion.h1 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent"
+      >
+        All Music
+      </motion.h1>
+
+      {/* Search Bar */}
+      <motion.div 
+        className="flex justify-center mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            className="w-full p-3 pl-10 rounded-lg bg-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="Search songs..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="absolute left-3 top-3 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        {filteredMusicList.map((music, index) => (
+          <motion.div
               key={music._id}
-              className={`p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white ${
+              className={`p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white max-w-xs w-full h-80 flex flex-col justify-between mx-auto ${
                 index === currentSongIndex ? 'border-2 border-purple-500 expanded-card' : ''
               }`}
               whileInView={{ opacity: 1, rotate: 0, translateY: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="flex justify-center">
+            <div className="flex flex-col justify-center h-full">
+              {/* Album Art */}
+              <div className="flex justify-center mb-2">
                 <img 
                   src={music.image || 'https://via.placeholder.com/150'} 
                   alt={music.title}
-                  className="w-70 h-70 sm:h-60 object-cover rounded-lg mb-4"
+                  className="w-32 h-32 object-cover rounded-md"
                 />
               </div>
-              <p className="text-gray-100 mb-6">{music.category}</p>
-              <p className="text-gray-100 mb-6 text-xl">{music.title}</p>
-              <p className="text-gray-100 mb-6 text-sm">{music.description}</p>
-              
-              <div className="flex flex-col sm:flex-row justify-between mt-4">
-                <div className="flex space-x-4">
-                <button onClick={() => handleDownload(music)} className="transition-colors">
-                  <FontAwesomeIcon icon={faDownload} className="mr-2" />
-                </button>
-                  <button onClick={() => handleShare(music)} className="text-white p-2 transition-colors">
-                    <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
+
+              {/* Song Info */}
+             <div className="mb-2 flex-grow flex flex-col items-center">
+              <p className="text-gray-400 text-sm mb-1 text-center">{music.category}</p>
+              <h3 className="text-white text-md font-medium mb-1 break-words whitespace-normal text-center">{music.title}</h3>
+              <p className="text-gray-400 text-xs text-center">{music.description}</p>
+            </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-between ml-4 items-center mt-2">
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => handleDownload(music)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <FontAwesomeIcon icon={faDownload} />
+                  </button>
+                  <button 
+                    onClick={() => handleShare(music)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <FontAwesomeIcon icon={faShareAlt} />
                   </button>
                 </div>
-                {index === currentSongIndex ? (
-                    <audio
-                      controls
-                      controlsList="nodownload"
-                      ref={audioRef}
-                      className="w-full"
-                      autoPlay
-                    >
-                      <source src={music.music} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  ) : (
-                    <button onClick={() => handlePlaySong(index)}>
-                      <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                    </button>
-                  )}
-                
+                <button 
+                  onClick={() => handlePlaySong(index)}
+                  className="text-white bg-purple-600 mr-3 rounded-full p-2 w-8 h-8 flex items-center justify-center"
+                >
+                  <FontAwesomeIcon 
+                    icon={currentSongIndex === index && isPlaying ? faPause : faPlay} 
+                    className="text-xs"
+                  />
+                </button>
               </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-gray-400 text-center">No music found.</p>
-        )}
+
+              {/* Audio Player */}
+              {index === currentSongIndex && (
+                <div className="mt-3">
+                  <audio
+                    controls
+                    controlsList="nodownload"
+                    ref={audioRef}
+                    className="w-full h-8"
+                  >
+                    <source src={music.music} type="audio/mpeg" />
+                  </audio>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

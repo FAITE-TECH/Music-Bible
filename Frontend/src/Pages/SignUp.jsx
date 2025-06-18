@@ -92,19 +92,19 @@ export default function SignUp() {
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover z-0"
+                className="absolute inset-0 w-full h-full object-cover z-0 opacity-50"
             >
                 <source src={video} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
-            <div className="relative z-10 flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-20">
+            <div className="relative z-10 flex p-6 max-w-6xl mx-auto w-full flex-col md:flex-row md:items-center gap-12">
                 {/* Left: Logo and description */}
                 <motion.div
                     className="flex-1 text-center md:text-left"
-                    initial={{ opacity: 0, x: -100 }} // Initial position (hidden to the left)
-                    animate={{ opacity: 1, x: 0 }} // Animate to visible and its position
-                    transition={{ duration: 1 }} // Animation duration
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1 }}
                 >
                     <Link to="/" className="text-5xl font-bold text-white">
                         <img
@@ -123,19 +123,38 @@ export default function SignUp() {
 
                 {/* Right: Sign-up form */}
                 <div className="flex-1 mt-2">
-                    <p className="text-center text-2xl font-cinzel font-semibold text-white">Sign Up</p>
-                    <form className="grid grid-cols-2 md:grid-cols-2 gap-4 mt-5" onSubmit={handleSubmit}>
-                        <div>
+                    <p className="text-center text-2xl font-cinzel font-semibold text-white mb-8">Sign Up</p>
+                    <form className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+                        {/* Row 1 */}
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your username"/>
-                            <TextInput type="text" placeholder="Username" id="username" onChange={handleChange}/>
+                            <TextInput 
+                                type="text" 
+                                placeholder="Username" 
+                                id="username" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your email"/>
-                            <TextInput type="email" placeholder="name@company.com" id="email" onChange={handleChange}/>
+                            <TextInput 
+                                type="email" 
+                                placeholder="name@company.com" 
+                                id="email" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+
+                        {/* Row 2 */}
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your Country"/>
-                            <Select id="country" onChange={handleChange}>
+                            <Select 
+                                id="country" 
+                                onChange={handleChange}
+                                className="w-full"
+                            >
                                 <option value="">Select your country</option>
                                 {countryList.map((country) => (
                                     <option key={country} value={country}>
@@ -144,31 +163,77 @@ export default function SignUp() {
                                 ))}
                             </Select>
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your State"/>
-                            <TextInput type="text" placeholder="State" id="state" onChange={handleChange}/>
+                            <TextInput 
+                                type="text" 
+                                placeholder="State" 
+                                id="state" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+
+                        {/* Row 3 */}
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your City"/>
-                            <TextInput type="text" placeholder="City" id="city" onChange={handleChange}/>
+                            <TextInput 
+                                type="text" 
+                                placeholder="City" 
+                                id="city" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your Address"/>
-                            <TextInput type="text" placeholder="Address" id="address" onChange={handleChange}/>
+                            <TextInput 
+                                type="text" 
+                                placeholder="Address" 
+                                id="address" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+
+                        {/* Row 4 */}
+                        <div className="space-y-2">
                             <Label className="text-white" value="Postal Code"/>
-                            <TextInput type="text" placeholder="Postal Code" id="postalcode" onChange={handleChange}/>
+                            <TextInput 
+                                type="text" 
+                                placeholder="Postal Code" 
+                                id="postalcode" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label className="text-white" value="Your mobile"/>
-                            <TextInput type="tel" placeholder="Phone Number" id="mobile" onChange={handleChange}/>
+                            <TextInput 
+                                type="tel" 
+                                placeholder="Phone Number" 
+                                id="mobile" 
+                                onChange={handleChange}
+                                className="w-full"
+                            />
                         </div>
-                        <div className="md:col-span-2">
+
+                        {/* Row 5 - Full width */}
+                        <div className="md:col-span-2 space-y-2">
                             <Label className="text-white" value="Your password"/>
                             <div className="relative">
-                                <TextInput type={showPassword ? "text" : "password"} placeholder="password" id="password" onChange={handleChange}/>
-                                <button type="button" className="absolute top-2 right-3 focus:outline-none" onClick={togglePasswordVisibility}>
+                                <TextInput 
+                                    type={showPassword ? "text" : "password"} 
+                                    placeholder="password" 
+                                    id="password" 
+                                    onChange={handleChange}
+                                    className="w-full"
+                                />
+                                <button 
+                                    type="button" 
+                                    className="absolute top-2 right-3 focus:outline-none" 
+                                    onClick={togglePasswordVisibility}
+                                >
                                     {showPassword ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.5c5.185 0 9.448 4.014 9.95 9.048a.944.944 0 0 1 0 .904C21.448 16.486 17.185 20.5 12 20.5S2.552 16.486 2.05 13.452a.944.944 0 0 1 0-.904C2.552 8.514 6.815 4.5 12 4.5zM12 6a9 9 0 0 0-8.72 6.752.944.944 0 0 1 0 .496A9 9 0 0 0 12 18a9 9 0 0 0 8.72-4.752.944.944 0 0 1 0-.496A9 9 0 0 0 12 6z" />
@@ -183,8 +248,14 @@ export default function SignUp() {
                                 </button>
                             </div>
                         </div>
-                        <div className=" col-span-2 ">
-                            <Button disabled={loading} type="submit" className="bg-amber-600 w-full">
+
+                        {/* Submit Button */}
+                        <div className="md:col-span-2">
+                            <Button 
+                                disabled={loading} 
+                                type="submit" 
+                                className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] w-3/4 mx-auto py-1"
+                            >
                                 {loading ? (
                                     <>
                                         <Spinner size="sm"/>
@@ -193,11 +264,22 @@ export default function SignUp() {
                                 ) : 'Sign Up'}
                             </Button>
                         </div>
-                        <div className=" col-span-2 w-full">
+
+                        {/* Divider */}
+                        <div className="md:col-span-2 flex items-center w-full my-2">
+                            <div className="flex-grow h-px bg-gray-300"></div>
+                            <span className="px-4 text-gray-400 text-sm">or </span>
+                            <div className="flex-grow h-px bg-gray-300"></div>
+                        </div>
+
+                        {/* OAuth */}
+                        <div className="md:col-span-2 w-full flex justify-center">
                             <OAuthenticate/>
                         </div>
                     </form>
-                    <div className="flex gap-2 text-sm justify-center mt-4 text-white">
+
+                    {/* Sign In Link */}
+                    <div className="flex gap-2 text-sm justify-center mt-6 text-white">
                         <span>Already have an account?</span>
                         <Link to="/sign-in" className="font-medium text-blue-500 hover:underline">
                             Sign In
