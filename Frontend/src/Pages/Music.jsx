@@ -130,11 +130,11 @@ export default function Music() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {filteredMusicList.map((music, index) => (
           <motion.div
               key={music._id}
-              className={`p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white max-w-xs w-full h-80 flex flex-col justify-between mx-auto ${
+              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto ${
                 index === currentSongIndex ? 'border-2 border-purple-500 expanded-card' : ''
               }`}
               whileInView={{ opacity: 1, rotate: 0, translateY: 0 }}
@@ -142,24 +142,38 @@ export default function Music() {
             >
             <div className="flex flex-col justify-center h-full">
               {/* Album Art */}
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-1">
                 <img 
                   src={music.image || 'https://via.placeholder.com/150'} 
                   alt={music.title}
-                  className="w-32 h-32 object-cover rounded-md"
+                  className="w-20 h-20 object-cover rounded-md"
                 />
               </div>
 
               {/* Song Info */}
-             <div className="mb-2 flex-grow flex flex-col items-center">
-              <p className="text-gray-400 text-sm mb-1 text-center">{music.category}</p>
-              <h3 className="text-white text-md font-medium mb-1 break-words whitespace-normal text-center">{music.title}</h3>
+             <div className=" flex-grow flex flex-col items-center">
+              <p className="text-gray-400 text-xs mb-0.5 text-center">{music.category}</p>
+              <h3 className="text-white text-sm font-medium mb-0.5 break-words whitespace-normal text-center">{music.title}</h3>
               <p className="text-gray-400 text-xs text-center">{music.description}</p>
             </div>
 
+              {/* Audio Player */}
+              {index === currentSongIndex && (
+                <div className="mt-2 flex justify-center items-center">
+                  <audio
+                    controls
+                    controlsList="nodownload"
+                    ref={audioRef}
+                    className="w-full h-8 max-w-[140px] mx-auto"
+                  >
+                    <source src={music.music} type="audio/mpeg" />
+                  </audio>
+                </div>
+              )}
+
               {/* Action Buttons */}
-              <div className="flex justify-between ml-4 items-center mt-2">
-                <div className="flex space-x-3">
+              <div className="flex justify-between items-center">
+                <div className="flex space-x-2">
                   <button 
                     onClick={() => handleDownload(music)}
                     className="text-gray-400 hover:text-white"
@@ -175,7 +189,7 @@ export default function Music() {
                 </div>
                 <button 
                   onClick={() => handlePlaySong(index)}
-                  className="text-white bg-purple-600 mr-3 rounded-full p-2 w-8 h-8 flex items-center justify-center"
+                  className="text-white bg-purple-600 rounded-full p-1.5 w-7 h-7 flex items-center justify-center"
                 >
                   <FontAwesomeIcon 
                     icon={currentSongIndex === index && isPlaying ? faPause : faPlay} 
@@ -183,20 +197,6 @@ export default function Music() {
                   />
                 </button>
               </div>
-
-              {/* Audio Player */}
-              {index === currentSongIndex && (
-                <div className="mt-3">
-                  <audio
-                    controls
-                    controlsList="nodownload"
-                    ref={audioRef}
-                    className="w-full h-8"
-                  >
-                    <source src={music.music} type="audio/mpeg" />
-                  </audio>
-                </div>
-              )}
             </div>
           </motion.div>
         ))}

@@ -20,6 +20,7 @@ import ContactUs from './Pages/ContactUs'
 // import AboutUs from './Pages/AboutUs'
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute'
 import ChatAI from './Pages/ChatAI'
+import PayButton from './Components/PayButton'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/membership" element={<Membership/>}/>
         <Route path="/album" element={<Album/>} />
         <Route path="/contactus" element={<ContactUs/>}/>
+         <Route path="/pay" element={<PayButton/>}/>
         {/* <Route path="/aboutus" element={<AboutUs/>}/> */}
         <Route path="/bible/ai" element={<ChatAI/>}/>
         <Route path="/forgetPassword" element={<ForgetPassword/>}/>

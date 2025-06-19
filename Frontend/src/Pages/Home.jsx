@@ -76,7 +76,7 @@ export default function Home() {
     Your browser does not support the video tag.
   </video>
 
-  <div className="relative flex flex-col items-center justify-center  lg:mt-[-150px]">
+  <div className="relative flex flex-col items-center justify-center  lg:mt-[-10px]">
     {/* Logo */}
     <motion.img
       src={logo}
