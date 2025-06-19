@@ -155,7 +155,7 @@ const ChatAI = () => {
                 <div className="relative flex flex-1">
                   <input
                     type="text"
-                    className="px-4 py-2 w-full h-14 rounded-full shadow-2xl border border-gray-300 focus:outline-none shadow-gray-600 bg-transparent shadow-lg placeholder-gray-400"
+                    className="px-4 py-2 w-full h-14 text-black rounded-full border border-gray-300 focus:outline-none shadow-gray-600 bg-transparent shadow-lg placeholder-gray-400"
                     placeholder="How to be a good Christian?"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -209,13 +209,13 @@ const ChatAI = () => {
               {/* Answer Section */}
               <div className="w-full max-w-lg md:max-w-xl lg:max-w-2xl">
                 <p className="text-gray-500 w-full ml-4 text-sm md:text-base">Answer</p>
-                <div className="mt-2 p-4 bg-white border-t shadow-2xl relative h-screen flex flex-col justify-between shadow-black bg-gray-50 rounded-t-[50px]">
+                <div className="mt-2 p-4  border-t shadow-2xl relative h-screen flex flex-col justify-between shadow-black bg-gray-50 rounded-t-[50px]">
                   {loading ? (
                     <div className="type_loader_container ml-4">
                       <div className="typing_loader"></div>
                     </div>
                   ) : (
-                    <div className="ml-4">............</div>
+                    <div className="ml-4 text-black">............</div>
                   )}
                   
                   <div className="mt-2 text-gray-800 font-medium flex-grow break-words">
