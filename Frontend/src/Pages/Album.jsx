@@ -177,7 +177,6 @@ export default function Album() {
     setCurrentSongIndex(newIndex);
     setIsPlaying(true);
 
-    // Use a small timeout to ensure the audio element has updated its src
     setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.playbackRate = playbackRate;
@@ -266,7 +265,6 @@ export default function Album() {
     setCategory(e.target.value);
   };
 
-  // Seek backward 10 seconds
   const handleSeekBackward = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.max(
@@ -277,7 +275,6 @@ export default function Album() {
     }
   };
 
-  // Seek forward 10 seconds
   const handleSeekForward = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.min(
@@ -310,7 +307,12 @@ export default function Album() {
       className="min-h-screen bg-black text-white p-4 md:p-8"
     >
       {/* Album Selector */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <motion.div 
+        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">
           Music Album
         </h1>
@@ -319,24 +321,30 @@ export default function Album() {
           <label htmlFor="album-select" className="text-white md:mr-2">
             Select Album:
           </label>
-          <select
+          <motion.select
             id="album-select"
             value={category}
             onChange={handleCategoryChange}
             className="p-2 bg-white text-gray-500 rounded-lg w-full md:w-64"
+            whileHover={{ scale: 1.05 }}
           >
             {categories.map((album) => (
               <option key={album._id} value={album.albumName}>
                 {album.albumName}
               </option>
             ))}
-          </select>
+          </motion.select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Album Info */}
       <div className="flex flex-col md:flex-row gap-6 mb-8">
-        <div className="w-full md:w-1/4">
+        <motion.div 
+          className="w-full md:w-1/4"
+          initial={{ x: '-100vw' }} 
+          animate={{ x: 0 }} 
+          transition={{ type: 'spring', stiffness: 50, duration: 1.8 }}
+        >
           <img
             src={
               categories.find((cat) => cat.albumName === category)?.image ||
@@ -345,9 +353,14 @@ export default function Album() {
             alt={category}
             className="w-full h-auto object-cover rounded-lg shadow-lg"
           />
-        </div>
+        </motion.div>
 
-        <div className="w-full md:w-3/4 flex flex-col justify-center">
+        <motion.div 
+          className="w-full md:w-3/4 flex flex-col justify-center"
+          initial={{ x: '100vw' }} 
+          animate={{ x: 0 }} 
+          transition={{ type: 'spring', stiffness: 50, duration: 1.8 }}
+        >
           <h2 className="tamil-font text-2xl md:text-3xl font-bold mb-2 text-purple-300">
             {category}
           </h2>
@@ -359,27 +372,34 @@ export default function Album() {
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <button
+            <motion.button
               onClick={handleAlbumShare}
               className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.05 }}
             >
               <FontAwesomeIcon icon={faShareAlt} />
               <span>Share Album</span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               onClick={() => {}}
               className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.05 }}
             >
               <FontAwesomeIcon icon={faDownload} />
               <span>Download Album</span>
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Music List */}
-      <div className="space-y-4">
+      <motion.div 
+        className="space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
         <h3 className="text-xl font-semibold mb-4 text-purple-300">Songs</h3>
 
         {musicList.length === 0 && !loading && (
@@ -389,13 +409,16 @@ export default function Album() {
         )}
 
         {musicList.map((music, index) => (
-          <div
+          <motion.div
             key={music._id}
             className={`p-3 rounded-lg ${
               index === currentSongIndex
                 ? "bg-gray-900 border-l-4 border-blue-500"
                 : "bg-gray-800"
             }`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
           >
             <div className="flex flex-col sm:flex-row items-center gap-2">
               {/* Title/Description */}
@@ -412,47 +435,52 @@ export default function Album() {
 
               {/* Player Controls */}
               <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4">
-                <button
+                <motion.button
                   onClick={handlePrevious}
                   className="text-gray-400 hover:text-white p-1 sm:p-2"
                   title="Previous Track"
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon icon={faStepBackward} />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={handleSeekBackward}
                   className="text-gray-400 hover:text-white p-1 sm:p-2"
                   title="Seek Backward 10s"
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon icon={faBackward} />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => handlePlaySong(index)}
                   className="text-white bg-blue-600 rounded-full p-2 w-8 h-8 flex items-center justify-center"
                   title={
                     currentSongIndex === index && isPlaying ? "Pause" : "Play"
                   }
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon
                     icon={
                       currentSongIndex === index && isPlaying ? faPause : faPlay
                     }
                   />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={handleSeekForward}
                   className="text-gray-400 hover:text-white p-1 sm:p-2"
                   title="Seek Forward 10s"
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon icon={faForward} />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={handleNext}
                   className="text-gray-400 hover:text-white p-1 sm:p-2"
                   title="Next Track"
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon icon={faStepForward} />
-                </button>
+                </motion.button>
                 <span className="text-xs text-gray-400 w-8 text-right shrink-0">
                   {formatTime(index === currentSongIndex ? currentTime : 0)}
                 </span>
@@ -480,25 +508,27 @@ export default function Album() {
                 </span>
 
                 {/* Shuffle Button */}
-                <button
+                <motion.button
                   onClick={handleShuffle}
                   className={`p-1 sm:p-2 ${
                     shuffle ? "text-purple-400" : "text-gray-400"
                   } hover:text-white`}
                   title={shuffle ? "Disable shuffle" : "Enable shuffle"}
+                  whileHover={{ scale: 1.1 }}
                 >
                   <FontAwesomeIcon icon={faRandom} />
-                </button>
+                </motion.button>
 
                 {/* Playback Rate Dropdown */}
                 <div className="relative">
-                  <button
+                  <motion.button
                     onClick={() => togglePlaybackRateMenu(index)}
                     className="text-gray-400 hover:text-white p-1 sm:p-2"
                     title="Playback speed"
+                    whileHover={{ scale: 1.1 }}
                   >
                     <FontAwesomeIcon icon={faEllipsisH} />
-                  </button>
+                  </motion.button>
 
                   {openPlaybackRateIndex === index && (
                     <motion.div
@@ -529,14 +559,15 @@ export default function Album() {
 
                 {/* Volume Control */}
                 <div className="relative group flex items-center">
-                  <button
+                  <motion.button
                     onClick={toggleMute}
                     className="text-gray-400 hover:text-white"
+                    whileHover={{ scale: 1.1 }}
                   >
                     <FontAwesomeIcon
                       icon={isMuted ? faVolumeMute : faVolumeUp}
                     />
-                  </button>
+                  </motion.button>
                   <input
                     type="range"
                     min="0"
@@ -552,25 +583,27 @@ export default function Album() {
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2 w-full sm:w-1/4 justify-end mt-2 sm:mt-0">
-                <button
+                <motion.button
                   onClick={() => handleDownload(music)}
                   className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
                 >
                   <FontAwesomeIcon icon={faDownload} size="xs" />
                   <span className="hidden sm:inline">Download</span>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => handleShare(music)}
                   className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
                 >
                   <FontAwesomeIcon icon={faShareAlt} size="xs" />
                   <span className="hidden sm:inline">Share</span>
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Hidden audio element */}
       <audio

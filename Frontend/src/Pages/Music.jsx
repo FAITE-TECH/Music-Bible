@@ -117,7 +117,7 @@ export default function Music() {
         <div className="relative w-full max-w-md">
           <input
             type="text"
-            className="w-full p-3 pl-10 rounded-lg bg-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 pl-10 rounded-lg bg-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Search songs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -134,8 +134,8 @@ export default function Music() {
         {filteredMusicList.map((music, index) => (
           <motion.div
               key={music._id}
-              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-purple-950 to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto ${
-                index === currentSongIndex ? 'border-2 border-purple-500 expanded-card' : ''
+              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-[#0093FF] to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto ${
+                index === currentSongIndex ? 'border-2 border-blue-500 expanded-card' : ''
               }`}
               whileInView={{ opacity: 1, rotate: 0, translateY: 0 }}
               transition={{ duration: 0.5 }}
@@ -153,7 +153,7 @@ export default function Music() {
               {/* Song Info */}
              <div className=" flex-grow flex flex-col items-center">
               <p className="text-gray-400 text-xs mb-0.5 text-center">{music.category}</p>
-              <h3 className="text-white text-sm font-medium mb-0.5 break-words whitespace-normal text-center">{music.title}</h3>
+              <h3 className="text-white text-xs font-medium mb-0.5 break-words whitespace-normal text-center">{music.title}</h3>
               <p className="text-gray-400 text-xs text-center">{music.description}</p>
             </div>
 
@@ -176,20 +176,20 @@ export default function Music() {
                 <div className="flex space-x-2">
                   <button 
                     onClick={() => handleDownload(music)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-[#0119FF]"
                   >
                     <FontAwesomeIcon icon={faDownload} />
                   </button>
                   <button 
                     onClick={() => handleShare(music)}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-[#0119FF]"
                   >
                     <FontAwesomeIcon icon={faShareAlt} />
                   </button>
                 </div>
                 <button 
                   onClick={() => handlePlaySong(index)}
-                  className="text-white bg-purple-600 rounded-full p-1.5 w-7 h-7 flex items-center justify-center"
+                  className="text-white bg-blue-600 rounded-full p-1.5 w-7 h-7 flex items-center justify-center"
                 >
                   <FontAwesomeIcon 
                     icon={currentSongIndex === index && isPlaying ? faPause : faPlay} 
