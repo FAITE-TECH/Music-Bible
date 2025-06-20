@@ -16,10 +16,13 @@ import {
   faForward,
   faEllipsisH,
   faRandom,
+  faHeart as faHeartSolid,
+  faHeart as faHeartOutline,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
 export default function Album() {
+  const [favorites, setFavorites] = useState([]);
   const [musicList, setMusicList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,10 +36,26 @@ export default function Album() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [volume, setVolume] = useState(0.7);
-  const [isMuted, setIsMuted] = useState(false);
+  const [volumes, setVolumes] = useState({});
+  const [mutedTracks, setMutedTracks] = useState({});
   const [openPlaybackRateIndex, setOpenPlaybackRateIndex] = useState(null);
   const [shuffle, setShuffle] = useState(false);
+  const [hoveredVolumeIndex, setHoveredVolumeIndex] = useState(null);
+  const [showFavoritesForAlbum, setShowFavoritesForAlbum] = useState(null);
+
+  // Initialize volumes when musicList changes
+  useEffect(() => {
+    if (musicList.length > 0) {
+      const initialVolumes = {};
+      const initialMuted = {};
+      musicList.forEach((_, index) => {
+        initialVolumes[index] = 0.7;
+        initialMuted[index] = false;
+      });
+      setVolumes(initialVolumes);
+      setMutedTracks(initialMuted);
+    }
+  }, [musicList]);
 
   const togglePlaybackRateMenu = (index) => {
     setOpenPlaybackRateIndex(openPlaybackRateIndex === index ? null : index);
@@ -44,7 +63,61 @@ export default function Album() {
 
   const handleShuffle = () => {
     setShuffle(!shuffle);
-    console.log(shuffle ? "Shuffle turned off" : "Shuffle turned on");
+  };
+
+  const toggleShowFavorites = () => {
+    if (showFavoritesForAlbum === category) {
+      setShowFavoritesForAlbum(null);
+    } else {
+      setShowFavoritesForAlbum(category);
+    }
+  };
+
+  const toggleFavorite = async (musicId) => {
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+
+      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (!res.ok)
+        throw new Error(data.message || "Failed to update favorites");
+
+      setFavorites(data.favorites.map((fav) => fav._id));
+    } catch (error) {
+      console.error("Favorite error:", error);
+    }
+  };
+
+  const handleVolumeChange = (index, newVolume) => {
+    const updatedVolumes = { ...volumes, [index]: newVolume };
+    setVolumes(updatedVolumes);
+
+    if (index === currentSongIndex && audioRef.current) {
+      audioRef.current.volume = newVolume;
+      audioRef.current.muted = newVolume === 0;
+    }
+
+    if (newVolume === 0) {
+      setMutedTracks((prev) => ({ ...prev, [index]: true }));
+    } else if (mutedTracks[index]) {
+      setMutedTracks((prev) => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const toggleMute = (index) => {
+    const newMutedState = !mutedTracks[index];
+    setMutedTracks((prev) => ({ ...prev, [index]: newMutedState }));
+
+    if (index === currentSongIndex && audioRef.current) {
+      audioRef.current.muted = newMutedState;
+    }
   };
 
   useEffect(() => {
@@ -64,6 +137,22 @@ export default function Album() {
   }, []);
 
   useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!currentUser) return;
+      try {
+        const res = await fetch("/api/favorites", { credentials: "include" });
+        const data = await res.json();
+        if (res.ok) {
+          setFavorites(data.favorites.map((fav) => fav._id));
+        }
+      } catch (error) {
+        console.error("Failed to fetch favorites:", error);
+      }
+    };
+    fetchFavorites();
+  }, [currentUser]);
+
+  useEffect(() => {
     const fetchMusicByCategory = async () => {
       if (!category) return;
       try {
@@ -74,6 +163,8 @@ export default function Album() {
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
         setMusicList(data.music);
+        // Reset favorites filter when changing albums
+        setShowFavoritesForAlbum(null);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -93,7 +184,7 @@ export default function Album() {
     };
 
     const handleEnded = () => {
-      handleNext(); // Automatically go to next song when current ends
+      handleNext();
     };
 
     audio.addEventListener("timeupdate", updateTime);
@@ -105,7 +196,7 @@ export default function Album() {
       audio.removeEventListener("loadedmetadata", updateTime);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [currentSongIndex, musicList, shuffle]); // Add dependencies
+  }, [currentSongIndex, musicList, shuffle]);
 
   const handlePlaySong = (index) => {
     if (currentSongIndex === index) {
@@ -122,6 +213,8 @@ export default function Album() {
       setIsPlaying(true);
       setTimeout(() => {
         if (audioRef.current) {
+          audioRef.current.volume = volumes[index] || 0.7;
+          audioRef.current.muted = mutedTracks[index] || false;
           audioRef.current.playbackRate = playbackRate;
           audioRef.current
             .play()
@@ -136,12 +229,10 @@ export default function Album() {
 
     let newIndex;
     if (shuffle) {
-      // Shuffle logic - get a random index different from current
       do {
         newIndex = Math.floor(Math.random() * musicList.length);
       } while (newIndex === currentSongIndex && musicList.length > 1);
     } else {
-      // Normal sequential play
       newIndex =
         currentSongIndex === 0 ? musicList.length - 1 : currentSongIndex - 1;
     }
@@ -151,6 +242,8 @@ export default function Album() {
 
     setTimeout(() => {
       if (audioRef.current) {
+        audioRef.current.volume = volumes[newIndex] || 0.7;
+        audioRef.current.muted = mutedTracks[newIndex] || false;
         audioRef.current.playbackRate = playbackRate;
         audioRef.current
           .play()
@@ -164,12 +257,10 @@ export default function Album() {
 
     let newIndex;
     if (shuffle) {
-      // Shuffle logic - get a random index different from current
       do {
         newIndex = Math.floor(Math.random() * musicList.length);
       } while (newIndex === currentSongIndex && musicList.length > 1);
     } else {
-      // Normal sequential play
       newIndex =
         currentSongIndex === musicList.length - 1 ? 0 : currentSongIndex + 1;
     }
@@ -179,6 +270,8 @@ export default function Album() {
 
     setTimeout(() => {
       if (audioRef.current) {
+        audioRef.current.volume = volumes[newIndex] || 0.7;
+        audioRef.current.muted = mutedTracks[newIndex] || false;
         audioRef.current.playbackRate = playbackRate;
         audioRef.current
           .play()
@@ -191,27 +284,6 @@ export default function Album() {
     const seekTime = parseFloat(e.target.value);
     audioRef.current.currentTime = seekTime;
     setCurrentTime(seekTime);
-  };
-
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    audioRef.current.volume = newVolume;
-    if (newVolume === 0) {
-      setIsMuted(true);
-    } else {
-      setIsMuted(false);
-    }
-  };
-
-  const toggleMute = () => {
-    if (isMuted) {
-      audioRef.current.volume = volume;
-      setIsMuted(false);
-    } else {
-      audioRef.current.volume = 0;
-      setIsMuted(true);
-    }
   };
 
   const handlePlaybackRateChange = (rate, index) => {
@@ -285,6 +357,12 @@ export default function Album() {
     }
   };
 
+  // Filter music list based on current album and favorite status
+  const filteredMusicList =
+    showFavoritesForAlbum === category
+      ? musicList.filter((music) => favorites.includes(music._id))
+      : musicList;
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen bg-black">
@@ -306,8 +384,7 @@ export default function Album() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-black text-white p-4 md:p-8"
     >
-      {/* Album Selector */}
-      <motion.div 
+      <motion.div
         className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -337,13 +414,12 @@ export default function Album() {
         </div>
       </motion.div>
 
-      {/* Album Info */}
       <div className="flex flex-col md:flex-row gap-6 mb-8">
-        <motion.div 
+        <motion.div
           className="w-full md:w-1/4"
-          initial={{ x: '-100vw' }} 
-          animate={{ x: 0 }} 
-          transition={{ type: 'spring', stiffness: 50, duration: 1.8 }}
+          initial={{ x: "-100vw" }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 50, duration: 1.8 }}
         >
           <img
             src={
@@ -355,11 +431,11 @@ export default function Album() {
           />
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="w-full md:w-3/4 flex flex-col justify-center"
-          initial={{ x: '100vw' }} 
-          animate={{ x: 0 }} 
-          transition={{ type: 'spring', stiffness: 50, duration: 1.8 }}
+          initial={{ x: "100vw" }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 50, duration: 1.8 }}
         >
           <h2 className="tamil-font text-2xl md:text-3xl font-bold mb-2 text-purple-300">
             {category}
@@ -393,22 +469,35 @@ export default function Album() {
         </motion.div>
       </div>
 
-      {/* Music List */}
-      <motion.div 
+      <motion.div
         className="space-y-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <h3 className="text-xl font-semibold mb-4 text-purple-300">Songs</h3>
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-purple-300">Songs</h3>
+          <button
+            onClick={toggleShowFavorites}
+            className={`px-3 py-1 rounded-full text-sm ${
+              showFavoritesForAlbum === category
+                ? "bg-blue-600 text-white"
+                : "bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white"
+            }`}
+          >
+            {showFavoritesForAlbum === category ? "Show All" : "Show Favorites"}
+          </button>
+        </div>
 
-        {musicList.length === 0 && !loading && (
+        {filteredMusicList.length === 0 && !loading && (
           <div className="text-center py-8 text-gray-400">
-            No songs found in this album
+            {showFavoritesForAlbum === category
+              ? "No favorite songs in this album"
+              : "No songs found in this album"}
           </div>
         )}
 
-        {musicList.map((music, index) => (
+        {filteredMusicList.map((music, index) => (
           <motion.div
             key={music._id}
             className={`p-3 rounded-lg ${
@@ -421,7 +510,6 @@ export default function Album() {
             transition={{ delay: index * 0.1 }}
           >
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              {/* Title/Description */}
               <div className="flex flex-col w-full sm:w-1/4 max-w-xs text-center sm:text-left">
                 <span className="tamil-font text-base sm:text-lg text-white truncate">
                   {music.title}
@@ -433,7 +521,6 @@ export default function Album() {
                 )}
               </div>
 
-              {/* Player Controls */}
               <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4">
                 <motion.button
                   onClick={handlePrevious}
@@ -490,7 +577,7 @@ export default function Album() {
                   max={index === currentSongIndex ? duration || 100 : 0}
                   value={index === currentSongIndex ? currentTime : 0}
                   onChange={handleSeek}
-                  className="flex-1 h-1.5 bg-gray-600 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px]"
+                  className="flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px]"
                   style={{
                     background: `linear-gradient(to right, #8b5cf6 ${
                       ((index === currentSongIndex ? currentTime : 0) /
@@ -507,7 +594,6 @@ export default function Album() {
                   {formatTime(index === currentSongIndex ? duration : 0)}
                 </span>
 
-                {/* Shuffle Button */}
                 <motion.button
                   onClick={handleShuffle}
                   className={`p-1 sm:p-2 ${
@@ -519,7 +605,6 @@ export default function Album() {
                   <FontAwesomeIcon icon={faRandom} />
                 </motion.button>
 
-                {/* Playback Rate Dropdown */}
                 <div className="relative">
                   <motion.button
                     onClick={() => togglePlaybackRateMenu(index)}
@@ -557,32 +642,92 @@ export default function Album() {
                   )}
                 </div>
 
-                {/* Volume Control */}
-                <div className="relative group flex items-center">
+                <div className="relative flex items-center group">
+                  {/* Volume Icon Button */}
                   <motion.button
-                    onClick={toggleMute}
+                    onClick={() => toggleMute(index)}
                     className="text-gray-400 hover:text-white"
                     whileHover={{ scale: 1.1 }}
+                    onMouseEnter={() => setHoveredVolumeIndex(index)}
+                    onTouchStart={() => setHoveredVolumeIndex(index)}
                   >
                     <FontAwesomeIcon
-                      icon={isMuted ? faVolumeMute : faVolumeUp}
+                      icon={mutedTracks[index] ? faVolumeMute : faVolumeUp}
                     />
                   </motion.button>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    className="w-14 h-1.5 bg-gray-600 rounded-lg appearance-none cursor-pointer absolute left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                    style={{ width: "56px" }}
-                  />
+
+                  {/* Responsive Volume Slider */}
+                  {hoveredVolumeIndex === index && (
+                    <motion.div
+                      initial={{ opacity: 0, scaleX: 0.5 }}
+                      animate={{ opacity: 1, scaleX: 1 }}
+                      exit={{ opacity: 0, scaleX: 0.5 }}
+                      className={`
+        absolute left-full ml-2 flex items-center
+        ${window.innerWidth < 640 ? "bottom-full mb-2" : ""}
+      `}
+                      onMouseLeave={() => setHoveredVolumeIndex(null)}
+                      onTouchEnd={() => setHoveredVolumeIndex(null)}
+                      style={{
+                        width: "100px",
+                        zIndex: 10,
+                      }}
+                    >
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={mutedTracks[index] ? 0 : volumes[index] || 0.7}
+                        onChange={(e) => {
+                          const newVolume = parseFloat(e.target.value);
+                          handleVolumeChange(index, newVolume);
+                          if (newVolume > 0 && mutedTracks[index]) {
+                            setMutedTracks((prev) => ({
+                              ...prev,
+                              [index]: false,
+                            }));
+                          }
+                        }}
+                        className="w-3/4 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #8b5cf6 ${
+                            (mutedTracks[index] ? 0 : volumes[index] || 0.7) *
+                            100
+                          }%, #4b5563 ${
+                            (mutedTracks[index] ? 0 : volumes[index] || 0.7) *
+                            100
+                          }%)`,
+                          outline: "none",
+                        }}
+                      />
+                    </motion.div>
+                  )}
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-2 w-full sm:w-1/4 justify-end mt-2 sm:mt-0">
+                <motion.button
+                  onClick={() => toggleFavorite(music._id)}
+                  className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                    favorites.includes(music._id)
+                      ? "text-red-800 bg-red-500 bg-opacity-20"
+                      : "text-gray-200 bg-gray-700"
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                >
+                  <FontAwesomeIcon
+                    icon={
+                      favorites.includes(music._id)
+                        ? faHeartSolid
+                        : faHeartOutline
+                    }
+                    size="xs"
+                  />
+                </motion.button>
+
                 <motion.button
                   onClick={() => handleDownload(music)}
                   className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
@@ -605,7 +750,6 @@ export default function Album() {
         ))}
       </motion.div>
 
-      {/* Hidden audio element */}
       <audio
         ref={audioRef}
         src={
