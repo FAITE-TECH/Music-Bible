@@ -4,11 +4,14 @@ import cir1 from "../assets/Logo/cir1.png";
 import cir2 from "../assets/Logo/cir2.png";
 import cir3 from "../assets/Logo/cir3.png";
 import cir4 from "../assets/Logo/cir4.png";
+import cir5 from "../assets/Logo/cir5.png";
+import cir6 from "../assets/Logo/cir6.png";
+import cir7 from "../assets/Logo/cir7.png";
 
 export default function ScrollSection() {
   const [currentImage, setCurrentImage] = useState(0);
   const [isInSection, setIsInSection] = useState(false);
-  const images = [cir1, cir2, cir3, cir4];
+  const images = [cir1, cir2, cir3, cir4, cir5, cir6, cir7];
 
   const sectionRef = useRef(null);
 

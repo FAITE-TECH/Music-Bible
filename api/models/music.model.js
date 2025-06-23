@@ -48,7 +48,15 @@ const musicSchema = new mongoose.Schema(
     music: {
       type: String, // Storing the file path or URL
       required: true,
-    }
+    },
+    favoriteCount: {
+      type: Number,
+      default: 0
+    },
+    favoritedBy: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }]
   },
   { timestamps: true }
 );

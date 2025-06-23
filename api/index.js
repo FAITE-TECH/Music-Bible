@@ -13,6 +13,7 @@ import categoryRoute from "./routes/category.route.js";
 import stripe from "./routes/stripe.route.js";
 import membership from "./routes/membership.route.js";
 import contactRoutes from "./routes/contact.route.js";
+import favoriteRoute from './routes/favorite.route.js';
 import ai from "./routes/ai.route.js";
 
 dotenv.config();
@@ -66,6 +67,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/stripe", stripe);
 app.use("/api/membership", membership);
 app.use("/api/contact", contactRoutes);
+app.use('/api/favorites', favoriteRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Backend is running successfully!" });

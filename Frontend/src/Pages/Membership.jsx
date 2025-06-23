@@ -86,7 +86,7 @@ export default function MembershipForm() {
         animate="visible"
         className="bg-black bg-opacity-80 p-8 rounded-xl shadow-lg max-w-md w-full"
       >
-        <h2 className="text-3xl font-bold text-center text-white mb-6">Join the Music Club</h2>
+        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent mb-6">Join the Music Club</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Name */}
           <input
@@ -164,7 +164,7 @@ export default function MembershipForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-lg p-3 hover:scale-105 transition-transform"
+            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  text-white rounded-lg p-3 hover:scale-105 transition-transform"
           >
             Submit Membership
           </button>

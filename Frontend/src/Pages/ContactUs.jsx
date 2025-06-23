@@ -47,9 +47,9 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen flex flex-col justify-center items-center py-10 px-4">
+    <div className="bg-black text-white min-h-screen flex flex-col justify-center items-center py-10 px-4">
       <div className="container mx-auto text-center mb-12" data-aos="fade-down">
-        <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 text-indigo-400" data-aos="zoom-in">
+        <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent" data-aos="zoom-in">
           Get in Touch
         </h1>
         <p className="text-base lg:text-lg leading-relaxed max-w-2xl mx-auto" data-aos="fade-up">
@@ -60,7 +60,7 @@ export default function ContactUs() {
       <div className="container mx-auto flex flex-col lg:flex-row items-center justify-center space-y-10 lg:space-y-0 lg:space-x-12 px-6">
         {/* Left: Contact Information */}
         <div className="lg:w-1/3 w-full" data-aos="fade-right">
-          <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-indigo-400">Contact Information</h2>
+          <h2 className="text-2xl lg:text-3xl font-bold mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">Contact Information</h2>
           <p className="text-sm lg:text-lg mb-4" data-aos="fade-up">
             <i className="fas fa-envelope mr-2 text-indigo-400"></i> Email: support@amusicbible.com
           </p>
@@ -123,12 +123,14 @@ export default function ContactUs() {
                 data-aos-delay="200"
               ></textarea>
             </div>
+            <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-lg p-3 hover:scale-105 transition-transform"
+              className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  text-white rounded-lg w-3/4 mx-auto  p-3 hover:scale-105 transition-transform"
             >
               Send Message
             </button>
+            </div>
           </form>
           {formStatus && <p className="mt-4">{formStatus}</p>}
         </div>
