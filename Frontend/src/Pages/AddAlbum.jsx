@@ -52,9 +52,17 @@ export default function AddAlbum() {
     },
   };
 
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+
   const handleFileChange = (file, type) => {
     setFile({ ...file, [type]: file });
   };
+
 
   const handleUploadFile = (file, type) => {
     if (!file) {
@@ -91,6 +99,24 @@ export default function AddAlbum() {
           setUploadProgress({ ...uploadProgress, [type]: null });
           setUploadError({ ...uploadError, [type]: null });
           setFormData({ ...formData, [type]: downloadURL });
+
+        setFormData({ ...formData, [type]: data.fileUrl });
+      } catch (error) {
+        setUploadError({ ...uploadError, [type]: "Upload error" });
+      }
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch("/api/category/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(formData),
+
         });
       }
     );
@@ -159,6 +185,7 @@ export default function AddAlbum() {
           </motion.div>
         </Link>
       </motion.div>
+
 
       {/* Main Content */}
       <motion.h1
@@ -230,6 +257,7 @@ export default function AddAlbum() {
               )}
             </Button>
           </div>
+
 
           {uploadError.image && (
             <Alert color="failure" className="w-full">
