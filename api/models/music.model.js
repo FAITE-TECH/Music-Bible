@@ -33,6 +33,10 @@ const musicSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      default: function() {
+        // Default function that will be overridden by pre-save if title exists
+        return 'temp-slug-' + Math.random().toString(36).substring(2, 8);
+      }
     },
 
    /* price: {
@@ -58,8 +62,43 @@ const musicSchema = new mongoose.Schema(
       ref: 'User'
     }]
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    collation: { locale: 'en', strength: 2 }
+  }
 );
+
+// handle slug generation
+musicSchema.pre('save', async function(next) {
+  // Only generate slug if title is modified or document is new
+  if (this.isModified('title') || this.isNew) {
+    try {
+      let slug = this.title
+        .split(' ')
+        .join('-')
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9-]/g, '');
+      
+      // If slug is empty after processing
+      if (!slug) {
+        slug = 'music-' + Math.random().toString(36).substring(2, 8);
+      }
+      
+      // Check for existing documents with same slug
+      let counter = 1;
+      const originalSlug = slug;
+      while (await this.constructor.findOne({ slug, _id: { $ne: this._id } })) {
+        slug = `${originalSlug}-${counter}`;
+        counter++;
+      }
+      
+      this.slug = slug;
+    } catch (err) {
+      return next(err);
+    }
+  }
+  next();
+});
 
 const Music = mongoose.model('Music', musicSchema);
 

@@ -32,7 +32,7 @@ export default function ForgetPassword() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://amusicbible.com/api/user/forgetpassword",
+        "/api/user/forgetpassword",
         {
           method: "POST",
           headers: {
