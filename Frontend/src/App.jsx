@@ -21,6 +21,7 @@ import ContactUs from './Pages/ContactUs'
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute'
 import ChatAI from './Pages/ChatAI'
 import PayButton from './Components/PayButton'
+import UpdateAlbum from './Pages/UpdateAlbum'
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/addmusic" element={<AddMusic/>}/>
           <Route path="/addalbum" element={<AddAlbum/>}/>
           <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
+          <Route path="/update-album/:albumId" element={<UpdateAlbum/>}/>
         <Route/>
       </Routes>
     </BrowserRouter>

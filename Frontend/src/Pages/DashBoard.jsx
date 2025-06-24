@@ -6,6 +6,7 @@ import DashUsers from "../Components/DashUsers";
 import DashMusic from "../Components/DashMusic";
 import DashMembership from "../Components/DashMembership";
 import DashContactUs from "../Components/DashContactUs";
+import DashAlbums from "../Components/DashAlbums";
 
 
 
@@ -35,6 +36,7 @@ export default function DashBoard() {
       {tab === 'music' && <DashMusic/>}
       {tab === 'membership' && <DashMembership/>}
       {tab === 'contact' && <DashContactUs/>}
+      {tab === 'albums' && <DashAlbums/>}
      
 
    

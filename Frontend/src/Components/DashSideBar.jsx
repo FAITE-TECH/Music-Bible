@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser} from 'react-icons/hi';
+import { HiArchive, HiArrowSmRight, HiBookOpen, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser} from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
@@ -72,6 +72,16 @@ export default function DashSideBar() {
                 </Sidebar.Item>
               </Link>
 
+               <Link to='/dashboard?tab=albums' key="albums">
+                <Sidebar.Item
+                  active={tab === 'albums'}
+                  icon={HiBookOpen}
+                  as='div'
+                >
+                  Music Albums
+                </Sidebar.Item>
+              </Link>
+
               <Link to='/dashboard?tab=contact' key="contact">
                 <Sidebar.Item
                   active={tab === 'contact'}
@@ -91,6 +101,8 @@ export default function DashSideBar() {
                   Membership Req
                 </Sidebar.Item>
               </Link>
+
+             
 
               
              

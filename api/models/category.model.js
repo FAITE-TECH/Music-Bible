@@ -2,10 +2,7 @@ import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
-    userId: {
-      type: String,
-    },
-
+    
     albumName: {
       type: String,
       required: true,
