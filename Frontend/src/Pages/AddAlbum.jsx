@@ -27,7 +27,7 @@ export default function AddAlbum() {
       formData.append("file", file[type]);
 
       try {
-        const res = await fetch("https://api.amusicbible.com/api/upload", {
+        const res = await fetch("/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -47,7 +47,7 @@ export default function AddAlbum() {
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-        const res = await fetch("https://api.musicbible.com/api/category/create", {
+        const res = await fetch("/api/category/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -94,15 +94,7 @@ export default function AddAlbum() {
           {uploadError.image && <Alert color='failure'>{uploadError.image}</Alert>}
           {formData.image && <img src={formData.image} alt="Uploaded" className="w-full h-80 object-cover" />}
 
-          {/* Music Upload */}
-          <div className='flex gap-4 items-center border-4 border-teal-500 border-dotted p-3'>
-            <FileInput type='file' accept='audio/mp3' onChange={(e) => handleFileChange(e, 'music')} />
-            <Button onClick={() => handleUploadFile('music')} type='button' disabled={uploadProgress.music}>
-              {uploadProgress.music ? (
-                <CircularProgressbar value={uploadProgress.music} text={`${uploadProgress.music}%`} />
-              ) : ('Upload Music')}
-            </Button>
-          </div>
+          
 
           {uploadError.music && <Alert color='failure'>{uploadError.music}</Alert>}
 

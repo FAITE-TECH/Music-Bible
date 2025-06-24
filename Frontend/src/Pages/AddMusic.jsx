@@ -80,7 +80,7 @@ export default function AddMusic() {
     console.log('Form Data:', formData); 
   
     try {
-      const res = await fetch('https://amusicbible.com/api/music/create', {
+      const res = await fetch('/api/music/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
