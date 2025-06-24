@@ -16,7 +16,7 @@ export default function ResetPassword() {
   const userValid = async () => {
     try {
       const res = await fetch(
-        `https://amusicbible.com/api/user/resetpassword/${id}`,
+        `/api/user/resetpassword/${id}`,
         {
           method: "GET",
           headers: {
@@ -71,7 +71,7 @@ export default function ResetPassword() {
 
     try {
       const res = await fetch(
-        `https://amusicbible.com/api/user/updateResetPassword/${id}`,
+        `/api/user/updateResetPassword/${id}`,
         {
           method: "POST",
           headers: {

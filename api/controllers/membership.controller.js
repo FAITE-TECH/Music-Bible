@@ -48,39 +48,61 @@ export const createMembership = async (req, res, next) => {
 
 export const getAllMembership = async (req, res, next) => {
     try {
-      const { searchTerm = '' } = req.query;
-      const query = searchTerm ? { name: { $regex: searchTerm, $options: 'i' } } : {};
-  
-     
-      const totalMembership = await Membership.countDocuments(query);
-  
-   
-      const firstDayLastMonth = new Date();
-      firstDayLastMonth.setDate(1);
-      firstDayLastMonth.setMonth(firstDayLastMonth.getMonth() - 1);
-      firstDayLastMonth.setHours(0, 0, 0, 0);
-      
-      const lastDayLastMonth = new Date();
-      lastDayLastMonth.setDate(0); 
-      lastDayLastMonth.setHours(23, 59, 59, 999);
-  
-      
-      const lastMonthMembership = await Membership.countDocuments({
-        ...query,
-        updatedAt: { $gte: firstDayLastMonth, $lte: lastDayLastMonth }
-      });
-  
-      const membership = await Membership.find(query);
-  
-      res.status(200).json({
-        membership,
-        totalMembership,
-        lastMonthMembership,
-      });
+        const { searchTerm = '', page = 1, limit = 10 } = req.query;
+        const pageNumber = parseInt(page);
+        const limitNumber = parseInt(limit);
+        
+        // Validate pagination parameters
+        if (isNaN(pageNumber)) return next(errorHandler(400, 'Invalid page number'));
+        if (isNaN(limitNumber)) return next(errorHandler(400, 'Invalid limit value'));
+
+        const query = searchTerm 
+            ? { 
+                $or: [
+                    { name: { $regex: searchTerm, $options: 'i' } },
+                    { email: { $regex: searchTerm, $options: 'i' } },
+                    { country: { $regex: searchTerm, $options: 'i' } }
+                ]
+              } 
+            : {};
+
+        // Get total count
+        const totalMembership = await Membership.countDocuments(query);
+
+        // Calculate last month's memberships
+        const firstDayLastMonth = new Date();
+        firstDayLastMonth.setDate(1);
+        firstDayLastMonth.setMonth(firstDayLastMonth.getMonth() - 1);
+        firstDayLastMonth.setHours(0, 0, 0, 0);
+        
+        const lastDayLastMonth = new Date();
+        lastDayLastMonth.setDate(0);
+        lastDayLastMonth.setHours(23, 59, 59, 999);
+
+        const lastMonthMembership = await Membership.countDocuments({
+            ...query,
+            updatedAt: { $gte: firstDayLastMonth, $lte: lastDayLastMonth }
+        });
+
+        // Get paginated results
+        const memberships = await Membership.find(query)
+            .sort({ createdAt: -1 })
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+
+        res.status(200).json({
+            success: true,
+            membership: memberships,
+            totalMembership,
+            lastMonthMembership,
+            totalPages: Math.ceil(totalMembership / limitNumber),
+            currentPage: pageNumber,
+        });
     } catch (error) {
-      next(error);
+        next(error);
     }
-  };
+};
+
 
   // In membership.controller.js
   export const acceptMembership = async (req, res, next) => {

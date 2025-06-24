@@ -20,7 +20,7 @@ export default function Music() {
 
   const fetchMusic = async () => {
     try {
-      const response = await fetch(`/api/music/music`);
+      const response = await fetch(`/api/music/music?limit=0`);
       const data = await response.json();
       setMusicList(data.music || []);
       setFilteredMusicList(data.music || []);

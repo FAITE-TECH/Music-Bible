@@ -57,7 +57,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ success: false, message: "No file uploaded" });
   }
-  res.json({ success: true, fileUrl: `https://api.amusicbible.com/uploads/${req.file.filename}` });
+  res.json({ success: true, fileUrl: `/uploads/${req.file.filename}` });
 });
 
 app.use("/api/auth", authRoute);
