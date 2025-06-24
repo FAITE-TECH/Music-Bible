@@ -130,7 +130,7 @@ export default function AddAlbum() {
       }
 
       setPublishError(null);
-      navigate("/dashboard?tab=musics");
+      navigate("/album");
     } catch (error) {
       setPublishError(error.message || "Something went wrong");
     }
