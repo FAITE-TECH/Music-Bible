@@ -11,6 +11,12 @@ const categorySchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+
+    slug: {
+        type: String,
+        required: true,
+        unique: true
+    },
     image: {
       type: String,
       default: 'https://i0.wp.com/woodwoon.com/wp-content/uploads/2023/01/SOS0002-sofa-set-sofa-design-furniture-store-in-pakistan.webp?fit=1024%2C787&ssl=1',

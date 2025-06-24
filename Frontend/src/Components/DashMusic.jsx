@@ -279,12 +279,14 @@ export default function DashMusic() {
                         )}
                       </Table.Cell>
                       <Table.Cell className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                        <Link
-                          to={`/music/${music.slug}`}
+                        <a
+                          href={music.music}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                         >
                           {music.title}
-                        </Link>
+                        </a>
                       </Table.Cell>
                       <Table.Cell className="px-6 py-4">
                         <span className="px-2 py-1 text-blue-800 text-xs font-medium rounded dark:bg-blue-900 dark:text-blue-300">
