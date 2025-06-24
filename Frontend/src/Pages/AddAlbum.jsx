@@ -52,19 +52,11 @@ export default function AddAlbum() {
     },
   };
 
-      try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-
-  const handleFileChange = (file, type) => {
-    setFile({ ...file, [type]: file });
+  const handleFileChange = (e, type) => {
+    setFile({ ...file, [type]: e.target.files[0] });
   };
 
-
-  const handleUploadFile = (file, type) => {
+  const handleUploadFile = async (file, type) => {
     if (!file) {
       setUploadError({
         ...uploadError,
@@ -99,24 +91,6 @@ export default function AddAlbum() {
           setUploadProgress({ ...uploadProgress, [type]: null });
           setUploadError({ ...uploadError, [type]: null });
           setFormData({ ...formData, [type]: downloadURL });
-
-        setFormData({ ...formData, [type]: data.fileUrl });
-      } catch (error) {
-        setUploadError({ ...uploadError, [type]: "Upload error" });
-      }
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const res = await fetch("/api/category/create", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(formData),
-
         });
       }
     );
@@ -186,11 +160,10 @@ export default function AddAlbum() {
         </Link>
       </motion.div>
 
-
       {/* Main Content */}
       <motion.h1
         variants={itemVariants}
-        className="text-center  text-3xl md:text-3xl my-7 font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  text-transparent bg-clip-text"
+        className="text-center text-3xl md:text-3xl my-7 font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text"
       >
         Create New Album
       </motion.h1>
@@ -228,7 +201,7 @@ export default function AddAlbum() {
               <FileInput
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e.target.files[0], "image")}
+                onChange={(e) => handleFileChange(e, "image")}
                 className="w-full"
               />
             </div>
@@ -257,7 +230,6 @@ export default function AddAlbum() {
               )}
             </Button>
           </div>
-
 
           {uploadError.image && (
             <Alert color="failure" className="w-full">
@@ -293,17 +265,17 @@ export default function AddAlbum() {
               </p>
             )}
         </motion.div>
+
         {/* Submit Button */}
         <motion.div variants={itemVariants}>
           <Button
             type="submit"
-            className="w-full mt-4 mb-12 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] "
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="w-full mt-4 mb-12 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
           >
             Create Album
           </Button>
         </motion.div>
+
         {publishError && (
           <motion.div
             variants={itemVariants}

@@ -1,8 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-
-import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX } from 'react-icons/hi';
-
+import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen } from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
@@ -38,7 +36,6 @@ export default function DashSideBar() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Close mobile menu when a link is clicked
   const handleLinkClick = () => {
     if (window.innerWidth <= 768) {
       setIsMobileMenuOpen(false);
@@ -97,7 +94,6 @@ export default function DashSideBar() {
                       </Sidebar.Item>
                     </Link>
 
-
                     <Link to='/dashboard?tab=music' key="music" className="block" onClick={handleLinkClick}>
                       <Sidebar.Item
                         active={tab === 'music'}
@@ -124,17 +120,18 @@ export default function DashSideBar() {
                       </Sidebar.Item>
                     </Link>
 
-               <Link to='/dashboard?tab=albums' key="albums">
-                <Sidebar.Item
-                  active={tab === 'albums'}
-                  icon={HiBookOpen}
-                  as='div'
-                >
-                  Music Albums
-                </Sidebar.Item>
-              </Link>
-
-
+                    <Link to='/dashboard?tab=albums' key="albums" className="block" onClick={handleLinkClick}>
+                      <Sidebar.Item
+                        active={tab === 'albums'}
+                        icon={HiBookOpen}
+                        as='div'
+                        className={`w-full px-4 py-3 transition-all duration-300 ${tab === 'albums' ? 
+                          'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
+                          'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
+                      >
+                        Music Albums
+                      </Sidebar.Item>
+                    </Link>
 
                     <Link to='/dashboard?tab=membership' key="membership" className="block" onClick={handleLinkClick}>
                       <Sidebar.Item
@@ -164,22 +161,11 @@ export default function DashSideBar() {
                 >
                   Sign Out
                 </Sidebar.Item>
-
               </Sidebar.ItemGroup>
             </Sidebar.Items>
           </Sidebar>
         </div>
       </div>
-
-              </Link>
-
-             
-
-              
-             
-            </>
-          )}
-
 
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (

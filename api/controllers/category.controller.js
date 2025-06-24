@@ -3,7 +3,6 @@ import { errorHandler } from "../utils/error.js";
 
 export const createAlbum = async (req, res, next) => {
   try {
-
     const { albumName, description, image } = req.body;
 
     // Validate description after stripping HTML tags
@@ -20,7 +19,7 @@ export const createAlbum = async (req, res, next) => {
       slug,
       image: image || 'https://cdn.pixabay.com/photo/2018/07/01/20/01/music-3510326_1280.jpg',
       description: cleanDescription
-
+    }); 
 
     const savedCategory = await newCategory.save();
     res.status(201).json(savedCategory);
