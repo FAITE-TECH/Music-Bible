@@ -69,62 +69,163 @@ export default function DashAlbum() {
   };
 
   const generatePDFReport = () => {
-    const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-size: 14px;
-        }
-        td {
-          font-size: 12px;
-        }
-        img {
-          max-width: 100px;
-          height: auto;
-        }
-      </style>
-      <h1><b>Album Details Report</b></h1>
-      <p>Total Albums: ${totalAlbums}</p>
-      <p>Last Month Albums: ${lastMonthAlbums}</p>
-      <br>
-      <br>
-      <table>
-        <thead>
-          <tr>
-            <th>Date Updated</th>
-            <th>Image</th>
-            <th>Album Name</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${userAlbums.map((album) => `
-            <tr>
-              <td>${new Date(album.updatedAt).toLocaleDateString()}</td>
-              <td><img src="${album.image}" alt="Album Image"/></td>
-              <td>${album.albumName}</td>
-              <td>${album.description}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>  
-    `;
+  const date = new Date().toLocaleDateString();
+  const time = new Date().toLocaleTimeString();
 
-    html2pdf()
-      .from(content)
-      .set({ margin: 1, filename: "album_report.pdf" })
-      .save();
+  const content = `
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+        page-break-after: avoid;
+      }
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+        page-break-after: avoid;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+         page-break-inside: avoid;
+        page-break-after: auto;
+      }
+      .album-image {
+        max-width: 80px;
+        max-height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">Album Management Report</h1>
+        <p class="subtitle">Detailed overview of music albums</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Albums</div>
+        <div class="stat-value">${totalAlbums}</div>
+        <div class="stat-change">+${lastMonthAlbums} from last month</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date Updated</th>
+          <th>Album Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${userAlbums
+          .map(
+            (album) => `
+          <tr>
+            <td>${new Date(album.updatedAt).toLocaleDateString()}</td>
+            <td>${album.albumName}</td>
+            <td>${album.description || 'No description'}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+  const options = {
+    margin: [10, 10, 10, 10],
+    filename: `album_report_${date.replace(/\//g, '-')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait',
+      hotfixes: ["px_scaling"] 
+    }
   };
 
+  html2pdf().set(options).from(content).save();
+};
   return (
     <motion.div
       initial={{ opacity: 0 }}

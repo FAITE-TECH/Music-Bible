@@ -20,7 +20,6 @@ export default function DashMusic() {
   useEffect(() => {
     const fetchMusic = async () => {
       try {
-
         const res = await fetch(
           `/api/music/music?searchTerm=${searchTerm}&page=${currentPage}&limit=10`
         );
@@ -42,7 +41,6 @@ export default function DashMusic() {
   const handleDeleteMusic = async () => {
     setShowModal(false);
     try {
-
       const res = await fetch(
         `/api/music/delete/${musicIdToDelete}/${currentUser._id}`,
         {
@@ -72,72 +70,222 @@ export default function DashMusic() {
   };
 
   const generatePDFReport = () => {
+    const date = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = new Date().toLocaleTimeString();
+
     const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-size: 14px;
-        }
-        td {
-          font-size: 12px;
-        }
-        img {
-          max-width: 50px;
-          height: auto;
-        }
-      </style>
-      <h1><b>Music Details Report</b></h1>
-      <p>Total Music: ${totalMusic}</p>
-      <p>Last Month Music: ${lastMonthMusic}</p>
-      <br>
-      <br>
-      <table>
-        <thead>
+    <style>
+      
+      body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+        page-break-after: avoid;
+      }
+      
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        margin-bottom: 10px;
+      }
+    
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+        margin-bottom: 10px;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+        page-break-after: avoid;
+      }
+      
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      
+      .stat-change svg {
+        margin-right: 5px;
+      }
+      
+       table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+     
+      
+      .listen-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+        mx:auto;
+        text-align: center;
+      }
+      
+      .listen-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(1, 25, 255, 0.2);
+      }
+      
+      .category-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        background-color: #e6f0ff;
+        color: #0093FF;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">Music Library Report</h1>
+        <p class="subtitle">Comprehensive overview of your music collection</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Music Tracks</div>
+        <div class="stat-value">${totalMusic}</div>
+        <div class="stat-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0093FF">
+            <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+          </svg>
+          ${lastMonthMusic} added last month
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date Updated</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Listen</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${userMusic
+          .map(
+            (music) => `
           <tr>
-            <th>Date Updated</th>
-            <th>Image</th>
-            <th>Music Title</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Actions</th>
+            <td>${new Date(music.updatedAt).toLocaleDateString()}</td>
+            <td style="font-weight: 600;">${music.title}</td>
+            <td><span class="category-tag">${music.category}</span></td>
+            <td>${music.description.substring(0, 50)}${
+              music.description.length > 50 ? "..." : ""
+            }</td>
+            <td><a href="${
+              music.music
+            }" target="_blank" class="listen-btn">Play</a></td>
           </tr>
-        </thead>
-        <tbody>
-          ${userMusic
-            .map(
-              (music) => `
-            <tr>
-              <td>${new Date(music.updatedAt).toLocaleDateString()}</td>
-              <td><img src="${music.image}" alt="Music Image"/></td>
-              <td>${music.title}</td>
-              <td>${music.category}</td>
-              <td>${music.description}</td>
-              <td>
-                <a href="${music.music}" target="_blank">Listen</a>
-              </td>
-            </tr>
-          `
-            )
-            .join("")}
-        </tbody>
-      </table>  
-    `;
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
 
-    html2pdf()
-      .from(content)
-      .set({ margin: 1, filename: "music_report.pdf" })
-      .save();
+    const options = {
+      margin: [20, 20, 30, 20],
+      filename: `music_library_report_${date.replace(/ /g, "_")}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterRendering: true,
+        logging: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        hotfixes: ["px_scaling"],
+        putOnlyUsedFonts: true,
+      },
+    };
+
+    html2pdf().set(options).from(content).save();
   };
-
+  
   const handleGenerateReport = () => {
     generatePDFReport();
   };

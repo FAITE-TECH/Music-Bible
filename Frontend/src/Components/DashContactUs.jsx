@@ -61,49 +61,192 @@ export default function DashContactUs() {
   const handleSearch = (e) => setSearchTerm(e.target.value);
 
   const generatePDFReport = () => {
-    const visibleMessages = contactMessages.slice(
-      (currentPage - 1) * 10,
-      currentPage * 10
-    );
+    const date = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = new Date().toLocaleTimeString();
+
     const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-      </style>
-      <h1>Contact Messages Report - Page ${currentPage}</h1>
-      <table>
-        <thead>
+    <style>
+       body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+      }
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .email-link {
+        color: #3182ce;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+      
+      .email-link:hover {
+        text-decoration: underline;
+      }
+      
+      .message-preview {
+        max-width: full;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">Contact Messages Report</h1>
+        <p class="subtitle">Summary of all contact form submissions</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Messages</div>
+        <div class="stat-value">${totalMessages}</div>
+        <div class="stat-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0093FF">
+            <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+          </svg>
+          From last period
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${contactMessages
+          .map(
+            (msg) => `
           <tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Message</th>
+            <td>${new Date(msg.createdAt).toLocaleDateString()}</td>
+            <td style="font-weight: 600;">${msg.name}</td>
+            <td><a href="mailto:${msg.email}" class="email-link">${
+              msg.email
+            }</a></td>
+            <td class="message-preview" title="${msg.message}">${
+              msg.message
+            }</td>
           </tr>
-        </thead>
-        <tbody>
-          ${visibleMessages
-            .map(
-              (msg) => `
-            <tr>
-              <td>${new Date(msg.createdAt).toLocaleDateString()}</td>
-              <td>${msg.name}</td>
-              <td>${msg.email}</td>
-              <td>${msg.message}</td>
-            </tr>
-          `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
-    html2pdf().from(content).set({ filename: "contact_report.pdf" }).save();
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+
+  
+  `;
+
+    const options = {
+      margin: [20, 20, 30, 20],
+      filename: `contact_messages_report_${date.replace(/ /g, "_")}.pdf`,
+      image: {
+        type: "jpeg",
+        quality: 0.98,
+      },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterRendering: true,
+        logging: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        hotfixes: ["px_scaling"],
+        putOnlyUsedFonts: true,
+      },
+    };
+
+    html2pdf().set(options).from(content).save();
   };
 
   // Animation variants
@@ -134,7 +277,7 @@ export default function DashContactUs() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="p-3  md:mx-auto sm:w-full max-w-screen-2xl  md:w-3/4 "
+      className="p-3 md:mx-auto sm:w-full max-w-screen-2xl md:w-3/4"
     >
       <div className="max-w-7xl mx-auto items-center text-center justify-center">
         <motion.div
@@ -143,7 +286,7 @@ export default function DashContactUs() {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text ">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text">
             Contact Messages
           </h1>
           <p className="text-gray-200">
@@ -194,113 +337,101 @@ export default function DashContactUs() {
             </h2>
           </motion.div>
 
+          {/* Table Section */}
           <motion.div variants={itemVariants} className="overflow-x-auto">
             {isLoading ? (
               <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
               </div>
+            ) : contactMessages.length > 0 ? (
+              <Table hoverable className="min-w-full">
+                <Table.Head className="bg-gray-100">
+                  <Table.HeadCell className="py-3 px-4">Date</Table.HeadCell>
+                  <Table.HeadCell className="py-3 px-4">Name</Table.HeadCell>
+                  <Table.HeadCell className="py-3 px-4">Email</Table.HeadCell>
+                  <Table.HeadCell className="py-3 px-4">Message</Table.HeadCell>
+                </Table.Head>
+                <Table.Body className="divide-y">
+                  <AnimatePresence>
+                    {contactMessages.map((msg) => (
+                      <motion.tr
+                        key={msg._id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        transition={{ duration: 0.3 }}
+                        className="hover:bg-gray-50"
+                      >
+                        <Table.Cell className="py-3 px-4">
+                          {new Date(msg.createdAt).toLocaleDateString()}
+                        </Table.Cell>
+                        <Table.Cell className="py-3 px-4 font-medium">
+                          {msg.name}
+                        </Table.Cell>
+                        <Table.Cell className="py-3 px-4 text-blue-600 hover:underline">
+                          <a href={`mailto:${msg.email}`}>{msg.email}</a>
+                        </Table.Cell>
+                        <Table.Cell className="py-3 px-4">
+                          {msg.message.length > 50
+                            ? `${msg.message.substring(0, 50)}...`
+                            : msg.message}
+                        </Table.Cell>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </Table.Body>
+              </Table>
             ) : (
-              <>
-                <Table hoverable className="min-w-full">
-                  <Table.Head className="bg-gray-100">
-                    <Table.HeadCell className="py-3 px-4">Date</Table.HeadCell>
-                    <Table.HeadCell className="py-3 px-4">Name</Table.HeadCell>
-                    <Table.HeadCell className="py-3 px-4">Email</Table.HeadCell>
-                    <Table.HeadCell className="py-3 px-4">
-                      Message
-                    </Table.HeadCell>
-                  </Table.Head>
-                  <Table.Body className="divide-y">
-                    <AnimatePresence>
-                      {contactMessages.length > 0 ? (
-                        contactMessages.map((msg) => (
-                          <motion.tr
-                            key={msg._id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 10 }}
-                            transition={{ duration: 0.3 }}
-                            className="hover:bg-gray-50"
-                          >
-                            <Table.Cell className="py-3 px-4">
-                              {new Date(msg.createdAt).toLocaleDateString()}
-                            </Table.Cell>
-                            <Table.Cell className="py-3 px-4 font-medium">
-                              {msg.name}
-                            </Table.Cell>
-                            <Table.Cell className="py-3 px-4 text-blue-600 hover:underline">
-                              <a href={`mailto:${msg.email}`}>{msg.email}</a>
-                            </Table.Cell>
-                            <Table.Cell className="py-3 px-4">
-                              {msg.message.length > 50
-                                ? `${msg.message.substring(0, 50)}...`
-                                : msg.message}
-                            </Table.Cell>
-                          </motion.tr>
-                        ))
-                      ) : (
-                        <motion.tr
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <Table.Cell
-                            colSpan={4}
-                            className="py-8 text-center text-gray-500"
-                          >
-                            No contact messages found.
-                          </Table.Cell>
-                        </motion.tr>
-                      )}
-                    </AnimatePresence>
-                  </Table.Body>
-                </Table>
-
-                {totalPages > 1 && (
-                  <motion.div
-                    variants={itemVariants}
-                    className="flex justify-between items-center mt-6 p-4 text-black bg-gray-50 rounded-lg"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button
-                        disabled={currentPage === 1}
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        className="flex text-gray-700 items-center gap-1"
-                      >
-                        Previous
-                      </Button>
-                    </motion.div>
-                    <span className="text-gray-700 font-medium">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button
-                        disabled={
-                          currentPage === totalPages || totalPages === 0
-                        }
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages)
-                          )
-                        }
-                        className="flex  text-gray-700 items-center gap-1"
-                      >
-                        Next
-                      </Button>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-center py-12 text-gray-500"
+              >
+                No contact messages found.
+              </motion.div>
             )}
           </motion.div>
+
+          {/* Pagination - Now outside the table container */}
+          {totalPages > 1 && (
+            <motion.div
+              variants={itemVariants}
+              className="flex justify-between items-center mt-6 p-4 bg-gray-50 rounded-lg"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  className="flex text-gray-700 items-center gap-1"
+                >
+                  Previous
+                </Button>
+              </motion.div>
+              <span className="text-gray-700 font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  className="flex text-gray-700 items-center gap-1"
+                >
+                  Next
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
         </motion.div>
       </div>
 

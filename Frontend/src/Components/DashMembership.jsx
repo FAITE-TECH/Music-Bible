@@ -92,65 +92,211 @@ export default function DashMembership() {
   };
 
   const generatePDFReport = () => {
-    const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-size: 14px;
-        }
-        td {
-          font-size: 12px;
-        }
-      </style>
-      <h1><b>Membership Details Report</b></h1>
-      <p>Total Memberships: ${totalMemberships}</p>
-      <p>Last Month Memberships: ${lastMonthMemberships}</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Date Joined</th>
-            <th>Member Name</th>
-            <th>Email</th>
-            <th>Country</th>
-            <th>Mobile Number</th>
-            <th>Subscription Period</th>
-            <th>Is Member</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${memberships
-            .map(
-              (membership) => `
-            <tr>
-              <td>${new Date(membership.updatedAt).toLocaleDateString()}</td>
-              <td>${membership.name}</td>
-              <td>${membership.email}</td>
-              <td>${membership.country}</td>
-              <td>${membership.mobile}</td>
-              <td>${membership.subscriptionPeriod}</td>
-              <td>${membership.isMember ? "Yes" : "No"}</td>
-            </tr>
-          `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
+  const date = new Date().toLocaleDateString();
+  const time = new Date().toLocaleTimeString();
 
-    html2pdf()
-      .from(content)
-      .set({ margin: 1, filename: "membership_report.pdf" })
-      .save();
+  const content = `
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+      }
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+        .email-link {
+        color: #3182ce;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+      
+      .email-link:hover {
+        text-decoration: underline;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        min-width: full;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .active-badge {
+        background-color: #4CAF50;
+        color: white;
+      }
+      .pending-badge {
+        background-color: #FFC107;
+        color: black;
+      }
+      .rejected-badge {
+        background-color: #F44336;
+        color: white;
+      }
+      .status-cell {
+        text-align: center;
+      }
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">Membership Management Report</h1>
+        <p class="subtitle">Detailed overview of membership applications</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Memberships</div>
+        <div class="stat-value">${totalMemberships}</div>
+        <div class="stat-change">+${lastMonthMemberships} from last month</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date Joined</th>
+          <th>Member Name</th>
+          <th>Email</th>
+          
+          <th>Mobile</th>
+          <th>Subscription</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${memberships
+          .map(
+            (membership) => `
+          <tr>
+            <td>${new Date(membership.updatedAt).toLocaleDateString()}</td>
+            <td>${membership.name}</br>(${membership.country})</td>
+            <td><a href="mailto:${membership.email}" class="email-link">${membership.email} </a></td>
+           
+            <td>${membership.mobile}</td>
+            <td>${membership.subscriptionPeriod}</td>
+            <td class="status-cell">
+              <span class="status-badge ${
+                membership.isMember
+                  ? 'active-badge'
+                  : membership.status === 'Rejected'
+                  ? 'rejected-badge'
+                  : 'pending-badge'
+              }">
+                ${
+                  membership.isMember
+                    ? 'Active'
+                    : membership.status === 'Rejected'
+                    ? 'Rejected'
+                    : 'Pending'
+                }
+              </span>
+            </td>
+          </tr>
+        `
+          )
+          .join('')}
+      </tbody>
+    </table>
+  `;
+
+  const options = {
+    margin: [10, 10, 10, 10],
+    filename: `membership_report_${date.replace(/\//g, '-')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait',
+      hotfixes: ["px_scaling"] 
+    }
   };
+
+  html2pdf().set(options).from(content).save();
+};
 
   // Animation variants
   const containerVariants = {
@@ -288,8 +434,8 @@ export default function DashMembership() {
         transition={{ delay: 0.4 }}
       >
         {currentUser.isAdmin && memberships.length > 0 ? (
-          <>
-          <div className="min-w-full">
+          
+       
             <Table hoverable className="w-full">
               <Table.Head className="bg-gray-100 dark:bg-gray-700">
                 <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
@@ -386,9 +532,25 @@ export default function DashMembership() {
                 </AnimatePresence>
               </Table.Body>
             </Table>
-            </div>
+          
 
-            {totalPages > 1 && (
+           
+          
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center py-12 text-gray-500"
+          >
+            {currentUser.isAdmin
+              ? "No membership applications found"
+              : "You don't have permission to view memberships"}
+          </motion.div>
+        )}
+      </motion.div>
+
+       {totalPages > 1 && (
               <motion.div
                 variants={itemVariants}
                 className="flex justify-between items-center mt-6 p-4  rounded-lg"
@@ -426,20 +588,6 @@ export default function DashMembership() {
                 </motion.div>
               </motion.div>
             )}
-          </>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-12 text-gray-500"
-          >
-            {currentUser.isAdmin
-              ? "No membership applications found"
-              : "You don't have permission to view memberships"}
-          </motion.div>
-        )}
-      </motion.div>
 
       <Modal
         show={showModal}
