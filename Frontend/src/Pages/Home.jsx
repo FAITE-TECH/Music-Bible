@@ -14,6 +14,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import ScrollSection from "../Components/ScrollSection";
 import { FaCogs, FaShieldAlt, FaUser } from "react-icons/fa";
+import pic1 from "../assets/Logo/pic1.png";
+import pic2 from "../assets/Logo/pic2.png";
+import pic3 from "../assets/Logo/pic3.png";
 
 export default function Home() {
   const [ref, inView] = useInView({ threshold: 0.2 });
@@ -300,7 +303,7 @@ export default function Home() {
           >
             <div className="flex items-center mb-4">
               <img
-                src="https://via.placeholder.com/50"
+                src={pic1}
                 alt="Suthakaran"
                 className="w-12 h-12 rounded-full mr-4"
               />
@@ -318,7 +321,7 @@ export default function Home() {
           >
             <div className="flex items-center mb-4">
               <img
-                src="https://via.placeholder.com/50"
+                src={pic2}
                 alt="Mason"
                 className="w-12 h-12 rounded-full mr-4"
               />
@@ -335,7 +338,7 @@ export default function Home() {
           >
             <div className="flex items-center mb-4">
               <img
-                src="https://via.placeholder.com/50"
+                src={pic3}
                 alt="Jonah"
                 className="w-12 h-12 rounded-full mr-4"
               />

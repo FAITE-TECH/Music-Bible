@@ -1,47 +1,47 @@
-import { Button, Modal, Table, TextInput } from "flowbite-react";
+import { Button, Modal, Table, TextInput, Tooltip } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiGift, HiOutlineExclamationCircle, HiSearch } from "react-icons/hi";
+import { HiOutlineExclamationCircle, HiSearch, HiOutlineCurrencyDollar, HiClipboard, HiCheck } from "react-icons/hi";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import { motion } from "framer-motion";
 
-export default function DashAlbum() {
+export default function DashAIOrders() {
   const { currentUser } = useSelector((state) => state.user);
-  const [userAlbums, setUserAlbums] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [albumIdToDelete, setAlbumIdToDelete] = useState("");
-  const [totalAlbums, setTotalAlbums] = useState(0);
-  const [lastMonthAlbums, setLastMonthAlbums] = useState(0);
+  const [orderIdToDelete, setOrderIdToDelete] = useState("");
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [lastMonthOrders, setLastMonthOrders] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [copiedKey, setCopiedKey] = useState(null);
 
   useEffect(() => {
-    const fetchAlbums = async () => {
+    const fetchOrders = async () => {
       try {
         const res = await fetch(
-          `/api/category/getAlbums?searchTerm=${searchTerm}&page=${currentPage}&limit=10`
+          `/api/aiorder/getAIOrders?searchTerm=${searchTerm}&page=${currentPage}&limit=10`
         );
         const data = await res.json();
         if (res.ok) {
-          setUserAlbums(data.albums);
-          setTotalAlbums(data.totalAlbums);
-          setLastMonthAlbums(data.lastMonthAlbums);
+          setOrders(data.orders);
+          setTotalOrders(data.totalOrders);
+          setLastMonthOrders(data.lastMonthOrders);
           setTotalPages(data.totalPages);
         }
       } catch (error) {
         console.log(error.message);
       }
     };
-    fetchAlbums();
+    fetchOrders();
   }, [searchTerm, currentPage]);
 
-  const handleDeleteAlbum = async () => {
+  const handleDeleteOrder = async () => {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/api/category/delete/${albumIdToDelete}/${currentUser._id}`,
+        `/api/aiorder/deleteAIOrder/${orderIdToDelete}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -55,8 +55,8 @@ export default function DashAlbum() {
       if (!res.ok) {
         console.log(data.message);
       } else {
-        setUserAlbums((prev) =>
-          prev.filter((album) => album._id !== albumIdToDelete)
+        setOrders((prev) =>
+          prev.filter((order) => order.orderId !== orderIdToDelete)
         );
       }
     } catch (error) {
@@ -68,164 +68,77 @@ export default function DashAlbum() {
     setSearchTerm(e.target.value);
   };
 
-  const generatePDFReport = () => {
-  const date = new Date().toLocaleDateString();
-  const time = new Date().toLocaleTimeString();
-
-  const content = `
-    <style>
-      body {
-        font-family: 'Arial', sans-serif;
-        color: #333;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #3AF7F0;
-        page-break-after: avoid;
-      }
-      .title {
-        color: #0119FF;
-        font-size: 24px;
-        font-weight: bold;
-        margin: 0;
-      }
-      .subtitle {
-        color: #0093FF;
-        font-size: 16px;
-        margin: 5px 0 0 0;
-      }
-      .report-info {
-        text-align: right;
-        font-size: 12px;
-        color: #666;
-      }
-      .stats-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin: 20px 0;
-        page-break-after: avoid;
-      }
-      .stat-card {
-        flex: 1;
-        min-width: 200px;
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      }
-      .stat-title {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 5px;
-      }
-      .stat-value {
-        font-size: 22px;
-        font-weight: bold;
-        color: #0119FF;
-      }
-      .stat-change {
-        font-size: 12px;
-        color: #0093FF;
-        margin-top: 5px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      th {
-        background: linear-gradient(to right, #0119FF, #0093FF);
-        color: white;
-        text-align: left;
-        padding: 12px;
-        font-size: 14px;
-      }
-      td {
-        padding: 10px 12px;
-        border-bottom: 1px solid #ddd;
-        font-size: 13px;
-      }
-      tr:nth-child(even) {
-        background-color: #f8f9fa;
-         page-break-inside: avoid;
-        page-break-after: auto;
-      }
-      .album-image {
-        max-width: 80px;
-        max-height: 80px;
-        object-fit: cover;
-        border-radius: 4px;
-      }
-    </style>
-
-    <div class="header">
-      <div>
-        <h1 class="title">Album Management Report</h1>
-        <p class="subtitle">Detailed overview of music albums</p>
-      </div>
-      <div class="report-info">
-        Generated on ${date}<br>
-        At ${time}
-      </div>
-    </div>
-
-    <div class="stats-container">
-      <div class="stat-card">
-        <div class="stat-title">Total Albums</div>
-        <div class="stat-value">${totalAlbums}</div>
-        <div class="stat-change">+${lastMonthAlbums} from last month</div>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Date Updated</th>
-          <th>Album Name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${userAlbums
-          .map(
-            (album) => `
-          <tr>
-            <td>${new Date(album.updatedAt).toLocaleDateString()}</td>
-            <td>${album.albumName}</td>
-            <td>${album.description || 'No description'}</td>
-          </tr>
-        `
-          )
-          .join("")}
-      </tbody>
-    </table>
-  `;
-
-  const options = {
-    margin: [10, 10, 10, 10],
-    filename: `album_report_${date.replace(/\//g, '-')}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      letterRendering: true
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait',
-      hotfixes: ["px_scaling"] 
-    }
+  const copyToClipboard = (apiKey) => {
+    if (!apiKey) return;
+    
+    navigator.clipboard.writeText(apiKey);
+    setCopiedKey(apiKey);
+    
+    // Reset the copied state after 2 seconds
+    setTimeout(() => {
+      setCopiedKey(null);
+    }, 2000);
   };
 
-  html2pdf().set(options).from(content).save();
-};
+  const generatePDFReport = () => {
+    const content = `
+      <style>
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        th {
+          background-color: #f2f2f2;
+          font-size: 14px;
+        }
+        td {
+          font-size: 12px;
+        }
+      </style>
+      <h1><b>AI Orders Report</b></h1>
+      <p>Total Orders: ${totalOrders}</p>
+      <p>Last Month Orders: ${lastMonthOrders}</p>
+      <br>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Order ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${orders.map((order) => `
+            <tr>
+              <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+              <td>${order.orderId}</td>
+              <td>${order.username}</td>
+              <td>${order.email}</td>
+              <td>${order.mobile || 'N/A'}</td>
+              <td>$${(order.totalcost).toFixed(2)}</td>
+              <td>${order.status}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>  
+    `;
+
+    html2pdf()
+      .from(content)
+      .set({ margin: 1, filename: "ai_orders_report.pdf" })
+      .save();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -240,10 +153,10 @@ export default function DashAlbum() {
         className="mb-8 text-center"
       >
         <h1 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text">
-          Album Management
+          AI Orders Management
         </h1>
         <p className="text-gray-200 mt-2">
-          Manage your music albums and collections
+          Manage all Bible AI API Key purchases
         </p>
       </motion.div>
 
@@ -259,30 +172,23 @@ export default function DashAlbum() {
           </div>
           <TextInput
             type="text"
-            placeholder="Search Albums..."
+            placeholder="Search Orders..."
             value={searchTerm}
             onChange={handleSearch}
             className="pl-10 w-full"
           />
         </div>
 
-        <div className="flex gap-2">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/addalbum">
-              <Button gradientDuoTone="purpleToBlue">Create Album</Button>
-            </Link>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              gradientDuoTone="purpleToBlue"
-              outline
-              onClick={generatePDFReport}
-              className="whitespace-nowrap"
-            >
-              Generate Report
-            </Button>
-          </motion.div>
-        </div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            gradientDuoTone="purpleToBlue"
+            outline
+            onClick={generatePDFReport}
+            className="whitespace-nowrap"
+          >
+            Generate Report
+          </Button>
+        </motion.div>
       </motion.div>
 
       {/* Stats Cards */}
@@ -299,11 +205,11 @@ export default function DashAlbum() {
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-gray-200 text-lg uppercase font-semibold">
-                Total Albums
+                Total Orders
               </h3>
-              <p className="text-3xl font-bold">{totalAlbums}</p>
+              <p className="text-3xl font-bold">{totalOrders}</p>
             </div>
-            <HiGift className="bg-red-600 text-white rounded-full text-5xl p-3 shadow-lg" />
+            <HiOutlineCurrencyDollar className="bg-red-600 text-white rounded-full text-5xl p-3 shadow-lg" />
           </div>
         </motion.div>
 
@@ -314,88 +220,106 @@ export default function DashAlbum() {
           <div className="flex justify-between items-center">
             <div>
               <h3 className="text-gray-200 text-lg uppercase font-semibold">
-                Last Month Albums
+                Last Month Orders
               </h3>
-              <p className="text-3xl font-bold">{lastMonthAlbums}</p>
+              <p className="text-3xl font-bold">{lastMonthOrders}</p>
             </div>
-            <HiGift className="bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg" />
+            <HiOutlineCurrencyDollar className="bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg" />
           </div>
         </motion.div>
       </motion.div>
 
-      {/* Albums Table */}
+      {/* Orders Table */}
       <motion.div
         className="w-full overflow-x-auto rounded-lg shadow-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
       >
-        {currentUser.isAdmin && userAlbums.length > 0 ? (
+        {currentUser.isAdmin && orders.length > 0 ? (
           <>
             <div className="min-w-full">
               <Table hoverable className="w-full">
                 <Table.Head className="bg-gray-100 dark:bg-gray-700">
                   <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
-                    Date Updated
+                    Date
                   </Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Image</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Album Name</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4 min-w-[200px]">
-                    Description
-                  </Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">Username</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">Email</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">Mobile</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">Amount</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">Status</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">API Key</Table.HeadCell>
                   <Table.HeadCell className="px-6 py-4">Delete</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Edit</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {userAlbums.map((album) => (
+                  {orders.map((order) => (
                     <Table.Row
                       className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      key={album._id}
+                      key={order._id}
                     >
                       <Table.Cell className="px-6 py-4 whitespace-nowrap">
-                        {new Date(album.updatedAt).toLocaleDateString()}
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </Table.Cell>
+                      
+                      <Table.Cell className="px-6 py-4">
+                        {order.username}
                       </Table.Cell>
                       <Table.Cell className="px-6 py-4">
-                        {album.image && (
-                          <motion.div
-                            className="w-16 h-16 flex items-center justify-center"
-                            whileHover={{ scale: 1.1 }}
-                          >
-                            <img
-                              src={album.image}
-                              alt="Album cover"
-                              className="w-full h-full object-cover rounded-lg"
-                            />
-                          </motion.div>
-                        )}
+                        {order.email}
                       </Table.Cell>
-                      <Table.Cell className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                        {album.albumName}
+                      <Table.Cell className="px-6 py-4">
+                        {order.mobile || 'N/A'}
+                      </Table.Cell>
+                      <Table.Cell className="px-6 py-4">
+                        ${order.totalcost.toFixed(2)}
+                      </Table.Cell>
+                      <Table.Cell className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          order.status === 'completed' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {order.status}
+                        </span>
                       </Table.Cell>
                       <Table.Cell className="px-6 py-4 max-w-xs">
-                        <p className="line-clamp-2">{album.description}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-mono truncate w-32">
+                            {order.apiKey || 'Not generated'}
+                          </p>
+                          {order.apiKey && (
+                            <Tooltip
+                              content={copiedKey === order.apiKey ? "Copied!" : "Copy to clipboard"}
+                              placement="top"
+                            >
+                              <motion.button
+                                onClick={() => copyToClipboard(order.apiKey)}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
+                              >
+                                {copiedKey === order.apiKey ? (
+                                  <HiCheck className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <HiClipboard className="h-4 w-4" />
+                                )}
+                              </motion.button>
+                            </Tooltip>
+                          )}
+                        </div>
                       </Table.Cell>
                       <Table.Cell className="px-6 py-4">
                         <motion.button
                           onClick={() => {
                             setShowModal(true);
-                            setAlbumIdToDelete(album._id);
+                            setOrderIdToDelete(order.orderId);
                           }}
                           className="text-red-600 hover:text-red-900 dark:hover:text-red-400 font-medium"
                           whileHover={{ scale: 1.1 }}
                         >
                           Delete
                         </motion.button>
-                      </Table.Cell>
-                      <Table.Cell className="px-6 py-4">
-                        <motion.div whileHover={{ scale: 1.1 }}>
-                          <Link
-                            to={`/update-album/${album._id}`}
-                            className="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 font-medium"
-                          >
-                            Edit
-                          </Link>
-                        </motion.div>
                       </Table.Cell>
                     </Table.Row>
                   ))}
@@ -411,8 +335,8 @@ export default function DashAlbum() {
           >
             <p className="text-lg text-gray-500 dark:text-gray-400">
               {searchTerm
-                ? "No matching albums found"
-                : "You have no albums to show"}
+                ? "No matching orders found"
+                : "No AI orders to show"}
             </p>
           </motion.div>
         )}
@@ -479,11 +403,11 @@ export default function DashAlbum() {
             </div>
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
               <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                Delete Album
+                Delete Order
               </h3>
               <div className="mt-2">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Are you sure you want to delete this album? This action cannot
+                  Are you sure you want to delete this order? This action cannot
                   be undone.
                 </p>
               </div>
@@ -503,7 +427,7 @@ export default function DashAlbum() {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Button
               color="failure"
-              onClick={handleDeleteAlbum}
+              onClick={handleDeleteOrder}
               className="px-4 py-2"
             >
               Delete

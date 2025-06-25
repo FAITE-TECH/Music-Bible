@@ -22,6 +22,7 @@ import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute'
 import ChatAI from './Pages/ChatAI'
 import PayButton from './Components/PayButton'
 import UpdateAlbum from './Pages/UpdateAlbum'
+import AIOrderSuccess from './Pages/AIOrderSuccess'
 
 export default function App() {
   return (
@@ -45,6 +46,8 @@ export default function App() {
           <Route path="/dashboard" element={<DashBoard/>}/> 
           <Route path="/order-summary" element={<OrderSummary/>}/>
           <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess/>}/>
+          <Route path="/ai-order-success/:userId" element={<AIOrderSuccess/>}/>
+         
         <Route/> 
 
         <Route element={<OnlyAdminPrivateRoute/>}/>
@@ -52,6 +55,7 @@ export default function App() {
           <Route path="/addalbum" element={<AddAlbum/>}/>
           <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
           <Route path="/update-album/:albumId" element={<UpdateAlbum/>}/>
+
         <Route/>
       </Routes>
     </BrowserRouter>
