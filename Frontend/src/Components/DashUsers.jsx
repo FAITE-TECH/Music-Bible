@@ -140,68 +140,197 @@ export default function DashUsers() {
   };
 
   const generatePDFReport = () => {
-    const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-size: 14px; 
-        }
-        td {
-          font-size: 12px; 
-        }
-      </style>
-      <h1><b>User Details Report</b></h1>
-      <p>Total Customers: ${totalCustomers}</p>
-      <p>Last Month Customers : ${lastMonthCustomers}</p>
-      <p>Total Admins : ${totalAdmins}</p>
-      <p>Last Month Admins : ${lastMonthAdmin}</p>
-      <p>Total User (Admin + Customers) : ${totalUsers}</p>
-      <p>Last Month User (Admin + Customers) : ${lastMonthUsers}</p>
-      <br>
-      <br>
-      <table>
-        <thead>
-          <tr>
-            <th>Created At</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th></th>
-            <th>Admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${users
-            .map(
-              (user) => `
-            <tr>
-              <td>${new Date(user.createdAt).toLocaleDateString()}</td>
-              <td>${user.username}</td>
-              <td>${user.email}</td>
-              <td>${user.mobile}</td>
-              <td>${user.adress}</td>
-              <td>${user.isAdmin ? "Yes" : "No"}</td>
-            </tr>
-          `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
 
-    html2pdf()
-      .from(content)
-      .set({ margin: 1, filename: "user_report.pdf" })
-      .save();
+    const content = `
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+      }
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+     .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+         justify-content: center;
+        align-items: center;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        min-width: 70px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .admin-badge {
+        background-color: #4CAF50;
+        color: white;
+      }
+      .user-badge {
+        background-color: #2196F3;
+        color: white;
+      }
+      .status-cell {
+        text-align: center;
+      }
+      
+
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">User Management Report</h1>
+        <p class="subtitle">Detailed overview of system users</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Users</div>
+        <div class="stat-value">${totalUsers}</div>
+        <div class="stat-change">+${lastMonthUsers} from last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Total Admins</div>
+        <div class="stat-value">${totalAdmins}</div>
+        <div class="stat-change">+${lastMonthAdmin} from last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Total Customers</div>
+        <div class="stat-value">${totalCustomers}</div>
+        <div class="stat-change">+${lastMonthCustomers} from last month</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date Created</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Mobile</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${users
+          .map(
+            (user) => `
+          <tr>
+            <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.mobile || "N/A"}</td>
+            <td class="status-cell">
+              <span class="status-badge ${user.isAdmin ? 'admin-badge' : 'user-badge'}">
+                ${user.isAdmin ? 'Admin' : 'Customer'}
+              </span>
+            </td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+
+   
+  `;
+
+    const options = {
+    margin: [10, 10, 10, 10],
+    filename: `user_report_${date.replace(/\//g, '-')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait',
+      hotfixes: ["px_scaling"] 
+    }
+  };
+
+    html2pdf().set(options).from(content).save();
   };
 
   const handleGenerateReport = () => {
@@ -432,130 +561,127 @@ export default function DashUsers() {
         transition={{ delay: 0.4 }}
       >
         {currentUser.isAdmin && users.length > 0 ? (
-          <>
-            <div className="min-w-full">
-              <Table hoverable className="w-full">
-                <Table.Head className="bg-gray-100 dark:bg-gray-700">
-                  <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
-                    Date created
-                  </Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">
-                    User image
-                  </Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">
-                    Username
-                  </Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Email</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Mobile</Table.HeadCell>
+          <Table hoverable className="w-full">
+            <Table.Head className="bg-gray-100 dark:bg-gray-700">
+              <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
+                Date created
+              </Table.HeadCell>
+              <Table.HeadCell className="px-6 py-4">User image</Table.HeadCell>
+              <Table.HeadCell className="px-6 py-4">Username</Table.HeadCell>
+              <Table.HeadCell className="px-6 py-4">Email</Table.HeadCell>
+              <Table.HeadCell className="px-6 py-4">Mobile</Table.HeadCell>
 
-                  <Table.HeadCell className="px-6 py-4">Admin</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Remove</Table.HeadCell>
-                  {currentUser.isOwner && (
-                    <Table.HeadCell className="px-6 py-4">
-                      Admin Actions
-                    </Table.HeadCell>
-                  )}
-                </Table.Head>
-                <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700 ">
-                  {users.map((user) => (
-                    <Table.Row
-                      key={user._id}
-                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              <Table.HeadCell className="px-6 py-4">Admin</Table.HeadCell>
+              <Table.HeadCell className="px-6 py-4">Remove</Table.HeadCell>
+              {currentUser.isOwner && (
+                <Table.HeadCell className="px-6 py-4">
+                  Admin Actions
+                </Table.HeadCell>
+              )}
+            </Table.Head>
+            <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700 ">
+              {users.map((user) => (
+                <Table.Row
+                  key={user._id}
+                  className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Table.Cell className=" px-6 py-4 whitespace-nowrap">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4">
+                    <img
+                      src={user.profilePicture}
+                      alt={user.username}
+                      className="w-8 h-8 md:w-10 md:h-10 object-cover bg-gray-500 rounded-full"
+                    />
+                  </Table.Cell>
+                  <Table.Cell className=" px-6 py-4 whitespace-nowrap">
+                    {user.username}
+                  </Table.Cell>
+                  <Table.Cell className=" px-6 py-4 whitespace-nowrap">
+                    {user.email}
+                  </Table.Cell>
+                  <Table.Cell className=" px-6 py-4 whitespace-nowrap">
+                    {user.mobile || "N/A"}
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4">
+                    {user.isAdmin ? (
+                      <FaCheck className="text-green-500" />
+                    ) : (
+                      <FaTimes className="text-red-500" />
+                    )}
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4">
+                    <motion.span
+                      whileHover={{ scale: 1.1 }}
+                      onClick={() => {
+                        setShowModal(true);
+                        setUserIdToDelete(user._id);
+                      }}
+                      className="font-medium text-red-500 hover:underline cursor-pointer"
                     >
-                      <Table.Cell className=" px-6 py-4 whitespace-nowrap">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </Table.Cell>
-                      <Table.Cell className="px-6 py-4">
-                        <img
-                          src={user.profilePicture}
-                          alt={user.username}
-                          className="w-8 h-8 md:w-10 md:h-10 object-cover bg-gray-500 rounded-full"
-                        />
-                      </Table.Cell>
-                      <Table.Cell className=" px-6 py-4 whitespace-nowrap">
-                        {user.username}
-                      </Table.Cell>
-                      <Table.Cell className=" px-6 py-4 whitespace-nowrap">
-                        {user.email}
-                      </Table.Cell>
-                      <Table.Cell className=" px-6 py-4 whitespace-nowrap">
-                        {user.mobile || "N/A"}
-                      </Table.Cell>
-                      <Table.Cell className="px-6 py-4">
-                        {user.isAdmin ? (
-                          <FaCheck className="text-green-500" />
-                        ) : (
-                          <FaTimes className="text-red-500" />
-                        )}
-                      </Table.Cell>
-                      <Table.Cell className="px-6 py-4">
-                        <motion.span
-                          whileHover={{ scale: 1.1 }}
-                          onClick={() => {
-                            setShowModal(true);
-                            setUserIdToDelete(user._id);
-                          }}
-                          className="font-medium text-red-500 hover:underline cursor-pointer"
-                        >
-                          Remove
-                        </motion.span>
-                      </Table.Cell>
-                      {currentUser.isOwner && (
-                        <Table.Cell className="px-6 py-4 flex gap-2">
-                          <motion.span
-                            whileHover={{ scale: 1.1 }}
-                            onClick={() => {
-                              if (!user.isAdmin) {
-                                setShowAccessConfirmation(true);
-                                setUserIdToAssignAdmin(user._id);
-                              }
-                            }}
-                            className={`font-medium text-green-500 hover:underline cursor-pointer ${
-                              user.isAdmin
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            Assign
-                          </motion.span>
+                      Remove
+                    </motion.span>
+                  </Table.Cell>
+                  {currentUser.isOwner && (
+                    <Table.Cell className="px-6 py-4 flex gap-2">
+                      <motion.span
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => {
+                          if (!user.isAdmin) {
+                            setShowAccessConfirmation(true);
+                            setUserIdToAssignAdmin(user._id);
+                          }
+                        }}
+                        className={`font-medium text-green-500 hover:underline cursor-pointer ${
+                          user.isAdmin ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        Assign
+                      </motion.span>
 
-                          <motion.span
-                            whileHover={{ scale: 1.1 }}
-                            onClick={() => {
-                              if (user.isAdmin) {
-                                setShowAccessDeclaration(true);
-                                setUserIdToResignAdmin(user._id);
-                              }
-                            }}
-                            className={`font-medium text-red-500 hover:underline cursor-pointer ${
-                              !user.isAdmin
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            Resign
-                          </motion.span>
-                        </Table.Cell>
-                      )}
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </div>
-            {showMore && (
-              <motion.button
-                onClick={handleShowMore}
-                className="w-full text-teal-500 self-center text-sm py-7"
-                whileHover={{ scale: 1.05 }}
-              >
-                Show more
-              </motion.button>
-            )}
-          </>
+                      <motion.span
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => {
+                          if (user.isAdmin) {
+                            setShowAccessDeclaration(true);
+                            setUserIdToResignAdmin(user._id);
+                          }
+                        }}
+                        className={`font-medium text-red-500 hover:underline cursor-pointer ${
+                          !user.isAdmin ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      >
+                        Resign
+                      </motion.span>
+                    </Table.Cell>
+                  )}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
         ) : (
           <p className="text-center text-gray-500 py-10">No users found</p>
         )}
       </motion.div>
+
+      {showMore && (
+        <motion.div
+          className="flex justify-center mt-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.button
+            onClick={handleShowMore}
+            className="text-teal-500 hover:text-teal-700 font-medium py-2 px-4 rounded-lg border border-teal-500 hover:border-teal-700 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Show more users
+          </motion.button>
+        </motion.div>
+      )}
 
       {/* Modals */}
       <Modal
