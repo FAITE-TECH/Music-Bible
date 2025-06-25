@@ -4,8 +4,10 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import { HiArrowLeft, HiOutlinePhotograph } from "react-icons/hi";
 
 export default function UpdateAlbum() {
   const [file, setFile] = useState(null);
@@ -17,6 +19,29 @@ export default function UpdateAlbum() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        when: "beforeChildren"
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchAlbum = async () => {
       try {
@@ -26,7 +51,7 @@ export default function UpdateAlbum() {
           setPublishError(data.message);
           return;
         }
-        setFormData(data);
+        setFormData({ ...data, description: data.description || '' });
         setPublishError(null);
       } catch (error) {
         setPublishError(error.message);
@@ -97,64 +122,138 @@ export default function UpdateAlbum() {
   };
 
   return (
-    <div className="p-3 max-w-3xl mx-auto min-h-screen">
-      <h1 className="text-center text-3xl my-7 font-semibold">Update Album</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <TextInput
-          type='text'
-          placeholder='Album Name'
-          required
-          id='albumName'
-          className='flex-1'
-          onChange={(e) => setFormData({ ...formData, albumName: e.target.value })}
-          value={formData.albumName || ''}
-        />
-        <Textarea
-          placeholder="Description"
-          className="h-52"
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          value={formData.description || ''}
-        />
-        <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
-          <FileInput
-            type='file'
-            accept='image/*'
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-          <Button
-            onClick={handleUploadImage}
-            type='button'
-            size='sm'
-            outline
-            disabled={imageUploadProgress}
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="p-3 max-w-full bg-black mx-auto min-h-screen"
+    >
+      {/* Navigation Header */}
+      <motion.div variants={itemVariants} className="flex items-center gap-4 mb-6">
+        <Link to="/dashboard?tab=albums">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
           >
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
-                />
-              </div>
-            ) : ('Upload Image')}
-          </Button>
-        </div>
-        {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
-        {formData.image && (
-          <img
-            src={formData.image}
-            alt='upload'
-            className='w-full h-72 object-cover'
+            <HiArrowLeft className="text-xl" />
+            <span className="font-medium">Back to Albums Dashboard</span>
+          </motion.div>
+        </Link>
+      </motion.div>
+
+      {/* Main Content */}
+      <motion.h1
+        variants={itemVariants}
+        className="text-center text-3xl md:text-4xl my-7 font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text"
+      >
+        Update Album
+      </motion.h1>
+
+      <motion.form
+        variants={containerVariants}
+        className="flex flex-col gap-6 max-w-4xl mx-auto"
+        onSubmit={handleSubmit}
+      >
+        {/* Album Name */}
+        <motion.div variants={itemVariants}>
+          <TextInput
+            type='text'
+            placeholder='Album Name'
+            required
+            id='albumName'
+            onChange={(e) => setFormData({ ...formData, albumName: e.target.value })}
+            value={formData.albumName || ''}
           />
-        )}
-        <Button type='submit' gradientDuoTone='purpleToBlue'>
-          Update Album
-        </Button>
+        </motion.div>
+
+        {/* Description */}
+        <motion.div variants={itemVariants}>
+          <Textarea
+            placeholder="Description"
+            className="h-52"
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            value={formData.description || ''}
+          />
+        </motion.div>
+
+        {/* Image Upload Section */}
+        <motion.div
+          variants={itemVariants}
+          className='flex flex-col gap-4 items-center justify-between border-2 border-dashed border-blue-300 rounded-xl p-4 hover:border-blue-500 transition-colors'
+        >
+          <div className="flex flex-col sm:flex-row gap-4 w-full items-center">
+            <div className="flex items-center gap-2 w-full">
+              <HiOutlinePhotograph className="text-2xl text-blue-500" />
+              <FileInput
+                type='file'
+                accept='image/*'
+                onChange={(e) => setFile(e.target.files[0])}
+                className="w-full"
+              />
+            </div>
+            <Button
+              onClick={handleUploadImage}
+              type='button'
+              size='sm'
+              gradientDuoTone="purpleToBlue"
+              outline
+              disabled={imageUploadProgress}
+              className="w-full sm:w-auto"
+            >
+              {imageUploadProgress ? (
+                <div className="w-6 h-6">
+                  <CircularProgressbar
+                    value={imageUploadProgress}
+                    text={`${imageUploadProgress}%`}
+                    styles={{
+                      path: { stroke: '#3B82F6' },
+                      text: { fill: '#3B82F6', fontSize: '24px' }
+                    }}
+                  />
+                </div>
+              ) : ('Upload Image')}
+            </Button>
+          </div>
+
+          {imageUploadError && (
+            <Alert color='failure' className="w-full">{imageUploadError}</Alert>
+          )}
+          {formData.image && (
+            <motion.img
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              src={formData.image}
+              alt="upload"
+              className="w-full max-h-64 object-contain rounded-lg shadow-md mt-2"
+            />
+          )}
+        </motion.div>
+
+        {/* Submit Button */}
+        <motion.div variants={itemVariants}>
+          <Button
+            type='submit'
+            className="w-full mb-12 mt-4 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Update Album
+          </Button>
+        </motion.div>
+
         {publishError && (
-          <Alert className='mt-5' color='failure'>
-            {publishError}
-          </Alert>
+          <motion.div
+            variants={itemVariants}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <Alert className='mt-4' color='failure'>
+              {publishError}
+            </Alert>
+          </motion.div>
         )}
-      </form>
-    </div>
+      </motion.form>
+    </motion.div>
   );
 }

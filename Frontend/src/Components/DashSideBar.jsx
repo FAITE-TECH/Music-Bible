@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen } from 'react-icons/hi';
+import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen, HiPaperClip } from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
@@ -133,6 +133,19 @@ export default function DashSideBar() {
                       </Sidebar.Item>
                     </Link>
 
+                    <Link to='/dashboard?tab=API' key="API" className="block" onClick={handleLinkClick}>
+                      <Sidebar.Item
+                        active={tab === 'API'}
+                        icon={HiPaperClip}
+                        as='div'
+                        className={`w-full px-4 py-3 transition-all duration-300 ${tab === 'API' ? 
+                          'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
+                          'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
+                      >
+                        API Orders
+                      </Sidebar.Item>
+                    </Link>
+
                     <Link to='/dashboard?tab=membership' key="membership" className="block" onClick={handleLinkClick}>
                       <Sidebar.Item
                         active={tab === 'membership'}
@@ -142,7 +155,7 @@ export default function DashSideBar() {
                           'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
                           'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
                       >
-                        Membership Requests
+                        Membership Req
                       </Sidebar.Item>
                     </Link>
                   </>
