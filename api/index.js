@@ -14,7 +14,9 @@ import stripe from "./routes/stripe.route.js";
 import membership from "./routes/membership.route.js";
 import contactRoutes from "./routes/contact.route.js";
 import favoriteRoute from './routes/favorite.route.js';
-import ai from "./routes/ai.route.js";
+import aiRoute from "./routes/ai.route.js";
+import aistripeRoutes from './routes/aistripe.route.js';
+import aiorderRoutes from './routes/aiorder.routes.js';
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ mongoose.connect(process.env.MONGO)
 const app = express();
 const corsOptions = {
   origin: 'http://localhost:5173',
+  credentials: true,
+  optionsSuccessStatus: 200 
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
@@ -68,6 +72,9 @@ app.use("/api/stripe", stripe);
 app.use("/api/membership", membership);
 app.use("/api/contact", contactRoutes);
 app.use('/api/favorites', favoriteRoute);
+app.use('/api/aistripe', aistripeRoutes);
+app.use('/api/ai', aiRoute);
+app.use('/api/aiorder', aiorderRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Backend is running successfully!" });
@@ -89,5 +96,5 @@ process.on('SIGTERM', () => {
 });
 
 app.listen(3000, '0.0.0.0', () => {
-  console.log('Server running on port 8080');
+  console.log('Server running on port 3000');
 });

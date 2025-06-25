@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import logo from "../assets/Logo/newlogo.png";
 import { motion } from "framer-motion";
 import searchIcon from "../assets/Logo/circleArrow.png";
 import shareIcon from "../assets/Logo/shareIcon.png";
 import copyIcon from "../assets/Logo/copyIcon.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 const ChatAI = () => {
   const [query, setQuery] = useState("");
@@ -12,7 +15,9 @@ const ChatAI = () => {
   const [loading, setLoading] = useState(false);
   const [shareClicked, setSharedClicked] = useState(false);
   const [copyClicked, setCopyClicked] = useState(false);
-  const navigate = useNavigate(); // Using useNavigate hook for proper navigation
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (shareClicked) {
@@ -35,7 +40,7 @@ const ChatAI = () => {
       if (query !== "") {
         setLoading(true);
         setAnswer("");
-        const response = await fetch("https://amusicbible.com/api/ai/ask", {
+        const response = await fetch("/api/ai/ask", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -63,19 +68,48 @@ const ChatAI = () => {
           title: "Bible AI",
           url: "https://amusicbible.com/bible/ai",
         })
-        .then(() => console.log('Link successfully'))
+        .then(() => console.log('Link shared successfully'))
         .catch((error) => console.error('Error sharing link:', error));
     } else {
       alert('Web Share API not supported in your browser.');
     }
   };
 
-  const handleContactUs = () => {
-    navigate('/contactus'); // Using navigate instead of window.location
+  const handleBuyNow = async () => {
+    if (!currentUser) {
+      navigate('/signin');
+      return;
+    }
+
+    setIsPurchasing(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/aistripe/create-ai-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId: currentUser._id
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('No URL returned from Stripe session creation');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
-  const handleBuyNow = () => {
-    navigate('/membership'); // Using navigate instead of window.location
+  const handleContactUs = () => {
+    navigate('/contactus');
   };
 
   const ParseText = (text) => {
@@ -127,9 +161,17 @@ const ChatAI = () => {
           <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-1 sm:space-y-0 w-full justify-center">
             <button 
               onClick={handleBuyNow} 
-              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition"
+              disabled={isPurchasing}
+              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center"
             >
-              Buy Now
+              {isPurchasing ? (
+                'Processing...'
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faShoppingCart} className="mr-1" />
+                  Buy Now ($500)
+                </>
+              )}
             </button>
             <button 
               onClick={handleContactUs} 
@@ -209,7 +251,7 @@ const ChatAI = () => {
               {/* Answer Section */}
               <div className="w-full max-w-lg md:max-w-xl lg:max-w-2xl">
                 <p className="text-gray-500 w-full ml-4 text-sm md:text-base">Answer</p>
-                <div className="mt-2 p-4  border-t shadow-2xl relative h-screen flex flex-col justify-between shadow-black bg-gray-50 rounded-t-[50px]">
+                <div className="mt-2 p-4 border-t shadow-2xl relative h-screen flex flex-col justify-between shadow-black bg-gray-50 rounded-t-[50px]">
                   {loading ? (
                     <div className="type_loader_container ml-4">
                       <div className="typing_loader"></div>

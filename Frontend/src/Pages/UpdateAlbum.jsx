@@ -16,6 +16,7 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 
+
 export default function UpdateAlbum() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
@@ -34,9 +35,11 @@ export default function UpdateAlbum() {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
+
         when: "beforeChildren",
       },
     },
+
   };
 
   const itemVariants = {
@@ -45,9 +48,11 @@ export default function UpdateAlbum() {
       y: 0,
       opacity: 1,
       transition: {
+
         duration: 0.5,
       },
     },
+
   };
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export default function UpdateAlbum() {
           setIsLoading(false);
           return;
         }
-        setFormData(data);
+        setFormData({ ...data, description: data.description || '' });
         setPublishError(null);
         setIsLoading(false);
       } catch (error) {
@@ -152,12 +157,14 @@ export default function UpdateAlbum() {
       className="p-3 max-w-full bg-black mx-auto min-h-screen"
     >
       {/* Navigation Header */}
+
       <motion.div
         variants={itemVariants}
         className="flex items-center gap-4 mb-6"
       >
         <Link to="/dashboard?tab=albums">
           <motion.div
+
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
@@ -184,6 +191,7 @@ export default function UpdateAlbum() {
         {/* Album Name */}
         <motion.div variants={itemVariants}>
           <TextInput
+
             type="text"
             placeholder="Album Name"
             required
@@ -193,6 +201,7 @@ export default function UpdateAlbum() {
             }
             value={formData.albumName || ""}
             className="bg-gray-800 text-white border-gray-700 focus:border-blue-500"
+
           />
         </motion.div>
 
@@ -201,32 +210,40 @@ export default function UpdateAlbum() {
           <Textarea
             placeholder="Description"
             className="h-52"
+
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
             value={formData.description || ""}
+
           />
         </motion.div>
 
         {/* Image Upload Section */}
         <motion.div
           variants={itemVariants}
+
           className="flex flex-col gap-4 items-center justify-between border-2 border-dashed border-blue-300 rounded-xl p-4 hover:border-blue-500 transition-colors bg-gray-900"
+
         >
           <div className="flex flex-col sm:flex-row gap-4 w-full items-center">
             <div className="flex items-center gap-2 w-full">
               <HiOutlinePhotograph className="text-2xl text-blue-500" />
               <FileInput
+
                 type="file"
                 accept="image/*"
                 onChange={(e) => setFile(e.target.files[0])}
                 className="w-full text-white"
+
               />
             </div>
             <Button
               onClick={handleUploadImage}
+
               type="button"
               size="sm"
+
               gradientDuoTone="purpleToBlue"
               outline
               disabled={imageUploadProgress}
@@ -238,6 +255,7 @@ export default function UpdateAlbum() {
                     value={imageUploadProgress}
                     text={`${imageUploadProgress}%`}
                     styles={{
+
                       path: { stroke: "#3B82F6" },
                       text: { fill: "#3B82F6", fontSize: "24px" },
                     }}
@@ -246,13 +264,16 @@ export default function UpdateAlbum() {
               ) : (
                 "Upload Image"
               )}
+
             </Button>
           </div>
 
           {imageUploadError && (
+
             <Alert color="failure" className="w-full">
               {imageUploadError}
             </Alert>
+
           )}
           {formData.image && (
             <motion.img
@@ -268,7 +289,9 @@ export default function UpdateAlbum() {
         {/* Submit Button */}
         <motion.div variants={itemVariants}>
           <Button
+
             type="submit"
+
             className="w-full mb-12 mt-4 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -283,7 +306,9 @@ export default function UpdateAlbum() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
+
             <Alert className="mt-4" color="failure">
+
               {publishError}
             </Alert>
           </motion.div>
