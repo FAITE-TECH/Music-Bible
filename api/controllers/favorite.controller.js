@@ -5,7 +5,11 @@ import { errorHandler } from '../utils/error.js';
 export const toggleFavorite = async (req, res, next) => {
   try {
     const { musicId } = req.params;
-    const userId = req.user.id;
+    const { userId } = req.body; 
+
+    if (!userId) {
+      return next(errorHandler(401, 'User ID is required'));
+    }
 
     // Check if music exists
     const music = await Music.findById(musicId);
@@ -15,6 +19,10 @@ export const toggleFavorite = async (req, res, next) => {
 
     // Find user and check if music is already favorited
     const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
+
     const isFavorited = user.favorites.includes(musicId);
 
     let updatedUser;
@@ -73,8 +81,16 @@ export const toggleFavorite = async (req, res, next) => {
 
 export const getFavorites = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.body; 
+
+    if (!userId) {
+      return next(errorHandler(401, 'User ID is required'));
+    }
+
     const user = await User.findById(userId).populate('favorites');
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
 
     res.status(200).json({
       success: true,
