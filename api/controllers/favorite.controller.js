@@ -11,13 +11,13 @@ export const toggleFavorite = async (req, res, next) => {
       return next(errorHandler(401, 'User ID is required'));
     }
 
-    // Check if music exists
+    
     const music = await Music.findById(musicId);
     if (!music) {
       return next(errorHandler(404, 'Music not found'));
     }
 
-    // Find user and check if music is already favorited
+    
     const user = await User.findById(userId);
     if (!user) {
       return next(errorHandler(404, 'User not found'));
@@ -29,7 +29,7 @@ export const toggleFavorite = async (req, res, next) => {
     let updatedMusic;
     
     if (isFavorited) {
-      // Remove from favorites
+     
       [updatedUser, updatedMusic] = await Promise.all([
         User.findByIdAndUpdate(
           userId,
@@ -46,7 +46,6 @@ export const toggleFavorite = async (req, res, next) => {
         )
       ]);
     } else {
-      // Add to favorites
       [updatedUser, updatedMusic] = await Promise.all([
         User.findByIdAndUpdate(
           userId,
