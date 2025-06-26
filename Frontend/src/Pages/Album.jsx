@@ -73,27 +73,31 @@ export default function Album() {
     }
   };
 
-  const toggleFavorite = async (musicId) => {
-    try {
-      if (!currentUser) {
-        navigate("/sign-in");
-        return;
-      }
-
-      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Failed to update favorites");
-
-      setFavorites(data.favorites.map((fav) => fav._id));
-    } catch (error) {
-      console.error("Favorite error:", error);
+ const toggleFavorite = async (musicId) => {
+  try {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
     }
-  };
+
+    const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: currentUser._id }), 
+      credentials: "include",
+    });
+    const data = await res.json();
+
+    if (!res.ok)
+      throw new Error(data.message || "Failed to update favorites");
+
+    setFavorites(data.favorites.map((fav) => fav._id));
+  } catch (error) {
+    console.error("Favorite error:", error);
+  }
+};
 
   const handleVolumeChange = (index, newVolume) => {
     const updatedVolumes = { ...volumes, [index]: newVolume };
