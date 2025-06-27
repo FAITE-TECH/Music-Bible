@@ -21,6 +21,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
+// Utility function to get audio duration
+const getAudioDuration = (url) => {
+  return new Promise((resolve) => {
+    const audio = new Audio();
+    audio.addEventListener('loadedmetadata', () => {
+      resolve(audio.duration);
+    });
+    audio.addEventListener('error', () => {
+      resolve(0); // Return 0 if there's an error
+    });
+    audio.src = url;
+  });
+};
+
 export default function Album() {
   const [favorites, setFavorites] = useState([]);
   const [musicList, setMusicList] = useState([]);
@@ -73,31 +87,31 @@ export default function Album() {
     }
   };
 
- const toggleFavorite = async (musicId) => {
-  try {
-    if (!currentUser) {
-      navigate("/sign-in");
-      return;
+  const toggleFavorite = async (musicId) => {
+    try {
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+
+      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUser._id }), 
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (!res.ok)
+        throw new Error(data.message || "Failed to update favorites");
+
+      setFavorites(data.favorites.map((fav) => fav._id));
+    } catch (error) {
+      console.error("Favorite error:", error);
     }
-
-    const res = await fetch(`/api/favorites/toggle/${musicId}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: currentUser._id }), 
-      credentials: "include",
-    });
-    const data = await res.json();
-
-    if (!res.ok)
-      throw new Error(data.message || "Failed to update favorites");
-
-    setFavorites(data.favorites.map((fav) => fav._id));
-  } catch (error) {
-    console.error("Favorite error:", error);
-  }
-};
+  };
 
   const handleVolumeChange = (index, newVolume) => {
     const updatedVolumes = { ...volumes, [index]: newVolume };
@@ -166,8 +180,16 @@ export default function Album() {
         );
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
-        setMusicList(data.music);
-        // Reset favorites filter when changing albums
+        
+        // Load durations for all tracks
+        const musicWithDurations = await Promise.all(
+          data.music.map(async (music) => {
+            const duration = await getAudioDuration(music.music);
+            return { ...music, duration };
+          })
+        );
+        
+        setMusicList(musicWithDurations);
         setShowFavoritesForAlbum(null);
       } catch (error) {
         setError(error.message);
@@ -578,24 +600,24 @@ export default function Album() {
                 <input
                   type="range"
                   min="0"
-                  max={index === currentSongIndex ? duration || 100 : 0}
+                  max={index === currentSongIndex ? duration || 100 : music.duration || 100}
                   value={index === currentSongIndex ? currentTime : 0}
                   onChange={handleSeek}
                   className="flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px]"
                   style={{
                     background: `linear-gradient(to right, #8b5cf6 ${
                       ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : 100)) *
+                        (index === currentSongIndex ? duration || 100 : music.duration || 100)) *
                       100
                     }%, #4b5563 ${
                       ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : 100)) *
+                        (index === currentSongIndex ? duration || 100 : music.duration || 100)) *
                       100
                     }%)`,
                   }}
                 />
                 <span className="text-xs text-gray-400 w-8 shrink-0">
-                  {formatTime(index === currentSongIndex ? duration : 0)}
+                  {formatTime(music.duration || 0)}
                 </span>
 
                 <motion.button
@@ -760,7 +782,7 @@ export default function Album() {
           currentSongIndex !== null ? musicList[currentSongIndex]?.music : ""
         }
         onError={(e) => console.error("Audio error:", e)}
-      />
+      /> 
     </motion.div>
   );
 }
