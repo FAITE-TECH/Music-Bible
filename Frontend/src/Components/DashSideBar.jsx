@@ -132,7 +132,11 @@ export default function DashSideBar() {
                         Music Albums
                       </Sidebar.Item>
                     </Link>
+<<<<<<< HEAD
                      {/*
+=======
+                    
+>>>>>>> 4c92959 (new)
                       <Link to='/dashboard?tab=API' key="API" className="block" onClick={handleLinkClick}>
                       <Sidebar.Item
                         active={tab === 'API'}
@@ -145,7 +149,11 @@ export default function DashSideBar() {
                         API Orders
                       </Sidebar.Item>
                     </Link>
+<<<<<<< HEAD
                      */}
+=======
+                   
+>>>>>>> 4c92959 (new)
                     
 
                     <Link to='/dashboard?tab=membership' key="membership" className="block" onClick={handleLinkClick}>

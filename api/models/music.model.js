@@ -6,7 +6,11 @@ const musicSchema = new mongoose.Schema(
      title: {
       type: String,
       required: true,
+<<<<<<< HEAD
       unique: true,
+=======
+     
+>>>>>>> 4c92959 (new)
     },
 
     description: {
