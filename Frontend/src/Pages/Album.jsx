@@ -21,8 +21,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
-<<<<<<< HEAD
-=======
 // Utility function to get audio duration
 const getAudioDuration = (url) => {
   return new Promise((resolve) => {
@@ -37,7 +35,6 @@ const getAudioDuration = (url) => {
   });
 };
 
->>>>>>> 4c92959 (new)
 export default function Album() {
   const [favorites, setFavorites] = useState([]);
   const [musicList, setMusicList] = useState([]);
@@ -99,13 +96,10 @@ export default function Album() {
 
       const res = await fetch(`/api/favorites/toggle/${musicId}`, {
         method: "POST",
-<<<<<<< HEAD
-=======
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ userId: currentUser._id }), 
->>>>>>> 4c92959 (new)
         credentials: "include",
       });
       const data = await res.json();
@@ -186,10 +180,6 @@ export default function Album() {
         );
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
-<<<<<<< HEAD
-        setMusicList(data.music);
-        // Reset favorites filter when changing albums
-=======
         
         // Load durations for all tracks
         const musicWithDurations = await Promise.all(
@@ -200,7 +190,6 @@ export default function Album() {
         );
         
         setMusicList(musicWithDurations);
->>>>>>> 4c92959 (new)
         setShowFavoritesForAlbum(null);
       } catch (error) {
         setError(error.message);
@@ -236,13 +225,10 @@ export default function Album() {
   }, [currentSongIndex, musicList, shuffle]);
 
   const handlePlaySong = (index) => {
-<<<<<<< HEAD
-=======
     if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
       alert("This song will be available soon!");
       return;
     }
->>>>>>> 4c92959 (new)
     if (currentSongIndex === index) {
       setIsPlaying(!isPlaying);
       if (isPlaying) {
@@ -359,26 +345,20 @@ export default function Album() {
   };
 
   const handleDownload = (music) => {
-<<<<<<< HEAD
-=======
     if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
       alert("This song will be available soon!");
       return;
     }
->>>>>>> 4c92959 (new)
     currentUser
       ? navigate("/order-summary", { state: { musicItem: music } })
       : navigate("/sign-in");
   };
 
   const handleShare = (music) => {
-<<<<<<< HEAD
-=======
     if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
       alert("This song will be available soon!");
       return;
     }
->>>>>>> 4c92959 (new)
     if (navigator.share) {
       navigator
         .share({
@@ -485,11 +465,7 @@ export default function Album() {
               "https://via.placeholder.com/300"
             }
             alt={category}
-<<<<<<< HEAD
-            className="w-full h-auto object-cover rounded-lg shadow-lg"
-=======
             className="w-full max-w-xs h-auto max-h-80 object-contain rounded-lg shadow-lg mx-auto"
->>>>>>> 4c92959 (new)
           />
         </motion.div>
 
@@ -504,34 +480,13 @@ export default function Album() {
           </h2>
           {categories.find((cat) => cat.albumName === category)
             ?.description && (
-<<<<<<< HEAD
-            <p className="tamil-font text-gray-300 mb-4">
-=======
             <p className="tamil-font text-justify text-gray-300 mb-4">
->>>>>>> 4c92959 (new)
               {categories.find((cat) => cat.albumName === category).description}
             </p>
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <motion.button
-<<<<<<< HEAD
-              onClick={handleAlbumShare}
-              className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.05 }}
-            >
-              <FontAwesomeIcon icon={faShareAlt} />
-              <span>Share Album</span>
-            </motion.button>
-
-            <motion.button
-              onClick={() => {}}
-              className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.05 }}
-            >
-              <FontAwesomeIcon icon={faDownload} />
-              <span>Download Album</span>
-=======
               onClick={() => {
                 if (category === "BOOK OF JAMES - ஞான மொழிகள்") {
                   alert("This album will be available soon!");
@@ -584,7 +539,6 @@ export default function Album() {
               {category === "BOOK OF JAMES - ஞான மொழிகள்" && (
                 <span className="ml-2 text-xs">(Coming Soon)</span>
               )}
->>>>>>> 4c92959 (new)
             </motion.button>
           </div>
         </motion.div>
@@ -625,13 +579,10 @@ export default function Album() {
               index === currentSongIndex
                 ? "bg-gray-900 border-l-4 border-blue-500"
                 : "bg-gray-800"
-<<<<<<< HEAD
-=======
             } ${
               category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                 ? "opacity-70 cursor-not-allowed"
                 : ""
->>>>>>> 4c92959 (new)
             }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -650,31 +601,6 @@ export default function Album() {
               </div>
 
               <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4">
-<<<<<<< HEAD
-                <motion.button
-                  onClick={handlePrevious}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Previous Track"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <FontAwesomeIcon icon={faStepBackward} />
-                </motion.button>
-                <motion.button
-                  onClick={handleSeekBackward}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Seek Backward 10s"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <FontAwesomeIcon icon={faBackward} />
-                </motion.button>
-                <motion.button
-                  onClick={() => handlePlaySong(index)}
-                  className="text-white bg-blue-600 rounded-full p-2 w-8 h-8 flex items-center justify-center"
-                  title={
-                    currentSongIndex === index && isPlaying ? "Pause" : "Play"
-                  }
-                  whileHover={{ scale: 1.1 }}
-=======
                 {/* Previous Track Button */}
                 <motion.button
                   onClick={() => {
@@ -773,7 +699,6 @@ export default function Album() {
                   disabled={
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
->>>>>>> 4c92959 (new)
                 >
                   <FontAwesomeIcon
                     icon={
@@ -781,24 +706,6 @@ export default function Album() {
                     }
                   />
                 </motion.button>
-<<<<<<< HEAD
-                <motion.button
-                  onClick={handleSeekForward}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Seek Forward 10s"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <FontAwesomeIcon icon={faForward} />
-                </motion.button>
-                <motion.button
-                  onClick={handleNext}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Next Track"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <FontAwesomeIcon icon={faStepForward} />
-                </motion.button>
-=======
 
                 {/* Seek Forward Button */}
                 <motion.button
@@ -871,42 +778,12 @@ export default function Album() {
                 </motion.button>
 
                 {/* Progress Bar */}
->>>>>>> 4c92959 (new)
                 <span className="text-xs text-gray-400 w-8 text-right shrink-0">
                   {formatTime(index === currentSongIndex ? currentTime : 0)}
                 </span>
                 <input
                   type="range"
                   min="0"
-<<<<<<< HEAD
-                  max={index === currentSongIndex ? duration || 100 : 0}
-                  value={index === currentSongIndex ? currentTime : 0}
-                  onChange={handleSeek}
-                  className="flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px]"
-                  style={{
-                    background: `linear-gradient(to right, #8b5cf6 ${
-                      ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : 100)) *
-                      100
-                    }%, #4b5563 ${
-                      ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : 100)) *
-                      100
-                    }%)`,
-                  }}
-                />
-                <span className="text-xs text-gray-400 w-8 shrink-0">
-                  {formatTime(index === currentSongIndex ? duration : 0)}
-                </span>
-
-                <motion.button
-                  onClick={handleShuffle}
-                  className={`p-1 sm:p-2 ${
-                    shuffle ? "text-purple-400" : "text-gray-400"
-                  } hover:text-white`}
-                  title={shuffle ? "Disable shuffle" : "Enable shuffle"}
-                  whileHover={{ scale: 1.1 }}
-=======
                   max={index === currentSongIndex ? duration || 100 : music.duration || 100}
                   value={index === currentSongIndex ? currentTime : 0}
                   onChange={(e) => {
@@ -978,19 +855,10 @@ export default function Album() {
                   disabled={
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
->>>>>>> 4c92959 (new)
                 >
                   <FontAwesomeIcon icon={faRandom} />
                 </motion.button>
 
-<<<<<<< HEAD
-                <div className="relative">
-                  <motion.button
-                    onClick={() => togglePlaybackRateMenu(index)}
-                    className="text-gray-400 hover:text-white p-1 sm:p-2"
-                    title="Playback speed"
-                    whileHover={{ scale: 1.1 }}
-=======
                 {/* Playback Rate Menu */}
                 <div className="relative">
                   <motion.button
@@ -1024,7 +892,6 @@ export default function Album() {
                     disabled={
                       category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                     }
->>>>>>> 4c92959 (new)
                   >
                     <FontAwesomeIcon icon={faEllipsisH} />
                   </motion.button>
@@ -1056,14 +923,6 @@ export default function Album() {
                   )}
                 </div>
 
-<<<<<<< HEAD
-                <div className="relative flex items-center group">
-                  {/* Volume Icon Button */}
-                  <motion.button
-                    onClick={() => toggleMute(index)}
-                    className="text-gray-400 hover:text-white"
-                    whileHover={{ scale: 1.1 }}
-=======
                 {/* Volume Controls */}
                 <div className="relative flex items-center group">
                   <motion.button
@@ -1084,7 +943,6 @@ export default function Album() {
                     whileHover={{
                       scale: 1.1,
                     }}
->>>>>>> 4c92959 (new)
                     onMouseEnter={() => setHoveredVolumeIndex(index)}
                     onTouchStart={() => setHoveredVolumeIndex(index)}
                   >
@@ -1093,25 +951,15 @@ export default function Album() {
                     />
                   </motion.button>
 
-<<<<<<< HEAD
-                  {/* Responsive Volume Slider */}
-=======
->>>>>>> 4c92959 (new)
                   {hoveredVolumeIndex === index && (
                     <motion.div
                       initial={{ opacity: 0, scaleX: 0.5 }}
                       animate={{ opacity: 1, scaleX: 1 }}
                       exit={{ opacity: 0, scaleX: 0.5 }}
                       className={`
-<<<<<<< HEAD
-        absolute left-full ml-2 flex items-center
-        ${window.innerWidth < 640 ? "bottom-full mb-2" : ""}
-      `}
-=======
                         absolute left-full ml-2 flex items-center
                         ${window.innerWidth < 640 ? "bottom-full mb-2" : ""}
                       `}
->>>>>>> 4c92959 (new)
                       onMouseLeave={() => setHoveredVolumeIndex(null)}
                       onTouchEnd={() => setHoveredVolumeIndex(null)}
                       style={{
@@ -1159,12 +1007,6 @@ export default function Album() {
                     favorites.includes(music._id)
                       ? "text-red-800 bg-red-500 bg-opacity-20"
                       : "text-gray-200 bg-gray-700"
-<<<<<<< HEAD
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-=======
                   } ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
@@ -1179,7 +1021,6 @@ export default function Album() {
                   disabled={
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
->>>>>>> 4c92959 (new)
                 >
                   <FontAwesomeIcon
                     icon={
@@ -1191,12 +1032,6 @@ export default function Album() {
                   />
                 </motion.button>
 
-<<<<<<< HEAD
-                <motion.button
-                  onClick={() => handleDownload(music)}
-                  className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
-                  whileHover={{ scale: 1.05 }}
-=======
                 {/* Download button */}
                 <motion.button
                   onClick={() => handleDownload(music, index)}
@@ -1214,17 +1049,10 @@ export default function Album() {
                   disabled={
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
->>>>>>> 4c92959 (new)
                 >
                   <FontAwesomeIcon icon={faDownload} size="xs" />
                   <span className="hidden sm:inline">Download</span>
                 </motion.button>
-<<<<<<< HEAD
-                <motion.button
-                  onClick={() => handleShare(music)}
-                  className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
-                  whileHover={{ scale: 1.05 }}
-=======
 
                 {/* Share button */}
                 <motion.button
@@ -1243,7 +1071,6 @@ export default function Album() {
                   disabled={
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
->>>>>>> 4c92959 (new)
                 >
                   <FontAwesomeIcon icon={faShareAlt} size="xs" />
                   <span className="hidden sm:inline">Share</span>
@@ -1260,14 +1087,7 @@ export default function Album() {
           currentSongIndex !== null ? musicList[currentSongIndex]?.music : ""
         }
         onError={(e) => console.error("Audio error:", e)}
-<<<<<<< HEAD
-      />
-    </motion.div>
-  );
-}
-=======
       /> 
     </motion.div>
   );
 }
->>>>>>> 4c92959 (new)

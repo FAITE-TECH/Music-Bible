@@ -59,19 +59,6 @@ export default function ContactUs() {
 
       <div className="container mx-auto flex flex-col lg:flex-row items-center justify-center space-y-10 lg:space-y-0 lg:space-x-12 px-6">
         {/* Left: Contact Information */}
-<<<<<<< HEAD
-        <div className="lg:w-1/3 w-full" data-aos="fade-right">
-          <h2 className="text-2xl lg:text-3xl font-bold mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">Contact Information</h2>
-          <p className="text-sm lg:text-lg mb-4" data-aos="fade-up">
-            <i className="fas fa-envelope mr-2 text-indigo-400"></i> Email: support@amusicbible.com
-          </p>
-          <p className="text-sm lg:text-lg mb-4" data-aos="fade-up" data-aos-delay="100">
-            <i className="fas fa-phone-alt mr-2 text-indigo-400"></i> Phone: +1 234 567 890
-          </p>
-          <p className="text-sm lg:text-lg mb-4" data-aos="fade-up" data-aos-delay="200">
-            <i className="fas fa-map-marker-alt mr-2 text-indigo-400"></i> Location: 123 Music Avenue, NY
-          </p>
-=======
         <div className="w-full lg:w-2/5" data-aos="fade-right">
           <div className=" p-6 sm:p-8 rounded-xl shadow-lg h-full">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">
@@ -117,7 +104,6 @@ export default function ContactUs() {
               </div>
             </div>
           </div>
->>>>>>> 4c92959 (new)
         </div>
 
         {/* Right: Contact Form */}

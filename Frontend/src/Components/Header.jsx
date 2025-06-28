@@ -39,15 +39,10 @@ export default function Header() {
 
     const navItems = [
         { name: "Home", path: "/", icon: <HiHome size={20} /> },
-<<<<<<< HEAD
-        { name: "Musics", path: "/musics", icon: <HiMusicNote size={20} /> },
-        { name: "Album", path: "/album", icon: <HiCollection size={20} /> },
-=======
         // { name: "AboutUs", path: "/about", icon: <HiBookOpen size={20} /> },
         { name: "Musics", path: "/musics", icon: <HiMusicNote size={20} /> },
         { name: "Album", path: "/album", icon: <HiCollection size={20} /> },
          { name: "Blog", path: "/blog", icon: <HiBookOpen size={20} /> },
->>>>>>> 4c92959 (new)
         { name: "Membership", path: "/membership", icon: <HiUserGroup size={20} /> },
         { name: "Contact Us", path: "/contactus", icon: <FaPhone size={20} /> },
     ];
@@ -137,14 +132,9 @@ export default function Header() {
     }
 
     return (
-<<<<<<< HEAD
-        <>
-            <header className="bg-black text-white shadow-lg w-full z-50 relative h-14">
-=======
         <div className='pt-14'>
             <header className="bg-black text-white shadow-lg w-full fixed top-0 left-0 z-50 h-14">
 
->>>>>>> 4c92959 (new)
                 <div className="container mx-auto flex items-center justify-between h-full px-4">
                     <motion.div className="flex items-center gap-x-4 md:gap-x-6">
                         <NavLink to="/" className="flex items-center text-2xl font-bold text-white">
@@ -245,10 +235,6 @@ export default function Header() {
 
                 <MobileMenu menuOpen={menuOpen} setMenuOpen={setMenuOpen} navigate={navigate} currentUser={currentUser} />
             </header>
-<<<<<<< HEAD
-        </>
-=======
         </div>
->>>>>>> 4c92959 (new)
     );
 }
