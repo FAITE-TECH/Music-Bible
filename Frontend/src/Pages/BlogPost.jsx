@@ -9,114 +9,50 @@ const BlogPost = () => {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Function to get complete image URL
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+        // Check if it's already a full URL
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            return imagePath;
+        }
+        // Prepend the base URL for local images
+        return `http://localhost:3000${imagePath}`;
+    };
 
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                // Enhanced mock data with more realistic content
-                const mockPosts = {
-                    1: {
-                        id: 1,
-                        title: "The Transformative Power of Music in Spiritual Growth",
-                        content: `
-                            <p class="mb-6">Music has always been the soul's language, transcending cultural and religious boundaries to touch the deepest parts of our spiritual being. In Christian tradition, music serves as a divine bridge between heaven and earth, a powerful medium for worship, meditation, and communion with God's living word.</p>
-                            
-                            <div class="bg-gray-800 rounded-xl p-6 mb-8 border-l-4 border-blue-500">
-                                <blockquote class="text-xl italic">
-                                    "Let the word of Christ dwell in you richly in all wisdom; teaching and admonishing one another in psalms and hymns and spiritual songs, singing with grace in your hearts to the Lord."
-                                    <footer class="mt-4 text-blue-400">— Colossians 3:16</footer>
-                                </blockquote>
-                            </div>
-                            
-                            <h2 class="text-2xl font-bold mb-4 mt-10 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">The Science Behind Sacred Sounds</h2>
-                            
-                            <p class="mb-6">At MusicBible, our research has revealed profound benefits when scripture intertwines with melody:</p>
-                            
-                            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                                <li class="flex items-start">
-                                    <span class="bg-blue-500 rounded-full p-1 mr-3 mt-1">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span>300% faster scripture memorization compared to reading alone</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="bg-blue-500 rounded-full p-1 mr-3 mt-1">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span>Deeper emotional engagement with biblical texts</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="bg-blue-500 rounded-full p-1 mr-3 mt-1">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span>Enhanced focus during prayer sessions</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="bg-blue-500 rounded-full p-1 mr-3 mt-1">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                    </span>
-                                    <span>Reduced stress levels during devotional time</span>
-                                </li>
-                            </ul>
-                            
-                            <div class="bg-gray-800 rounded-xl p-6 mb-8 overflow-hidden relative">
-                                <div class="absolute inset-0 bg-gradient-to-r from-blue-900 to-transparent opacity-30"></div>
-                                <h3 class="text-xl font-bold mb-3 relative z-10">Neurological Benefits</h3>
-                                <p class="relative z-10">Recent fMRI studies show musical scripture activates both left (analytical) and right (creative) brain hemispheres simultaneously, creating optimal conditions for spiritual learning and retention.</p>
-                            </div>
-                            
-                            <h2 class="text-2xl font-bold mb-4 mt-10 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">Practical Applications</h2>
-                            
-                            <p class="mb-6">Try these techniques to incorporate musical scripture into your daily practice:</p>
-                            
-                            <div class="grid gap-6 mb-10">
-                                <div class="bg-gray-800 p-5 rounded-lg border-l-4 border-blue-400">
-                                    <h4 class="font-bold text-lg mb-2">Morning Devotion</h4>
-                                    <p>Start your day with our "Psalms at Dawn" playlist to set a worshipful tone.</p>
-                                </div>
-                                <div class="bg-gray-800 p-5 rounded-lg border-l-4 border-green-400">
-                                    <h4 class="font-bold text-lg mb-2">Scripture Memorization</h4>
-                                    <p>Use our verse-specific tracks to internalize key passages.</p>
-                                </div>
-                                <div class="bg-gray-800 p-5 rounded-lg border-l-4 border-purple-400">
-                                    <h4 class="font-bold text-lg mb-2">Family Worship</h4>
-                                    <p>Engage children with our interactive Bible story songs.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] p-0.5 rounded-xl mb-8">
-                                <div class="bg-gray-900 rounded-xl p-6">
-                                    <h3 class="text-xl font-bold mb-3">Testimonial</h3>
-                                    <p class="italic mb-4">"After using MusicBible for just three weeks, I've memorized more scripture than in the previous three years. The melodies make the words come alive!"</p>
-                                    <p class="text-blue-400">— Sarah J., Ministry Leader</p>
-                                </div>
-                            </div>
-                        `,
-                        image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-                        date: "May 15, 2023",
-                        author: "Dr. Michael Chen",
-                        authorTitle: "Worship Studies Director",
-                        authorImage: "https://randomuser.me/api/portraits/men/32.jpg",
-                        category: "Spiritual Growth",
-                        readTime: "8 min read",
-                        tags: ["Worship", "Neuroscience", "Devotion"]
-                    }
-                };
+                setLoading(true);
+                setError(null);
                 
-                setTimeout(() => {
-                    setPost(mockPosts[id]);
-                    setLoading(false);
-                }, 800); // Simulate network delay
-            } catch (error) {
-                console.error("Error fetching blog post:", error);
+                // Fetch blog post
+                const response = await fetch(`/api/blog/get/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error(response.status === 404 
+                        ? "Blog post not found" 
+                        : "Failed to fetch blog post");
+                }
+                
+                const data = await response.json();
+                setPost(data);
+                
+                // Increment view count
+                try {
+                    await fetch(`/api/blog/${id}/view`, {
+                        method: 'POST'
+                    });
+                } catch (viewError) {
+                    console.error("Error incrementing view count:", viewError);
+                }
+                
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching blog post:", err);
+                setError(err.message);
                 setLoading(false);
             }
         };
@@ -152,7 +88,27 @@ const BlogPost = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center h-96">
                         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
-                        <p className="text-blue-400">Loading divine inspiration...</p>
+                        <p className="text-blue-400">Loading article...</p>
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-20">
+                        <motion.div
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            className="inline-block mb-6"
+                        >
+                            <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </motion.div>
+                        <h2 className="text-3xl font-bold mb-4">Error Loading Article</h2>
+                        <p className="text-gray-400 mb-8 max-w-md mx-auto">{error}</p>
+                        <Link 
+                            to="/blog"
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-8 py-3 rounded-full font-medium inline-block"
+                        >
+                            Explore Other Articles
+                        </Link>
                     </div>
                 ) : post ? (
                     <motion.article
@@ -170,7 +126,7 @@ const BlogPost = () => {
                         </Link>
 
                         {/* Header section */}
-                        <div className="mb-10">
+                        <div className="mb-14">
                             <div className="flex items-center space-x-4 mb-4">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-900 text-blue-300">
                                     <HiTag className="mr-1" />
@@ -178,38 +134,45 @@ const BlogPost = () => {
                                 </span>
                                 <span className="text-gray-400 text-sm flex items-center">
                                     <HiCalendar className="mr-1" />
-                                    {post.date}
+                                    {new Date(post.createdAt).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
                                 </span>
                                 <span className="text-gray-400 text-sm flex items-center">
                                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    {post.readTime}
+                                    5 min read
                                 </span>
                             </div>
                             
                             <motion.h1 
-                                className="text-4xl md:text-5xl font-bold mb-6 leading-tight bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent"
+                                className="text-4xl md:text-5xl font-bold  leading-tight bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent mb-3"
                                 initial={{ y: -20 }}
                                 animate={{ y: 0 }}
                             >
                                 {post.title}
                             </motion.h1>
                             
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-4 pt-5">
                                 <img 
-                                    src={post.authorImage} 
-                                    alt={post.author} 
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                                    src={getImageUrl(post.authorImage)} 
+                                    alt={post.authorName} 
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 "
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/placeholder-avatar.jpg';
+                                    }}
                                 />
                                 <div>
-                                    <p className="font-medium">{post.author}</p>
-                                    <p className="text-sm text-gray-400">{post.authorTitle}</p>
+                                    <p className="font-medium">{post.authorName}</p>
                                 </div>
                             </div>
                         </div>
                         
-                        {/* Featured image with loading state */}
+                        {/* Featured image */}
                         <div className="mb-10 rounded-xl overflow-hidden relative">
                             {!isImageLoaded && (
                                 <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
@@ -221,30 +184,26 @@ const BlogPost = () => {
                                 </div>
                             )}
                             <motion.img 
-                                src={post.image} 
+                                src={getImageUrl(post.blogImage)} 
                                 alt={post.title} 
-                                className={`w-3/4 h-3/4 mx-auto object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                className={`w-full h-auto mx-auto object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                 onLoad={() => setIsImageLoaded(true)}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/placeholder-image.jpg';
+                                    setIsImageLoaded(true);
+                                }}
                                 initial={{ scale: 0.98 }}
                                 animate={{ scale: 1 }}
                                 transition={{ duration: 0.8 }}
                             />
                         </div>
                         
-                        {/* Content with enhanced styling */}
+                        {/* Content */}
                         <div 
                             className="prose prose-invert max-w-none mb-12"
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />
-                        
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-10">
-                            {post.tags.map((tag, index) => (
-                                <span key={index} className="px-3 py-1 rounded-full text-sm bg-gray-800 text-gray-300">
-                                    #{tag}
-                                </span>
-                            ))}
-                        </div>
                         
                         {/* Share buttons */}
                         <div className="mb-12">
@@ -281,22 +240,6 @@ const BlogPost = () => {
                             </div>
                         </div>
                         
-                        {/* Author bio */}
-                        <div className="bg-gray-800 rounded-xl p-6 mb-12 border-l-4 border-blue-500">
-                            <div className="flex items-start space-x-4">
-                                <img 
-                                    src={post.authorImage} 
-                                    alt={post.author} 
-                                    className="w-16 h-16 rounded-full object-cover border-2 border-blue-500"
-                                />
-                                <div>
-                                    <h3 className="text-xl font-bold mb-1">{post.author}</h3>
-                                    <p className="text-blue-400 mb-3">{post.authorTitle}</p>
-                                    <p className="text-gray-300">Dr. Chen is a worship studies scholar with over 15 years of experience researching the intersection of music, neuroscience, and spiritual formation. His work has been published in numerous theological and scientific journals.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
                         {/* Navigation */}
                         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-8 border-t border-gray-700">
                             <Link 
@@ -322,7 +265,7 @@ const BlogPost = () => {
                             </svg>
                         </motion.div>
                         <h2 className="text-3xl font-bold mb-4">Article Not Found</h2>
-                        <p className="text-gray-400 mb-8 max-w-md mx-auto">The spiritual insight you're seeking isn't available at this moment. Perhaps it's still being composed in heaven's choir.</p>
+                        <p className="text-gray-400 mb-8 max-w-md mx-auto">The article you're looking for couldn't be found.</p>
                         <Link 
                             to="/blog"
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-8 py-3 rounded-full font-medium inline-block"
