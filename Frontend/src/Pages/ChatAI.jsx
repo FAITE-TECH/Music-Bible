@@ -15,6 +15,7 @@ const ChatAI = () => {
   const [loading, setLoading] = useState(false);
   const [shareClicked, setSharedClicked] = useState(false);
   const [copyClicked, setCopyClicked] = useState(false);
+  const [language, setLanguage] = useState('en'); // 'en' for English, 'ta' for Tamil
   const [isPurchasing, setIsPurchasing] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -46,7 +47,7 @@ const ChatAI = () => {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ question: query }),
+          body: JSON.stringify({ question: query, language: language }),
         });
         if (response.ok) {
           const data = await response.json();
@@ -71,7 +72,7 @@ const ChatAI = () => {
         .then(() => console.log('Link shared successfully'))
         .catch((error) => console.error('Error sharing link:', error));
     } else {
-      alert('Web Share API not supported in your browser.');
+      alert("Web Share API not supported in your browser.");
     }
   };
 
@@ -118,7 +119,7 @@ const ChatAI = () => {
       const paragraphs = [];
 
       for (let i = 0; i < sentences.length; i += 2) {
-        paragraphs.push(sentences.slice(i, i + 2).join(' '));
+        paragraphs.push(sentences.slice(i, i + 2).join(" "));
       }
 
       return paragraphs;
@@ -127,61 +128,100 @@ const ChatAI = () => {
     return (
       <div className="space-y-4 p-4">
         {formatText(text).map((para, index) => (
-          <p key={index} className="text-md leading-relaxed">{para}</p>
+          <p key={index} className="text-md leading-relaxed">
+            {para}
+          </p>
         ))}
       </div>
     );
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
-      <div className="max-h-screen overflow-hidden lg:bg-[url(../assets/bg5.png)] md:bg-[url(../assets/bg-md.png)] bg-[url(../assets/bg-sm.png)] bg-cover bg-center">
-        {/* Header */}
-        <div className="flex item-center text-3xl text-gray-800 px-4 md:px-16 py-8">
-          <motion.div
-            className="flex items-center"
-            initial={{ opacity: 0, x: -300 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 60, duration: 1.6 }}
-          >
-            <div className="w-12 h-12">
-              <img src={logo} alt="logo" className="max-w-100" />
-            </div>
-            <h1 className="text-3xl text-gray-800 bg-transparent">
-              aMusicBible/AI
-            </h1>
-          </motion.div>
-        </div>
-
-        {/* Responsive Info Container */}
-        <div className="absolute top-4 right-4 sm:top-8 sm:right-6 lg:top-12 lg:right-8 w-40 sm:w-48 md:w-56 p-2 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl md:rounded-3xl bg-gradient-to-b from-gray-900 to-black shadow-xl text-white text-xs sm:text-sm md:text-base font-light z-20 flex flex-col items-center text-center">
-          <h3 className="text-xs sm:text-sm md:text-base font-semibold mb-1">Available</h3>
-          <h3 className="text-xs sm:text-sm md:text-xl text-yellow-400 font-semibold mb-1">Bible AI API KEY</h3>
-          <p className="text-xs sm:text-sm md:text-base mb-2 sm:mb-3 leading-snug">Chatbox available in English</p>
-          <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-1 sm:space-y-0 w-full justify-center">
-            <button 
-              onClick={handleBuyNow} 
-              disabled={isPurchasing}
-              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center"
+      <div className="h-screen w-full overflow-y-auto lg:bg-[url(../assets/bg5.png)] md:bg-[url(../assets/bg-md.png)] bg-[url(../assets/bg-sm.png)] bg-cover bg-center bg-fixed">
+        {/* Header and Info Box Container */}
+        <div className="relative px-4 md:px-8 lg:px-16 py-8">
+          {/* Header */}
+          <div className="flex items-center text-3xl text-gray-800">
+            <motion.div
+              className="flex items-center"
+              initial={{ opacity: 0, x: -300 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", stiffness: 60, duration: 1.6 }}
             >
-              {isPurchasing ? (
-                'Processing...'
-              ) : (
-                <>
-                  <FontAwesomeIcon icon={faShoppingCart} className="mr-1" />
-                  Buy Now ($500)
-                </>
-              )}
-            </button>
-            <button 
-              onClick={handleContactUs} 
-              className="px-2 py-1 sm:px-3 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition"
-            >
-              Contact Us
-            </button>
+              <div className="w-12 h-12">
+                <img src={logo} alt="logo" className="max-w-100" />
+              </div>
+              <div className="flex flex-col ml-2">
+                <h1 className="text-3xl text-gray-800 bg-transparent">
+                  aMusicBible/AI
+                </h1>
+                {/* Language Selector */}
+                <div className="flex items-center mt-1 space-x-2">
+                  <span className="text-base text-gray-600">Language:</span>
+                  <div className="flex space-x-1">
+                    <button
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        language === "en"
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                      onClick={() => setLanguage("en")}
+                    >
+                      English
+                    </button>
+                    <button
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        language === "ta"
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                      onClick={() => setLanguage("ta")}
+                    >
+                      தமிழ்
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
 
+         {/* Responsive Info Container - Positioned absolutely on larger screens */}
+          <div className="lg:absolute lg:top-8 lg:right-8 mt-4 lg:mt-0 w-full max-w-xs mx-auto lg:mx-0 p-3 sm:p-4 rounded-xl bg-gradient-to-b from-gray-900 to-black shadow-xl text-white text-sm font-light z-20 flex flex-col items-center text-center">
+            <h3 className="text-sm font-semibold mb-1">
+              Available
+            </h3>
+            <h3 className="text-xl text-yellow-400 font-semibold mb-1">
+              Bible AI API KEY
+            </h3>
+            <p className="text-sm mb-3 leading-snug">
+              Chatbox available in English
+            </p>
+            <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-1 sm:space-y-0 w-full justify-center">
+              <button 
+                onClick={handleBuyNow} 
+                disabled={isPurchasing}
+                className="px-3 py-1 text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center"
+              >
+                {isPurchasing ? (
+                  'Processing...'
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faShoppingCart} className="mr-1" />
+                    Buy Now ($500)
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleContactUs}
+                className="px-3 py-1 text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition"
+              >
+                Contact Us
+              </button>
+            </div>
+          </div>
+      
+
+        
         {/* Main Content */}
         <div className="flex justify-start">
           <div className="lg:w-1/5 mt-36 hidden lg:block"></div>

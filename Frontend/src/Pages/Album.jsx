@@ -225,6 +225,10 @@ export default function Album() {
   }, [currentSongIndex, musicList, shuffle]);
 
   const handlePlaySong = (index) => {
+    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+      alert("This song will be available soon!");
+      return;
+    }
     if (currentSongIndex === index) {
       setIsPlaying(!isPlaying);
       if (isPlaying) {
@@ -341,12 +345,20 @@ export default function Album() {
   };
 
   const handleDownload = (music) => {
+    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+      alert("This song will be available soon!");
+      return;
+    }
     currentUser
       ? navigate("/order-summary", { state: { musicItem: music } })
       : navigate("/sign-in");
   };
 
   const handleShare = (music) => {
+    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+      alert("This song will be available soon!");
+      return;
+    }
     if (navigator.share) {
       navigator
         .share({
@@ -453,7 +465,7 @@ export default function Album() {
               "https://via.placeholder.com/300"
             }
             alt={category}
-            className="w-full h-auto object-cover rounded-lg shadow-lg"
+            className="w-full max-w-xs h-auto max-h-80 object-contain rounded-lg shadow-lg mx-auto"
           />
         </motion.div>
 
@@ -468,28 +480,65 @@ export default function Album() {
           </h2>
           {categories.find((cat) => cat.albumName === category)
             ?.description && (
-            <p className="tamil-font text-gray-300 mb-4">
+            <p className="tamil-font text-justify text-gray-300 mb-4">
               {categories.find((cat) => cat.albumName === category).description}
             </p>
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <motion.button
-              onClick={handleAlbumShare}
-              className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.05 }}
+              onClick={() => {
+                if (category === "BOOK OF JAMES - ஞான மொழிகள்") {
+                  alert("This album will be available soon!");
+                } else {
+                  handleAlbumShare();
+                }
+              }}
+              className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
+                category === "BOOK OF JAMES - ஞான மொழிகள்"
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              whileHover={{
+                scale: category === "BOOK OF JAMES - ஞான மொழிகள்" ? 1 : 1.05,
+              }}
+              disabled={category === "BOOK OF JAMES - ஞான மொழிகள்"}
+              title={
+                category === "BOOK OF JAMES - ஞான மொழிகள்"
+                  ? "This album will be available soon!"
+                  : "Share this album"
+              }
             >
               <FontAwesomeIcon icon={faShareAlt} />
               <span>Share Album</span>
+              {category === "BOOK OF JAMES - ஞான மொழிகள்" && (
+                <span className="ml-2 text-xs">(Coming Soon)</span>
+              )}
             </motion.button>
 
             <motion.button
-              onClick={() => {}}
-              className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.05 }}
+              onClick={() => {
+                if (category === "BOOK OF JAMES - ஞான மொழிகள்") {
+                  // Do nothing or show a message
+                } else {
+                  // Handle download
+                }
+              }}
+              className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
+                category === "BOOK OF JAMES - ஞான மொழிகள்"
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              whileHover={{
+                scale: category === "BOOK OF JAMES - ஞான மொழிகள்" ? 1 : 1.05,
+              }}
+              disabled={category === "BOOK OF JAMES - ஞான மொழிகள்"}
             >
               <FontAwesomeIcon icon={faDownload} />
               <span>Download Album</span>
+              {category === "BOOK OF JAMES - ஞான மொழிகள்" && (
+                <span className="ml-2 text-xs">(Coming Soon)</span>
+              )}
             </motion.button>
           </div>
         </motion.div>
@@ -530,6 +579,10 @@ export default function Album() {
               index === currentSongIndex
                 ? "bg-gray-900 border-l-4 border-blue-500"
                 : "bg-gray-800"
+            } ${
+              category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                ? "opacity-70 cursor-not-allowed"
+                : ""
             }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -548,29 +601,104 @@ export default function Album() {
               </div>
 
               <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4">
+                {/* Previous Track Button */}
                 <motion.button
-                  onClick={handlePrevious}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Previous Track"
-                  whileHover={{ scale: 1.1 }}
+                  onClick={() => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handlePrevious();
+                  }}
+                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : "Previous Track"
+                  }
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faStepBackward} />
                 </motion.button>
+
+                {/* Seek Backward Button */}
                 <motion.button
-                  onClick={handleSeekBackward}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Seek Backward 10s"
-                  whileHover={{ scale: 1.1 }}
+                  onClick={() => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handleSeekBackward();
+                  }}
+                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : "Seek Backward 10s"
+                  }
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faBackward} />
                 </motion.button>
+
+                {/* Play/Pause Button */}
                 <motion.button
                   onClick={() => handlePlaySong(index)}
-                  className="text-white bg-blue-600 rounded-full p-2 w-8 h-8 flex items-center justify-center"
+                  className={`text-white ${
+                    currentSongIndex === index && isPlaying
+                      ? "bg-purple-600"
+                      : "bg-blue-600"
+                  } rounded-full p-2 w-8 h-8 flex items-center justify-center ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
                   title={
-                    currentSongIndex === index && isPlaying ? "Pause" : "Play"
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : currentSongIndex === index && isPlaying
+                      ? "Pause"
+                      : "Play"
                   }
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon
                     icon={
@@ -578,22 +706,78 @@ export default function Album() {
                     }
                   />
                 </motion.button>
+
+                {/* Seek Forward Button */}
                 <motion.button
-                  onClick={handleSeekForward}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Seek Forward 10s"
-                  whileHover={{ scale: 1.1 }}
+                  onClick={() => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handleSeekForward();
+                  }}
+                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : "Seek Forward 10s"
+                  }
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faForward} />
                 </motion.button>
+
+                {/* Next Track Button */}
                 <motion.button
-                  onClick={handleNext}
-                  className="text-gray-400 hover:text-white p-1 sm:p-2"
-                  title="Next Track"
-                  whileHover={{ scale: 1.1 }}
+                  onClick={() => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handleNext();
+                  }}
+                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : "Next Track"
+                  }
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faStepForward} />
                 </motion.button>
+
+                {/* Progress Bar */}
                 <span className="text-xs text-gray-400 w-8 text-right shrink-0">
                   {formatTime(index === currentSongIndex ? currentTime : 0)}
                 </span>
@@ -602,8 +786,21 @@ export default function Album() {
                   min="0"
                   max={index === currentSongIndex ? duration || 100 : music.duration || 100}
                   value={index === currentSongIndex ? currentTime : 0}
-                  onChange={handleSeek}
-                  className="flex-1 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px]"
+                  onChange={(e) => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handleSeek(e);
+                  }}
+                  className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px] ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-gray-600"
+                  }`}
                   style={{
                     background: `linear-gradient(to right, #8b5cf6 ${
                       ((index === currentSongIndex ? currentTime : 0) /
@@ -615,28 +812,86 @@ export default function Album() {
                       100
                     }%)`,
                   }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 />
                 <span className="text-xs text-gray-400 w-8 shrink-0">
                   {formatTime(music.duration || 0)}
                 </span>
 
+                {/* Shuffle Button */}
                 <motion.button
-                  onClick={handleShuffle}
+                  onClick={() => {
+                    if (
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                      index !== 0
+                    ) {
+                      alert("This song will be available soon!");
+                      return;
+                    }
+                    handleShuffle();
+                  }}
                   className={`p-1 sm:p-2 ${
                     shuffle ? "text-purple-400" : "text-gray-400"
-                  } hover:text-white`}
-                  title={shuffle ? "Disable shuffle" : "Enable shuffle"}
-                  whileHover={{ scale: 1.1 }}
+                  } hover:text-white ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "Coming soon"
+                      : shuffle
+                      ? "Disable shuffle"
+                      : "Enable shuffle"
+                  }
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.1,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faRandom} />
                 </motion.button>
 
+                {/* Playback Rate Menu */}
                 <div className="relative">
                   <motion.button
-                    onClick={() => togglePlaybackRateMenu(index)}
-                    className="text-gray-400 hover:text-white p-1 sm:p-2"
-                    title="Playback speed"
-                    whileHover={{ scale: 1.1 }}
+                    onClick={() => {
+                      if (
+                        category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                        index !== 0
+                      ) {
+                        alert("This song will be available soon!");
+                        return;
+                      }
+                      togglePlaybackRateMenu(index);
+                    }}
+                    className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    title={
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? "Coming soon"
+                        : "Playback speed"
+                    }
+                    whileHover={{
+                      scale:
+                        category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                        index !== 0
+                          ? 1
+                          : 1.1,
+                    }}
+                    disabled={
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                    }
                   >
                     <FontAwesomeIcon icon={faEllipsisH} />
                   </motion.button>
@@ -668,12 +923,26 @@ export default function Album() {
                   )}
                 </div>
 
+                {/* Volume Controls */}
                 <div className="relative flex items-center group">
-                  {/* Volume Icon Button */}
                   <motion.button
-                    onClick={() => toggleMute(index)}
-                    className="text-gray-400 hover:text-white"
-                    whileHover={{ scale: 1.1 }}
+                    onClick={() => {
+                      if (
+                        category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                        index !== 0
+                      ) {
+                        return; // Don't show alert for volume control
+                      }
+                      toggleMute(index);
+                    }}
+                    className={`text-gray-400 hover:text-white ${
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    whileHover={{
+                      scale: 1.1,
+                    }}
                     onMouseEnter={() => setHoveredVolumeIndex(index)}
                     onTouchStart={() => setHoveredVolumeIndex(index)}
                   >
@@ -682,16 +951,15 @@ export default function Album() {
                     />
                   </motion.button>
 
-                  {/* Responsive Volume Slider */}
                   {hoveredVolumeIndex === index && (
                     <motion.div
                       initial={{ opacity: 0, scaleX: 0.5 }}
                       animate={{ opacity: 1, scaleX: 1 }}
                       exit={{ opacity: 0, scaleX: 0.5 }}
                       className={`
-        absolute left-full ml-2 flex items-center
-        ${window.innerWidth < 640 ? "bottom-full mb-2" : ""}
-      `}
+                        absolute left-full ml-2 flex items-center
+                        ${window.innerWidth < 640 ? "bottom-full mb-2" : ""}
+                      `}
                       onMouseLeave={() => setHoveredVolumeIndex(null)}
                       onTouchEnd={() => setHoveredVolumeIndex(null)}
                       style={{
@@ -739,10 +1007,20 @@ export default function Album() {
                     favorites.includes(music._id)
                       ? "text-red-800 bg-red-500 bg-opacity-20"
                       : "text-gray-200 bg-gray-700"
+                  } ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.05,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon
                     icon={
@@ -754,18 +1032,45 @@ export default function Album() {
                   />
                 </motion.button>
 
+                {/* Download button */}
                 <motion.button
-                  onClick={() => handleDownload(music)}
-                  className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
-                  whileHover={{ scale: 1.05 }}
+                  onClick={() => handleDownload(music, index)}
+                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.05,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faDownload} size="xs" />
                   <span className="hidden sm:inline">Download</span>
                 </motion.button>
+
+                {/* Share button */}
                 <motion.button
-                  onClick={() => handleShare(music)}
-                  className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2"
-                  whileHover={{ scale: 1.05 }}
+                  onClick={() => handleShare(music, index)}
+                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  whileHover={{
+                    scale:
+                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                        ? 1
+                        : 1.05,
+                  }}
+                  disabled={
+                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
+                  }
                 >
                   <FontAwesomeIcon icon={faShareAlt} size="xs" />
                   <span className="hidden sm:inline">Share</span>
