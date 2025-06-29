@@ -17,6 +17,7 @@ import favoriteRoute from './routes/favorite.route.js';
 import aiRoute from "./routes/ai.route.js";
 import aistripeRoutes from './routes/aistripe.route.js';
 import aiorderRoutes from './routes/aiorder.routes.js';
+import blogRoutes from './routes/blog.route.js';
 
 dotenv.config();
 
@@ -43,7 +44,7 @@ app.use("/uploads", express.static("/var/musicbible/Music-Bible/Frontend/uploads
 // Multer Storage Configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = "/var/musicbible/Music-Bible/Frontend/uploads"; // Update to your desired path
+    const uploadPath = "/var/musicbible/Music-Bible/Frontend/uploads"; 
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -75,6 +76,7 @@ app.use('/api/favorites', favoriteRoute);
 app.use('/api/aistripe', aistripeRoutes);
 app.use('/api/ai', aiRoute);
 app.use('/api/aiorder', aiorderRoutes);
+app.use('/api/blog', blogRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Backend is running successfully!" });

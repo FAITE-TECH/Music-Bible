@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen, HiPaperClip } from 'react-icons/hi';
+import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen, HiPaperClip, HiBookmarkAlt } from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
@@ -143,6 +143,18 @@ export default function DashSideBar() {
                           'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
                       >
                         API Orders
+                      </Sidebar.Item>
+                    </Link>
+                    <Link to='/dashboard?tab=blogs' key="API" className="block" onClick={handleLinkClick}>
+                      <Sidebar.Item
+                        active={tab === 'blogs'}
+                        icon={HiBookmarkAlt}
+                        as='div'
+                        className={`w-full px-4 py-3 transition-all duration-300 ${tab === 'blogs' ? 
+                          'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
+                          'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
+                      >
+                        Blogs
                       </Sidebar.Item>
                     </Link>
                    
