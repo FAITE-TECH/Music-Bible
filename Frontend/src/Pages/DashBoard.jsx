@@ -8,6 +8,7 @@ import DashMembership from "../Components/DashMembership";
 import DashContactUs from "../Components/DashContactUs";
 import DashAlbums from "../Components/DashAlbums";
 import DashAIOrderd from "../Components/DashAIOrderd";
+import DashBlogs from "../Components/DashBlogs";
 
 
 
@@ -17,32 +18,34 @@ import DashAIOrderd from "../Components/DashAIOrderd";
 
 export default function DashBoard() {
   const location = useLocation();
-  const[tab,setTab]= useState();
+  const [tab, setTab] = useState();
 
-  useEffect(()=>{
+  useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get('tab');
-    if(tabFromUrl){
-      setTab(tabFromUrl)
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
     }
-  },[location.search]);
-  
-  return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-black text-white py-20 px-6">
-      <div className="md:w-56">
-        <DashSideBar/>
-      </div>
-      {tab==='profile' && <DashProfile/>}
-      {tab === 'users' && <DashUsers/>}
-      {tab === 'music' && <DashMusic/>}
-      {tab === 'membership' && <DashMembership/>}
-      {tab === 'contact' && <DashContactUs/>}
-      {tab === 'albums' && <DashAlbums/>}
-      {tab === 'API' && <DashAIOrderd/>}
-     
+  }, [location.search]);
 
-   
-     
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row bg-black text-white">
+      {/* Sidebar - fixed width */}
+      <div className="md:w-56">
+        <DashSideBar />
+      </div>
+      
+      {/* Main Content - flex-1 to take remaining space */}
+      <div className="flex-1 overflow-auto">
+        {tab === 'profile' && <DashProfile />}
+        {tab === 'users' && <DashUsers />}
+        {tab === 'music' && <DashMusic />}
+        {tab === 'membership' && <DashMembership />}
+        {tab === 'contact' && <DashContactUs />}
+        {tab === 'albums' && <DashAlbums />}
+        {tab === 'API' && <DashAIOrderd />}
+        {tab === 'blogs' && <DashBlogs />}
+      </div>
     </div>
-  )
+  );
 }

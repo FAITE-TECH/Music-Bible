@@ -413,6 +413,16 @@ export default function DashProfile() {
                   Add New Album
                 </motion.button>
               </Link>
+              <Link to="/addblogs">
+                <motion.button
+                  type="button"
+                  className="w-full bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg font-medium shadow-md"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  Add Blogs
+                </motion.button>
+              </Link>
             </>
           )}
         </motion.div>

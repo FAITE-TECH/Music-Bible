@@ -23,6 +23,8 @@ import ChatAI from './Pages/ChatAI'
 import PayButton from './Components/PayButton'
 import UpdateAlbum from './Pages/UpdateAlbum'
 import AIOrderSuccess from './Pages/AIOrderSuccess'
+import AddBlog from './Pages/AddBlogs'
+import UpdateBlogs from './Pages/UpdateBlogs'
 
 export default function App() {
   return (
@@ -52,10 +54,11 @@ export default function App() {
 
         <Route element={<OnlyAdminPrivateRoute/>}/>
           <Route path="/addmusic" element={<AddMusic/>}/>
+          <Route path="/addblogs" element={<AddBlog/>}/>
           <Route path="/addalbum" element={<AddAlbum/>}/>
           <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
           <Route path="/update-album/:albumId" element={<UpdateAlbum/>}/>
-
+           <Route path="/edit-blog/:id" element={<UpdateBlogs/>} />
         <Route/>
       </Routes>
     </BrowserRouter>
