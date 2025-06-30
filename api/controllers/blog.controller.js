@@ -403,3 +403,29 @@ export const getFeaturedCount = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const getNextBlogId = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return next(errorHandler(400, "Invalid blog ID"));
+        }
+
+        // Find the current blog to get its creation date
+        const currentBlog = await Blog.findById(req.params.id);
+        if (!currentBlog) {
+            return next(errorHandler(404, "Blog not found"));
+        }
+
+        // Find the next blog (created after this one, sorted by creation date)
+        const nextBlog = await Blog.findOne({
+            createdAt: { $gt: currentBlog.createdAt }
+        }).sort({ createdAt: 1 }).select('_id');
+
+        res.status(200).json({
+            nextId: nextBlog?._id || null
+        });
+    } catch (error) {
+        next(error);
+    }
+};

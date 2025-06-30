@@ -8,6 +8,7 @@ import {
   getBlog, 
   getBlogs, 
   getFeaturedBlogs, 
+  getNextBlogId, 
   getPopularBlogs, 
   incrementViewCount, 
   toggleBlogFeature, 
@@ -96,6 +97,6 @@ router.delete('/delete/:id', deleteBlog);
 router.get('/get/featured', getFeaturedBlogs);  
 router.put('/feature/:id', toggleBlogFeature); 
 router.post('/:id/view', incrementViewCount);
-
+router.get('/next/:id', getNextBlogId);
 
 export default router;

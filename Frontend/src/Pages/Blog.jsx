@@ -335,13 +335,12 @@ const Blog = () => {
   const [error, setError] = useState(null);
   const [featuredBlogs, setFeaturedBlogs] = useState([]);
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch all posts without pagination
         const postsResponse = await fetch("/api/blog/get?showAll=true");
         if (!postsResponse.ok) {
           throw new Error("Failed to fetch posts");
@@ -349,13 +348,19 @@ const Blog = () => {
 
         const data = await postsResponse.json();
         const allPosts = data.blogs || [];
-        const featuredOnly = allPosts.filter((post) => post.isFeatured);
+        
+        // Sort by createdAt in descending order (newest first)
+        const sortedPosts = [...allPosts].sort((a, b) => 
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        const featuredOnly = sortedPosts.filter((post) => post.isFeatured);
         const uniqueCategories = [
           "All",
-          ...new Set(allPosts.map((post) => post.category)),
+          ...new Set(sortedPosts.map((post) => post.category)),
         ];
 
-        setPosts(allPosts);
+        setPosts(sortedPosts); // Use the sorted array
         setFeaturedBlogs(featuredOnly);
         setCategories(uniqueCategories);
       } catch (err) {

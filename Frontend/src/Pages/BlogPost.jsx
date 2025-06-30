@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { HiArrowLeft, HiCalendar, HiUser, HiTag } from 'react-icons/hi';
@@ -6,7 +6,9 @@ import { FaFacebook, FaTwitter, FaWhatsapp, FaLinkedin } from 'react-icons/fa';
 
 const BlogPost = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [post, setPost] = useState(null);
+    const [nextPostId, setNextPostId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [error, setError] = useState(null);
@@ -14,11 +16,9 @@ const BlogPost = () => {
     // Function to get complete image URL
     const getImageUrl = (imagePath) => {
         if (!imagePath) return '';
-        // Check if it's already a full URL
         if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
             return imagePath;
         }
-        // Prepend the base URL for local images
         return `http://localhost:3000${imagePath}`;
     };
 
@@ -39,6 +39,17 @@ const BlogPost = () => {
                 
                 const data = await response.json();
                 setPost(data);
+                
+                // Fetch next post ID
+                try {
+                    const nextResponse = await fetch(`/api/blog/next/${id}`);
+                    if (nextResponse.ok) {
+                        const nextData = await nextResponse.json();
+                        setNextPostId(nextData.nextId);
+                    }
+                } catch (nextError) {
+                    console.error("Error fetching next post ID:", nextError);
+                }
                 
                 // Increment view count
                 try {
@@ -79,6 +90,12 @@ const BlogPost = () => {
                 break;
             default:
                 break;
+        }
+    };
+
+    const handleNextArticle = () => {
+        if (nextPostId) {
+            navigate(`/blog/${nextPostId}`);
         }
     };
 
@@ -125,7 +142,7 @@ const BlogPost = () => {
                             Back to Blog
                         </Link>
 
-                        {/* Header section - keep the same */}
+                        {/* Header section */}
                         <div className="mb-14">
                             <div className="flex items-center space-x-4 mb-4">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-900 text-blue-300">
@@ -172,7 +189,7 @@ const BlogPost = () => {
                             </div>
                         </div>
                         
-                         {/* Modified Content section - blog image on left, text on right */}
+                        {/* Content section - blog image on left, text on right */}
                         <div className="flex flex-col lg:flex-row gap-8 mb-12">
                             {/* Blog image on left */}
                             <div className="lg:w-1/2">
@@ -210,7 +227,7 @@ const BlogPost = () => {
                             />
                         </div>
                         
-                        {/* Share buttons - keep the same */}
+                        {/* Share buttons */}
                         <div className="mb-12">
                             <h3 className="text-lg font-medium mb-4">Share this post</h3>
                             <div className="flex space-x-4">
@@ -245,7 +262,7 @@ const BlogPost = () => {
                             </div>
                         </div>
                         
-                        {/* Navigation - keep the same */}
+                        {/* Navigation */}
                         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-8 border-t border-gray-700">
                             <Link 
                                 to="/blog"
@@ -253,8 +270,16 @@ const BlogPost = () => {
                             >
                                 Back to Blog
                             </Link>
-                            <button className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-full font-medium transition-colors">
-                                Next Article
+                            <button 
+                                onClick={handleNextArticle}
+                                disabled={!nextPostId}
+                                className={`flex-1 px-6 py-3 rounded-full font-medium text-center transition-colors ${
+                                    nextPostId 
+                                        ? 'bg-gray-800 hover:bg-gray-700 text-white'
+                                        : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                }`}
+                            >
+                                Next Blogs
                             </button>
                         </div>
                     </motion.article>
