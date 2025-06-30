@@ -83,7 +83,7 @@ const BlogPost = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt-20 pb-12 px-4 md:px-8">
+       <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt-20 pb-12 px-4 md:px-8">
             <div className="max-w-6xl mx-auto">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center h-96">
@@ -111,13 +111,13 @@ const BlogPost = () => {
                         </Link>
                     </div>
                 ) : post ? (
-                    <motion.article
+                   <motion.article
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
                         {/* Back button */}
-                        <Link 
+                         <Link 
                             to="/blog"
                             className="inline-flex items-center text-blue-400 hover:text-blue-300 mb-8 transition-colors"
                         >
@@ -125,7 +125,7 @@ const BlogPost = () => {
                             Back to Blog
                         </Link>
 
-                        {/* Header section */}
+                        {/* Header section - keep the same */}
                         <div className="mb-14">
                             <div className="flex items-center space-x-4 mb-4">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-900 text-blue-300">
@@ -149,7 +149,7 @@ const BlogPost = () => {
                             </div>
                             
                             <motion.h1 
-                                className="text-4xl md:text-5xl font-bold  leading-tight bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent mb-3"
+                                className="text-4xl md:text-5xl font-bold leading-tight bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent mb-3"
                                 initial={{ y: -20 }}
                                 animate={{ y: 0 }}
                             >
@@ -160,7 +160,7 @@ const BlogPost = () => {
                                 <img 
                                     src={getImageUrl(post.authorImage)} 
                                     alt={post.authorName} 
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 "
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
                                     onError={(e) => {
                                         e.target.onerror = null;
                                         e.target.src = '/placeholder-avatar.jpg';
@@ -172,40 +172,45 @@ const BlogPost = () => {
                             </div>
                         </div>
                         
-                        {/* Featured image */}
-                        <div className="mb-10 rounded-xl overflow-hidden relative">
-                            {!isImageLoaded && (
-                                <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
-                                    <div className="animate-pulse flex space-x-4">
-                                        <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
-                                        <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
-                                        <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
-                                    </div>
+                         {/* Modified Content section - blog image on left, text on right */}
+                        <div className="flex flex-col lg:flex-row gap-8 mb-12">
+                            {/* Blog image on left */}
+                            <div className="lg:w-1/2">
+                                <div className="rounded-xl overflow-hidden relative">
+                                    {!isImageLoaded && (
+                                        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                                            <div className="animate-pulse flex space-x-4">
+                                                <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
+                                                <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
+                                                <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <motion.img 
+                                        src={getImageUrl(post.blogImage)} 
+                                        alt={post.title} 
+                                        className={`w-full h-auto object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                        onLoad={() => setIsImageLoaded(true)}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/placeholder-image.jpg';
+                                            setIsImageLoaded(true);
+                                        }}
+                                        initial={{ scale: 0.98 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ duration: 0.8 }}
+                                    />
                                 </div>
-                            )}
-                            <motion.img 
-                                src={getImageUrl(post.blogImage)} 
-                                alt={post.title} 
-                                className={`w-full h-auto mx-auto object-cover transition-opacity duration-500 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                                onLoad={() => setIsImageLoaded(true)}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = '/placeholder-image.jpg';
-                                    setIsImageLoaded(true);
-                                }}
-                                initial={{ scale: 0.98 }}
-                                animate={{ scale: 1 }}
-                                transition={{ duration: 0.8 }}
+                            </div>
+                            
+                            {/* Content on right */}
+                            <div 
+                                className="prose prose-invert lg:w-1/2"
+                                dangerouslySetInnerHTML={{ __html: post.content }}
                             />
                         </div>
                         
-                        {/* Content */}
-                        <div 
-                            className="prose prose-invert max-w-none mb-12"
-                            dangerouslySetInnerHTML={{ __html: post.content }}
-                        />
-                        
-                        {/* Share buttons */}
+                        {/* Share buttons - keep the same */}
                         <div className="mb-12">
                             <h3 className="text-lg font-medium mb-4">Share this post</h3>
                             <div className="flex space-x-4">
@@ -240,7 +245,7 @@ const BlogPost = () => {
                             </div>
                         </div>
                         
-                        {/* Navigation */}
+                        {/* Navigation - keep the same */}
                         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-8 border-t border-gray-700">
                             <Link 
                                 to="/blog"
