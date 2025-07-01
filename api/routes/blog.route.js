@@ -8,10 +8,11 @@ import {
   getBlog, 
   getBlogs, 
   getFeaturedBlogs, 
+  getNextBlogId, 
   getPopularBlogs, 
   incrementViewCount, 
   toggleBlogFeature, 
-  updateBlog 
+  updateBlog,
 } from '../controllers/blog.controller.js';
 
 const router = express.Router();
@@ -43,11 +44,11 @@ const upload = multer({
     files: 2 // Maximum of 2 files (blogImage and authorImage)
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const allowedTypes = ['image/jpeg', 'image/jpg','image/png', 'image/gif'];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files (JPEG, PNG, GIF) are allowed!'), false);
+      cb(new Error('Only image files (JPEG, JPG, PNG, GIF) are allowed!'), false);
     }
   }
 });
@@ -96,5 +97,6 @@ router.delete('/delete/:id', deleteBlog);
 router.get('/get/featured', getFeaturedBlogs);  
 router.put('/feature/:id', toggleBlogFeature); 
 router.post('/:id/view', incrementViewCount);
+router.get('/next/:id', getNextBlogId);
 
 export default router;

@@ -92,10 +92,10 @@ export default function DashMembership() {
   };
 
   const generatePDFReport = () => {
-  const date = new Date().toLocaleDateString();
-  const time = new Date().toLocaleTimeString();
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
 
-  const content = `
+    const content = `
     <style>
       body {
         font-family: 'Arial', sans-serif;
@@ -248,55 +248,57 @@ export default function DashMembership() {
           <tr>
             <td>${new Date(membership.updatedAt).toLocaleDateString()}</td>
             <td>${membership.name}</br>(${membership.country})</td>
-            <td><a href="mailto:${membership.email}" class="email-link">${membership.email} </a></td>
+            <td><a href="mailto:${membership.email}" class="email-link">${
+              membership.email
+            } </a></td>
            
             <td>${membership.mobile}</td>
             <td>${membership.subscriptionPeriod}</td>
             <td class="status-cell">
               <span class="status-badge ${
                 membership.isMember
-                  ? 'active-badge'
-                  : membership.status === 'Rejected'
-                  ? 'rejected-badge'
-                  : 'pending-badge'
+                  ? "active-badge"
+                  : membership.status === "Rejected"
+                  ? "rejected-badge"
+                  : "pending-badge"
               }">
                 ${
                   membership.isMember
-                    ? 'Active'
-                    : membership.status === 'Rejected'
-                    ? 'Rejected'
-                    : 'Pending'
+                    ? "Active"
+                    : membership.status === "Rejected"
+                    ? "Rejected"
+                    : "Pending"
                 }
               </span>
             </td>
           </tr>
         `
           )
-          .join('')}
+          .join("")}
       </tbody>
     </table>
   `;
 
-  const options = {
-    margin: [10, 10, 10, 10],
-    filename: `membership_report_${date.replace(/\//g, '-')}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      letterRendering: true
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait',
-      hotfixes: ["px_scaling"] 
-    }
-  };
+    const options = {
+      margin: [10, 10, 10, 10],
+      filename: `membership_report_${date.replace(/\//g, "-")}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterRendering: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        hotfixes: ["px_scaling"],
+      },
+    };
 
-  html2pdf().set(options).from(content).save();
-};
+    html2pdf().set(options).from(content).save();
+  };
 
   // Animation variants
   const containerVariants = {
@@ -340,19 +342,19 @@ export default function DashMembership() {
       className="p-3 md:mx-auto w-full max-w-screen-2xl md:w-3/4"
     >
       <div className="max-w-7xl mx-auto items-center text-center justify-center">
-              <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="mb-8"
-              >
-        <h1 className="text-3xl md:text-3xl font-bold  bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text ">
-          Membership Management
-        </h1>
-        <p className="text-gray-200">
-          View and manage all membership applications
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl md:text-3xl font-bold  bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text ">
+            Membership Management
+          </h1>
+          <p className="text-gray-200">
+            View and manage all membership applications
+          </p>
+        </motion.div>
       </div>
 
       <motion.div
@@ -415,7 +417,7 @@ export default function DashMembership() {
         >
           <div className="flex justify-between items-center">
             <div>
-             <h3 className="text-gray-200 text-lg uppercase font-semibold">
+              <h3 className="text-gray-200 text-lg uppercase font-semibold">
                 Last Month Memberships
               </h3>
               <p className="text-2xl font-bold text-gray-200">
@@ -434,108 +436,100 @@ export default function DashMembership() {
         transition={{ delay: 0.4 }}
       >
         {currentUser.isAdmin && memberships.length > 0 ? (
-          
-       
-            <Table hoverable className="w-full">
-              <Table.Head className="bg-gray-100 dark:bg-gray-700">
-                <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
-                  Date Joined
-                </Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">
-                  Member Name
-                </Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">Email</Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">Country</Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">Mobile</Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">
-                  Subscription
-                </Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">Status</Table.HeadCell>
-                <Table.HeadCell className="py-3 px-4">Actions</Table.HeadCell>
-              </Table.Head>
-              <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700">
-                <AnimatePresence>
-                  {memberships.map((membership) => (
-                    <motion.tr
-                      key={membership._id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.3 }}
-                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <Table.Cell className="py-3 px-4">
-                        {new Date(membership.updatedAt).toLocaleDateString()}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4 font-medium">
-                        {membership.name}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4 text-blue-600 hover:underline">
-                        <a href={`mailto:${membership.email}`}>
-                          {membership.email}
-                        </a>
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4">
-                        {membership.country}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4">
-                        {membership.mobile}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4">
-                        {membership.subscriptionPeriod}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4">
-                        {membership.isMember ? (
-                          <HiCheckCircle className="text-green-500 text-xl" />
-                        ) : membership.status === "Rejected" ? (
-                          <HiXCircle className="text-red-500 text-xl" />
-                        ) : (
-                          <span className="text-yellow-600">Pending</span>
-                        )}
-                      </Table.Cell>
-                      <Table.Cell className="py-3 px-4">
-                        <div className="flex flex-wrap gap-2">
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+          <Table hoverable className="w-full">
+            <Table.Head className="bg-gray-100 dark:bg-gray-700">
+              <Table.HeadCell className="px-6 py-4 whitespace-nowrap">
+                Date Joined
+              </Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Member Name</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Email</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Country</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Mobile</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">
+                Subscription
+              </Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Status</Table.HeadCell>
+              <Table.HeadCell className="py-3 px-4">Actions</Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y divide-gray-200 dark:divide-gray-700">
+              <AnimatePresence>
+                {memberships.map((membership) => (
+                  <motion.tr
+                    key={membership._id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <Table.Cell className="py-3 px-4">
+                      {new Date(membership.updatedAt).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4 font-medium">
+                      {membership.name}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4 text-blue-600 hover:underline">
+                      <a href={`mailto:${membership.email}`}>
+                        {membership.email}
+                      </a>
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4">
+                      {membership.country}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4">
+                      {membership.mobile}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4">
+                      {membership.subscriptionPeriod}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4">
+                      {membership.isMember ? (
+                        <HiCheckCircle className="text-green-500 text-xl" />
+                      ) : membership.status === "Rejected" ? (
+                        <HiXCircle className="text-red-500 text-xl" />
+                      ) : (
+                        <span className="text-yellow-600">Pending</span>
+                      )}
+                    </Table.Cell>
+                    <Table.Cell className="py-3 px-4">
+                      <div className="flex flex-wrap gap-2">
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Button
+                            size="xs"
+                            color="green"
+                            onClick={() =>
+                              handleAcceptMembership(membership._id)
+                            }
+                            disabled={membership.isMember}
                           >
-                            <Button
-                              size="xs"
-                              color="green"
-                              onClick={() =>
-                                handleAcceptMembership(membership._id)
-                              }
-                              disabled={membership.isMember}
-                            >
-                              Accept
-                            </Button>
-                          </motion.div>
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            Accept
+                          </Button>
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Button
+                            size="xs"
+                            color="red"
+                            onClick={() =>
+                              handleRejectMembership(membership._id)
+                            }
+                            disabled={membership.status === "Rejected"}
                           >
-                            <Button
-                              size="xs"
-                              color="red"
-                              onClick={() =>
-                                handleRejectMembership(membership._id)
-                              }
-                              disabled={membership.status === "Rejected"}
-                            >
-                              Reject
-                            </Button>
-                          </motion.div>
-                        </div>
-                      </Table.Cell>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </Table.Body>
-            </Table>
-          
-
-           
-          
+                            Reject
+                          </Button>
+                        </motion.div>
+                      </div>
+                    </Table.Cell>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </Table.Body>
+          </Table>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -550,44 +544,36 @@ export default function DashMembership() {
         )}
       </motion.div>
 
-       {totalPages > 1 && (
-              <motion.div
-                variants={itemVariants}
-                className="flex justify-between items-center mt-6 p-4  rounded-lg"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    disabled={currentPage === 1}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    className="flex text-gray-200 items-center gap-1"
-                  >
-                    Previous
-                  </Button>
-                </motion.div>
-                <span className="text-gray-200 font-medium">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    className="flex text-gray-200 items-center gap-1"
-                  >
-                    Next
-                  </Button>
-                </motion.div>
-              </motion.div>
-            )}
+      {totalPages > 1 && (
+        <motion.div
+          variants={itemVariants}
+          className="flex justify-between items-center mt-6 p-4  rounded-lg"
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="flex text-gray-200 items-center gap-1"
+            >
+              Previous
+            </Button>
+          </motion.div>
+          <span className="text-gray-200 font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="flex text-gray-200 items-center gap-1"
+            >
+              Next
+            </Button>
+          </motion.div>
+        </motion.div>
+      )}
 
       <Modal
         show={showModal}

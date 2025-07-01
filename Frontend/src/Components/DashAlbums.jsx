@@ -50,7 +50,7 @@ export default function DashAlbum() {
           },
         }
       );
-      
+
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
@@ -69,10 +69,10 @@ export default function DashAlbum() {
   };
 
   const generatePDFReport = () => {
-  const date = new Date().toLocaleDateString();
-  const time = new Date().toLocaleTimeString();
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
 
-  const content = `
+    const content = `
     <style>
       body {
         font-family: 'Arial', sans-serif;
@@ -197,7 +197,7 @@ export default function DashAlbum() {
           <tr>
             <td>${new Date(album.updatedAt).toLocaleDateString()}</td>
             <td>${album.albumName}</td>
-            <td>${album.description || 'No description'}</td>
+            <td>${album.description || "No description"}</td>
           </tr>
         `
           )
@@ -206,26 +206,26 @@ export default function DashAlbum() {
     </table>
   `;
 
-  const options = {
-    margin: [10, 10, 10, 10],
-    filename: `album_report_${date.replace(/\//g, '-')}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { 
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      letterRendering: true
-    },
-    jsPDF: { 
-      unit: 'mm', 
-      format: 'a4', 
-      orientation: 'portrait',
-      hotfixes: ["px_scaling"] 
-    }
-  };
+    const options = {
+      margin: [10, 10, 10, 10],
+      filename: `album_report_${date.replace(/\//g, "-")}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterRendering: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        hotfixes: ["px_scaling"],
+      },
+    };
 
-  html2pdf().set(options).from(content).save();
-};
+    html2pdf().set(options).from(content).save();
+  };
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -233,19 +233,22 @@ export default function DashAlbum() {
       transition={{ duration: 0.5 }}
       className="p-3 md:mx-auto w-full max-w-screen-2xl md:w-3/4"
     >
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="mb-8 text-center"
-      >
-        <h1 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text">
-          Album Management
-        </h1>
-        <p className="text-gray-200 mt-2">
-          Manage your music albums and collections
-        </p>
-      </motion.div>
+      <div className="max-w-7xl mx-auto items-center text-center justify-center">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text">
+            <span className="block md:inline">Album </span>
+            <span className="block md:inline">Management</span>
+          </h1>
+          <p className="text-gray-200 mt-2">
+            Manage your music albums and collections
+          </p>
+        </motion.div>
+      </div>
 
       {/* Search and Report Section */}
       <motion.div
@@ -339,7 +342,9 @@ export default function DashAlbum() {
                     Date Updated
                   </Table.HeadCell>
                   <Table.HeadCell className="px-6 py-4">Image</Table.HeadCell>
-                  <Table.HeadCell className="px-6 py-4">Album Name</Table.HeadCell>
+                  <Table.HeadCell className="px-6 py-4">
+                    Album Name
+                  </Table.HeadCell>
                   <Table.HeadCell className="px-6 py-4 min-w-[200px]">
                     Description
                   </Table.HeadCell>
