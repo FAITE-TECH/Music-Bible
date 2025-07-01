@@ -36,7 +36,7 @@ const getAudioDuration = (url) => {
 };
 
 export default function Album() {
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState({});
   const [musicList, setMusicList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -87,31 +87,7 @@ export default function Album() {
     }
   };
 
-  const toggleFavorite = async (musicId) => {
-    try {
-      if (!currentUser) {
-        navigate("/sign-in");
-        return;
-      }
 
-      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: currentUser._id }), 
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Failed to update favorites");
-
-      setFavorites(data.favorites.map((fav) => fav._id));
-    } catch (error) {
-      console.error("Favorite error:", error);
-    }
-  };
 
   const handleVolumeChange = (index, newVolume) => {
     const updatedVolumes = { ...volumes, [index]: newVolume };
@@ -154,21 +130,68 @@ export default function Album() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      if (!currentUser) return;
-      try {
-        const res = await fetch("/api/favorites", { credentials: "include" });
-        const data = await res.json();
-        if (res.ok) {
-          setFavorites(data.favorites.map((fav) => fav._id));
-        }
-      } catch (error) {
-        console.error("Failed to fetch favorites:", error);
+ useEffect(() => {
+  const fetchFavorites = async () => {
+    if (!currentUser) return;
+    try {
+      const res = await fetch("/api/favorites", { 
+        method: "POST", // Change to POST
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: "include",
+        body: JSON.stringify({ userId: currentUser._id }), // Add this line
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        // Convert array to object for faster lookups
+        const favoritesObj = data.favorites.reduce((acc, fav) => {
+          acc[fav._id] = true;
+          return acc;
+        }, {});
+        setFavorites(favoritesObj);
       }
-    };
-    fetchFavorites();
-  }, [currentUser]);
+    } catch (error) {
+      console.error("Failed to fetch favorites:", error);
+    }
+  };
+  fetchFavorites();
+}, [currentUser]);
+
+const toggleFavorite = async (musicId) => {
+  try {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
+    }
+
+    const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify({ userId: currentUser._id }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Failed to update favorites");
+
+    // Update favorites state
+    setFavorites(prev => {
+      const newFavorites = {...prev};
+      if (newFavorites[musicId]) {
+        delete newFavorites[musicId];
+      } else {
+        newFavorites[musicId] = true;
+      }
+      return newFavorites;
+    });
+  } catch (error) {
+    console.error("Favorite error:", error);
+  }
+};
 
   useEffect(() => {
     const fetchMusicByCategory = async () => {
@@ -397,9 +420,9 @@ export default function Album() {
 
   // Filter music list based on current album and favorite status
   const filteredMusicList =
-    showFavoritesForAlbum === category
-      ? musicList.filter((music) => favorites.includes(music._id))
-      : musicList;
+  showFavoritesForAlbum === category
+    ? musicList.filter((music) => favorites[music._id])
+    : musicList;
 
   if (loading)
     return (
@@ -1004,7 +1027,7 @@ export default function Album() {
                 <motion.button
                   onClick={() => toggleFavorite(music._id)}
                   className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
-                    favorites.includes(music._id)
+                    favorites[music._id]
                       ? "text-red-800 bg-red-500 bg-opacity-20"
                       : "text-gray-200 bg-gray-700"
                   } ${
@@ -1023,13 +1046,9 @@ export default function Album() {
                   }
                 >
                   <FontAwesomeIcon
-                    icon={
-                      favorites.includes(music._id)
-                        ? faHeartSolid
-                        : faHeartOutline
-                    }
-                    size="xs"
-                  />
+                      icon={favorites[music._id] ? faHeartSolid : faHeartOutline}
+                      size="xs"
+                    />
                 </motion.button>
 
                 {/* Download button */}
