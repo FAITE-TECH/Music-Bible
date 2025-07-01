@@ -135,17 +135,17 @@ export default function Album() {
     if (!currentUser) return;
     try {
       const res = await fetch("/api/favorites", { 
-        method: "POST", // Change to POST
+        method: "POST", 
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: "include",
-        body: JSON.stringify({ userId: currentUser._id }), // Add this line
+        body: JSON.stringify({ userId: currentUser._id }), 
       });
       
       const data = await res.json();
       if (res.ok) {
-        // Convert array to object for faster lookups
+        
         const favoritesObj = data.favorites.reduce((acc, fav) => {
           acc[fav._id] = true;
           return acc;
@@ -178,7 +178,7 @@ const toggleFavorite = async (musicId) => {
 
     if (!res.ok) throw new Error(data.message || "Failed to update favorites");
 
-    // Update favorites state
+    
     setFavorites(prev => {
       const newFavorites = {...prev};
       if (newFavorites[musicId]) {
@@ -204,7 +204,7 @@ const toggleFavorite = async (musicId) => {
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
         
-        // Load durations for all tracks
+       
         const musicWithDurations = await Promise.all(
           data.music.map(async (music) => {
             const duration = await getAudioDuration(music.music);
