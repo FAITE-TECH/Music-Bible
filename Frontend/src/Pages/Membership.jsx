@@ -164,7 +164,7 @@ export default function MembershipForm() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  text-white rounded-lg p-3 hover:scale-105 transition-transform"
+            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] w-1/2 mx-auto justify-center  text-white rounded-lg p-3 hover:scale-105 transition-transform"
           >
             Submit Membership
           </button>
