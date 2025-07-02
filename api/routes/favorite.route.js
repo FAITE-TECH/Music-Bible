@@ -4,6 +4,6 @@ import { toggleFavorite, getFavorites } from '../controllers/favorite.controller
 const router = express.Router();
 
 router.post('/toggle/:musicId', toggleFavorite);
-router.get('/',  getFavorites);
+router.post('/',  getFavorites);
 
 export default router;

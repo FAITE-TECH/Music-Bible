@@ -15,8 +15,8 @@ const blogSchema = new mongoose.Schema(
     category: { 
       type: String, 
       required: true,
-      enum: ['Technology', 'Business', 'Cloud', 'Development', 'MobileApps'],
-      default: 'Technology'
+      enum: ['Spiritual Growth', 'Album News', 'Devotional Tips', 'Interviews', 'App Updates', 'Music Reviews', 'Community Stories'],
+      default: 'Spiritual Growth'
     },
     authorName: { 
       type: String, 

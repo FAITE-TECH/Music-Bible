@@ -1,47 +1,55 @@
 import Blog from "../models/blog.model.js";
 import mongoose from "mongoose";
 import { errorHandler } from "../utils/error.js";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 export const createBlog = async (req, res, next) => {
   try {
     // Log incoming request data for debugging
-    console.log('Request body:', req.body);
-    console.log('Uploaded files:', req.files);
+    console.log("Request body:", req.body);
+    console.log("Uploaded files:", req.files);
 
     const { title, content, category, authorName } = req.body;
     const blogImage = req.files?.blogImage?.[0]?.filename;
     const authorImage = req.files?.authorImage?.[0]?.filename;
 
-    console.log('Processed values:', {
+    console.log("Processed values:", {
       title,
       content,
       category,
       authorName,
       blogImage,
-      authorImage
+      authorImage,
     });
 
     // Validation
     if (!title || !content || !blogImage) {
-      console.log('Validation failed - missing required fields');
-      
+      console.log("Validation failed - missing required fields");
+
       // Clean up any uploaded files
       if (blogImage) {
-        const blogImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", blogImage);
+        const blogImagePath = path.join(
+          "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+          blogImage
+        );
         if (fs.existsSync(blogImagePath)) {
           fs.unlinkSync(blogImagePath);
         }
       }
       if (authorImage) {
-        const authorImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", authorImage);
+        const authorImagePath = path.join(
+          "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+          authorImage
+        );
         if (fs.existsSync(authorImagePath)) {
           fs.unlinkSync(authorImagePath);
         }
       }
-      
-      return next(errorHandler(400, "Title, content, and blog image are required"));
+
+      return next(
+        errorHandler(400, "Title, content, and blog image are required")
+      );
     }
 
     // Create new blog
@@ -51,30 +59,35 @@ export const createBlog = async (req, res, next) => {
       category,
       authorName,
       blogImage: `/uploads/blog/${blogImage}`,
-      authorImage: authorImage 
+      authorImage: authorImage
         ? `/uploads/blog/${authorImage}`
-        : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
-      ...(req.user?.id && { userId: req.user.id })
+        : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      ...(req.user?.id && { userId: req.user.id }),
     });
 
     const savedBlog = await newBlog.save();
-    
+
     res.status(201).json({
       success: true,
       message: "Blog created successfully",
-      blog: savedBlog
+      blog: savedBlog,
     });
-
   } catch (error) {
     // Clean up uploaded files if error occurs
     if (req.files?.blogImage?.[0]?.filename) {
-      const blogImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", req.files.blogImage[0].filename);
+      const blogImagePath = path.join(
+        "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+        req.files.blogImage[0].filename
+      );
       if (fs.existsSync(blogImagePath)) {
         fs.unlinkSync(blogImagePath);
       }
     }
     if (req.files?.authorImage?.[0]?.filename) {
-      const authorImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", req.files.authorImage[0].filename);
+      const authorImagePath = path.join(
+        "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+        req.files.authorImage[0].filename
+      );
       if (fs.existsSync(authorImagePath)) {
         fs.unlinkSync(authorImagePath);
       }
@@ -84,7 +97,7 @@ export const createBlog = async (req, res, next) => {
       return next(errorHandler(400, "A blog with this title already exists"));
     }
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(val => val.message);
+      const messages = Object.values(error.errors).map((val) => val.message);
       return next(errorHandler(400, messages.join(", ")));
     }
     next(error);
@@ -93,14 +106,14 @@ export const createBlog = async (req, res, next) => {
 
 export const getBlogs = async (req, res, next) => {
   try {
-    const { searchTerm, category, page = 1, limit = 9, sort = "-createdAt" } = req.query;
+    const { searchTerm, category, page = 1, limit = 4, showAll = false } = req.query;
     const queryOptions = {};
 
     if (searchTerm) {
       queryOptions.$or = [
         { title: { $regex: searchTerm, $options: "i" } },
         { content: { $regex: searchTerm, $options: "i" } },
-        { authorName: { $regex: searchTerm, $options: "i" } }
+        { authorName: { $regex: searchTerm, $options: "i" } },
       ];
     }
 
@@ -108,41 +121,40 @@ export const getBlogs = async (req, res, next) => {
       queryOptions.category = category;
     }
 
-    // Convert to numbers
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    // Convert to numbers with proper defaults
+    const pageNum = Math.max(parseInt(page) || 1, 1);
+    const limitNum = showAll === 'true' ? 0 : Math.min(parseInt(limit) || 4, 20);
     const skip = (pageNum - 1) * limitNum;
 
-    // Get total count
+    // Get counts
+    const allCategories = await Blog.distinct("category");
     const totalBlogs = await Blog.countDocuments(queryOptions);
-
-    // Calculate first and last day of last month for statistics
-    const firstDayLastMonth = new Date();
-    firstDayLastMonth.setDate(1);
-    firstDayLastMonth.setMonth(firstDayLastMonth.getMonth() - 1);
-    firstDayLastMonth.setHours(0, 0, 0, 0);
-
-    const lastDayLastMonth = new Date();
-    lastDayLastMonth.setDate(0);
-    lastDayLastMonth.setHours(23, 59, 59, 999);
-
-    const lastMonthBlogs = await Blog.countDocuments({
+    const totalPages = showAll === 'true' ? 1 : Math.ceil(totalBlogs / limitNum);
+    const totalFeatured = await Blog.countDocuments({ 
       ...queryOptions,
-      updatedAt: { $gte: firstDayLastMonth, $lte: lastDayLastMonth },
+      isFeatured: true 
     });
 
-    // Get paginated results
-    const blogs = await Blog.find(queryOptions)
-      .sort(sort)
-      .skip(skip)
-      .limit(limitNum);
+    // Get results (with or without limit)
+    let blogs;
+    if (showAll === 'true') {
+      blogs = await Blog.find(queryOptions).sort({ createdAt: -1 });
+    } else {
+      blogs = await Blog.find(queryOptions)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum);
+    }
 
     res.status(200).json({
       blogs,
       totalBlogs,
-      lastMonthBlogs,
+      totalFeatured,
       currentPage: pageNum,
-      totalPages: Math.ceil(totalBlogs / limitNum),
+      totalPages,
+      hasNextPage: pageNum < totalPages,
+      hasPreviousPage: pageNum > 1,
+      categories: allCategories
     });
   } catch (error) {
     next(error);
@@ -206,14 +218,20 @@ export const updateBlog = async (req, res, next) => {
       content: req.body.content,
       category: req.body.category,
       authorName: req.body.authorName,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Handle blog image update
     if (req.files?.blogImage?.[0]) {
       // Delete old blog image if it exists
-      if (existingBlog.blogImage && !existingBlog.blogImage.startsWith('http')) {
-        const oldImagePath = path.join("/var/musicbible/Music-Bible/Frontend", existingBlog.blogImage);
+      if (
+        existingBlog.blogImage &&
+        !existingBlog.blogImage.startsWith("http")
+      ) {
+        const oldImagePath = path.join(
+          "/var/musicbible/Music-Bible/Frontend",
+          existingBlog.blogImage
+        );
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
         }
@@ -224,10 +242,16 @@ export const updateBlog = async (req, res, next) => {
     // Handle author image update
     if (req.files?.authorImage?.[0]) {
       // Delete old author image if it exists and isn't the default
-      if (existingBlog.authorImage && 
-          !existingBlog.authorImage.startsWith('http') && 
-          existingBlog.authorImage !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png') {
-        const oldImagePath = path.join("/var/musicbible/Music-Bible/Frontend", existingBlog.authorImage);
+      if (
+        existingBlog.authorImage &&
+        !existingBlog.authorImage.startsWith("http") &&
+        existingBlog.authorImage !==
+          "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+      ) {
+        const oldImagePath = path.join(
+          "/var/musicbible/Music-Bible/Frontend",
+          existingBlog.authorImage
+        );
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
         }
@@ -245,18 +269,24 @@ export const updateBlog = async (req, res, next) => {
   } catch (error) {
     // Clean up uploaded files if error occurs
     if (req.files?.blogImage?.[0]?.filename) {
-      const blogImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", req.files.blogImage[0].filename);
+      const blogImagePath = path.join(
+        "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+        req.files.blogImage[0].filename
+      );
       if (fs.existsSync(blogImagePath)) {
         fs.unlinkSync(blogImagePath);
       }
     }
     if (req.files?.authorImage?.[0]?.filename) {
-      const authorImagePath = path.join("/var/musicbible/Music-Bible/Frontend/uploads/blog", req.files.authorImage[0].filename);
+      const authorImagePath = path.join(
+        "/var/musicbible/Music-Bible/Frontend/uploads/blog",
+        req.files.authorImage[0].filename
+      );
       if (fs.existsSync(authorImagePath)) {
         fs.unlinkSync(authorImagePath);
       }
     }
-    
+
     next(error);
   }
 };
@@ -268,7 +298,7 @@ export const deleteBlog = async (req, res, next) => {
     }
 
     const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
-    
+
     if (!deletedBlog) {
       return next(errorHandler(404, "Blog not found"));
     }
@@ -281,10 +311,8 @@ export const deleteBlog = async (req, res, next) => {
 
 export const getPopularBlogs = async (req, res, next) => {
   try {
-    const popularBlogs = await Blog.find()
-      .sort({ views: -1 })
-      .limit(4);
-    
+    const popularBlogs = await Blog.find().sort({ views: -1 }).limit(4);
+
     res.status(200).json(popularBlogs);
   } catch (error) {
     next(error);
@@ -302,9 +330,8 @@ export const toggleBlogFeature = async (req, res, next) => {
       return next(errorHandler(404, "Blog not found"));
     }
 
-    // Check if we're trying to feature the blog
+    // If trying to feature the blog
     if (!blog.isFeatured) {
-      // Limit to 3 featured blogs
       const featuredCount = await Blog.countDocuments({ isFeatured: true });
       if (featuredCount >= 3) {
         return next(errorHandler(400, "Maximum of 3 featured blogs allowed"));
@@ -317,7 +344,13 @@ export const toggleBlogFeature = async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).json(updatedBlog);
+    // Return updated count along with the blog
+    const newFeaturedCount = await Blog.countDocuments({ isFeatured: true });
+
+    res.status(200).json({
+      blog: updatedBlog,
+      featuredCount: newFeaturedCount,
+    });
   } catch (error) {
     next(error);
   }
@@ -326,8 +359,7 @@ export const toggleBlogFeature = async (req, res, next) => {
 export const getFeaturedBlogs = async (req, res, next) => {
   try {
     const featuredBlogs = await Blog.find({ isFeatured: true })
-      .sort({ updatedAt: -1 })
-      .limit(3);  // Limit to 3 featured blogs
+      .sort({ updatedAt: -1 });
     
     res.status(200).json(featuredBlogs);
   } catch (error) {
@@ -361,4 +393,39 @@ export const getBlogsByCategory = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const getFeaturedCount = async (req, res, next) => {
+  try {
+    const count = await Blog.countDocuments({ isFeatured: true });
+    res.status(200).json({ count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getNextBlogId = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return next(errorHandler(400, "Invalid blog ID"));
+        }
+
+        // Find the current blog to get its creation date
+        const currentBlog = await Blog.findById(req.params.id);
+        if (!currentBlog) {
+            return next(errorHandler(404, "Blog not found"));
+        }
+
+        // Find the next blog (created after this one, sorted by creation date)
+        const nextBlog = await Blog.findOne({
+            createdAt: { $gt: currentBlog.createdAt }
+        }).sort({ createdAt: 1 }).select('_id');
+
+        res.status(200).json({
+            nextId: nextBlog?._id || null
+        });
+    } catch (error) {
+        next(error);
+    }
 };

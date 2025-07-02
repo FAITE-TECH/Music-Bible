@@ -17,7 +17,7 @@ const PayButton = ({ music, price }) => {
     }
 
     try {
-      const response = await fetch('https://amusicbible.com/api/stripe/create-checkout-session', {
+      const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ const PayButton = ({ music, price }) => {
           musicId: music._id,
           title: music.title,
           price: price, // Pass the selected price
-          image: music.image,
+          image: encodeURI(music.image),
           userId: currentUser._id,
         }),
       });
@@ -46,7 +46,7 @@ const PayButton = ({ music, price }) => {
   return (
     <button
       onClick={handleCheckout}
-      className="mt-4 w-60 rounded-md bg-indigo-600 px-6 py-3 font-medium text-white"
+      className="mt-4 w-56 rounded-full bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] hover:from-[#3AF7F0] hover:via-[#0093FF] hover:to-[#0119FF] px-6 py-3 items-center justify-center mx-auto font-medium text-white"
     >
       <FontAwesomeIcon icon={faDownload} className="mr-2" />
       {currentUser ? 'Proceed to Payment' : 'Sign in to Download'}

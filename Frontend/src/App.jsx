@@ -27,7 +27,8 @@ import AIOrderSuccess from './Pages/AIOrderSuccess'
 import AddBlog from './Pages/AddBlogs'
 import UpdateBlogs from './Pages/UpdateBlogs'
 import Blog from "./Pages/Blog";
-import BlogPost from "./Pages/BLogPost";
+import BlogPost from "./Pages/BlogPost";
+
 
 
 
