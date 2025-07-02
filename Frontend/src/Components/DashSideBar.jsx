@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen, HiPaperClip, HiBookmarkAlt } from 'react-icons/hi';
+import { HiArchive, HiArrowSmRight, HiGift, HiMusicNote, HiOutlineMail, HiOutlineMusicNote, HiOutlineUserGroup, HiUser, HiMenu, HiX, HiBookOpen, HiPaperClip, HiBookmarkAlt, HiDownload, HiOutlineDownload } from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
@@ -78,6 +78,18 @@ export default function DashSideBar() {
                     Profile
                   </Sidebar.Item>
                 </Link>
+                <Link to='/dashboard?tab=mypurchase' key="mypurchase" className="block" onClick={handleLinkClick}>
+                      <Sidebar.Item
+                        active={tab === 'mypurchase'}
+                        icon={HiOutlineDownload}
+                        as='div'
+                        className={`w-full px-4 py-3 transition-all duration-300 ${tab === 'mypurchase' ? 
+                          'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
+                          'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
+                      >
+                        My Downloads
+                      </Sidebar.Item>
+                </Link>
 
                 {currentUser?.isAdmin && (
                   <>
@@ -145,7 +157,19 @@ export default function DashSideBar() {
                         API Orders
                       </Sidebar.Item>
                     </Link>
-                    <Link to='/dashboard?tab=blogs' key="API" className="block" onClick={handleLinkClick}>
+                    <Link to='/dashboard?tab=purchase' key="purchase" className="block" onClick={handleLinkClick}>
+                      <Sidebar.Item
+                        active={tab === 'purchase'}
+                        icon={HiDownload}
+                        as='div'
+                        className={`w-full px-4 py-3 transition-all duration-300 ${tab === 'purchase' ? 
+                          'bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white' : 
+                          'hover:bg-gradient-to-r hover:from-[#0119FF] hover:via-[#0093FF] hover:to-[#3AF7F0] hover:text-white'}`}
+                      >
+                        Music Downloads
+                      </Sidebar.Item>
+                    </Link>
+                    <Link to='/dashboard?tab=blogs' key="blogs" className="block" onClick={handleLinkClick}>
                       <Sidebar.Item
                         active={tab === 'blogs'}
                         icon={HiBookmarkAlt}

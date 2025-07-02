@@ -18,6 +18,7 @@ import aiRoute from "./routes/ai.route.js";
 import aistripeRoutes from './routes/aistripe.route.js';
 import aiorderRoutes from './routes/aiorder.routes.js';
 import blogRoutes from './routes/blog.route.js';
+import purchaseRoutes from './routes/purchase.route.js';
 
 dotenv.config();
 
@@ -77,6 +78,7 @@ app.use('/api/aistripe', aistripeRoutes);
 app.use('/api/ai', aiRoute);
 app.use('/api/aiorder', aiorderRoutes);
 app.use('/api/blog', blogRoutes);
+app.use('/api/music-purchase', purchaseRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ success: true, message: "Backend is running successfully!" });

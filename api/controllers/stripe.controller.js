@@ -1,38 +1,40 @@
 import Stripe from 'stripe';
 import dotenv from "dotenv";
-import Order from "../models/order.model.js";
+import MusicOrder from "../models/musicorder.model.js";
+import Music from "../models/music.model.js"; 
 
 dotenv.config();
 
 const stripe = Stripe(process.env.CHECKOUT_API_KEY_SECRET);
 
 export const createSession = async (req, res) => {
-  const { musicId, title, price, userId, image } = req.body;
+  const { musicId, title, price, userId, image, username, email, mobile, audioFile } = req.body;
 
   // Validate required fields
-  if (!musicId || !title || price == null || !userId || !image) {
+  if (!musicId || !title || price == null || !userId || !image || !username || !email || !audioFile) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
-    // Log inputs for debugging
-    console.log('Music Data:', { musicId, title, price, userId, image });
-
-    // Create customer with metadata
+    // Create customer with metadata including the music file
     const customer = await stripe.customers.create({
       metadata: {
-        userId: userId,
-        musicId: musicId,
-        title: title,
-        image: image,
-        price: price,
+        userId,
+        username,
+        email,
+        mobile: mobile || '',
+        musicId,
+        title,
+        image,
+        price,
+        musicFile: audioFile 
       },
     });
 
     // Create line item for music purchase
     const line_item = {
       price_data: {
-        currency: 'usd', // Changed to USD
+        currency: 'usd',
         product_data: {
           name: title,
           images: [image],
@@ -41,7 +43,7 @@ export const createSession = async (req, res) => {
             id: musicId,
           },
         },
-        unit_amount: Math.round(price * 100), // USD requires the amount in cents
+        unit_amount: Math.round(price * 100),
       },
       quantity: 1,
     };
@@ -57,6 +59,10 @@ export const createSession = async (req, res) => {
       mode: 'payment',
       success_url: `https://amusicbible.com/order-pay-success/${musicId}/${userId}`,
       cancel_url: `https://amusicbible.com/musics`,
+      metadata: {
+        productType: 'music_purchase',
+        userId: userId
+      }
     });
 
     res.json({ url: session.url });
@@ -66,39 +72,33 @@ export const createSession = async (req, res) => {
   }
 };
 
-// Create order (save successful payments in database)
-
-const createOrder = async (customer, data) => {
+// Create music order in database
+const createMusicOrder = async (customer, data) => {
   try {
-    // Create an array of music details (from customer metadata)
-    const musicDetails = [{
-      musicId: customer.metadata.musicId, 
-      title: customer.metadata.title, 
-      image: customer.metadata.image
-    }];
-
-    // Create the new order document
-    const newOrder = new Order({
-      orderId: data.id, // Stripe session ID as order ID
+    const newOrder = new MusicOrder({
+      orderId: data.id,
       userId: customer.metadata.userId,
-      musicId: musicDetails, // Array of music details
+      username: customer.metadata.username,
       email: data.customer_details.email,
-      phone: data.customer_details.phone,
-      totalcost: data.amount_total / 100, // Convert from cents to dollars
-      
+      mobile: data.customer_details.phone || customer.metadata.mobile,
+      musicId: customer.metadata.musicId,
+      musicTitle: customer.metadata.title,
+      musicImage: customer.metadata.image,
+      musicFile: customer.metadata.musicFile, 
+      price: customer.metadata.price,
+      status: 'completed'
     });
 
-    // Save the order to the database
     const savedOrder = await newOrder.save();
-    console.log("Order successfully saved:", savedOrder);
+    console.log("Music Order successfully saved:", savedOrder);
+    
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("Error creating music order:", error);
     throw error;
   }
 };
 
-// Webhook and handling events
-
+// Webhook handler for music purchases
 let endpointSecret;
 
 export const handleWebhook = async (req, res) => {
@@ -127,17 +127,22 @@ export const handleWebhook = async (req, res) => {
 
   // Handle the event
   if (eventType === "checkout.session.completed") {
+    // Verify this is for our music product
+    if (data.metadata?.productType !== 'music_purchase') {
+      console.log("Received non-music product purchase, skipping");
+      return res.status(200).send();
+    }
+
     stripe.customers
       .retrieve(data.customer)
       .then((customer) => {
-        createOrder(customer, data);
-        console.log("Order created successfully!");
+        createMusicOrder(customer, data);
+        console.log("Music Order created successfully!");
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  // Return a 200 response to acknowledge receipt of the event
   res.send().end();
 };
