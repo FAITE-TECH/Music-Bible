@@ -11,8 +11,8 @@ const PayButton = ({ music, price }) => {
       return;
     }
 
-    if (!music || !music._id || !music.image) {
-      console.error('Invalid music object or missing _id or image', music);
+    if (!music || !music._id || !music.image || !music.music) {
+      console.error('Invalid music object or missing required fields', music);
       return;
     }
 
@@ -25,9 +25,13 @@ const PayButton = ({ music, price }) => {
         body: JSON.stringify({
           musicId: music._id,
           title: music.title,
-          price: price, // Pass the selected price
+          price: price,
           image: encodeURI(music.image),
           userId: currentUser._id,
+          username: currentUser.username,
+          email: currentUser.email,
+          mobile: currentUser.mobile || '',
+          audioFile: music.music // Changed from music.audioFile to music.music
         }),
       });
 

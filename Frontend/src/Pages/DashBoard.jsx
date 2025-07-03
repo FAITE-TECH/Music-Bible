@@ -9,6 +9,8 @@ import DashContactUs from "../Components/DashContactUs";
 import DashAlbums from "../Components/DashAlbums";
 import DashAIOrderd from "../Components/DashAIOrderd";
 import DashBlogs from "../Components/DashBlogs";
+import DashMusicPurchase from "../Components/DashMusicPurchase";
+import DashMyPurches from "../Components/DashMyPurches";
 
 
 
@@ -45,6 +47,8 @@ export default function DashBoard() {
         {tab === 'albums' && <DashAlbums />}
         {tab === 'API' && <DashAIOrderd />}
         {tab === 'blogs' && <DashBlogs />}
+        {tab === 'purchase' && <DashMusicPurchase />}
+        {tab === 'mypurchase' && <DashMyPurches />}
       </div>
     </div>
   );
