@@ -74,7 +74,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-medium text-gray-300">Email</h3>
-                  <p className="text-sm sm:text-base text-gray-400">support@amusicbible.com</p>
+                  <p className="text-sm sm:text-base text-gray-400">tgcncanada@gmail.com</p>
                 </div>
               </div>
 
