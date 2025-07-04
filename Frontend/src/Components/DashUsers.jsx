@@ -399,7 +399,7 @@ export default function DashUsers() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="p-3  md:mx-auto sm:w-full max-w-screen-2xl  md:w-3/4"
+      className="min-h-screen bg-black text-white p-4 md:p-8"
     >
       <motion.div
         initial={{ y: -20, opacity: 0 }}

@@ -231,7 +231,7 @@ export default function DashAlbum() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="p-3 md:mx-auto w-full max-w-screen-2xl md:w-3/4"
+      className="min-h-screen bg-black text-white p-4 md:p-8"
     >
       <div className="max-w-7xl mx-auto items-center text-center justify-center">
         <motion.div
@@ -272,7 +272,7 @@ export default function DashAlbum() {
         <div className="flex gap-2">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link to="/addalbum">
-              <Button gradientDuoTone="purpleToBlue">Create Album</Button>
+              <Button className="bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-700 hover:to-blue-900">Create Album</Button>
             </Link>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { 
+import {
   HiSearch,
   HiOutlineMusicNote,
-  HiOutlineInformationCircle
+  HiOutlineInformationCircle,
 } from "react-icons/hi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDownload,
-  faPlay,
-  faPause,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { Tooltip } from "flowbite-react";
-import ReactAudioPlayer from 'react-audio-player';
+import ReactAudioPlayer from "react-audio-player";
 
 export default function DashMyPurchases() {
   const { currentUser } = useSelector((state) => state.user);
@@ -47,17 +43,15 @@ export default function DashMyPurchases() {
     }
   }, [currentUser, searchTerm, currentPage]);
 
-  
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -93,7 +87,8 @@ export default function DashMyPurchases() {
         className="mb-8 text-center"
       >
         <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">
-          My Music Purchases
+          <span className="block md:inline">My </span>
+          <span className="block md:inline">Music Purchases</span>
         </h1>
         <p className="text-gray-400 mt-2">
           All the music you've purchased and downloaded
@@ -115,11 +110,11 @@ export default function DashMyPurchases() {
             placeholder="Search your purchases..."
             value={searchTerm}
             onChange={handleSearch}
-            className="pl-10 w-full rounded-lg bg-gray-800 text-white py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
+            className="pl-10 w-full rounded-xl  "
           />
         </div>
 
-        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-900 to-blue-700 px-4 py-2 rounded-lg shadow-lg">
+        <div className="flex items-center gap-2 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  px-4 py-2 rounded-lg shadow-lg">
           <HiOutlineMusicNote className="h-5 w-5 text-blue-300" />
           <span className="font-medium text-blue-100">
             Total Purchases: {totalPurchases}
@@ -134,7 +129,7 @@ export default function DashMyPurchases() {
             {purchases.map((purchase, index) => (
               <motion.div
                 key={purchase._id}
-                className={`p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-800 flex flex-col h-full ${
+                className={`p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-black via-[#0093FF] to-black border border-gray-800 flex flex-col h-full ${
                   index === currentSongIndex ? "ring-2 ring-blue-500" : ""
                 }`}
                 whileHover={{ scale: 1.03 }}
@@ -143,13 +138,15 @@ export default function DashMyPurchases() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
                 {/* Album Art with Hover Effect - Updated */}
-                <div 
+                <div
                   className="flex justify-center mb-3 cursor-pointer relative"
                   onClick={() => showFullImage(purchase.musicImage)}
                 >
                   <div className="w-full aspect-square overflow-hidden rounded-lg">
                     <img
-                      src={purchase.musicImage || "https://via.placeholder.com/500"}
+                      src={
+                        purchase.musicImage || "https://via.placeholder.com/500"
+                      }
                       alt={purchase.musicTitle}
                       className="w-full h-full object-cover hover:opacity-80 transition-opacity"
                     />
@@ -164,7 +161,7 @@ export default function DashMyPurchases() {
                   <h3 className="text-white font-medium text-sm mb-1 line-clamp-2">
                     {purchase.musicTitle}
                   </h3>
-                  
+
                   <div className="flex items-center gap-1 mb-1">
                     <span className="text-gray-400 text-xs">Order ID:</span>
                     <Tooltip content={purchase.orderId} placement="top">
@@ -173,7 +170,7 @@ export default function DashMyPurchases() {
                       </span>
                     </Tooltip>
                   </div>
-                  
+
                   <p className="text-gray-400 text-xs mb-2">
                     Purchased: {formatDate(purchase.createdAt)}
                   </p>
@@ -197,40 +194,50 @@ export default function DashMyPurchases() {
 
                 {/* Action Buttons */}
                 <div className="flex justify-between items-center mt-3">
-                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Tooltip content="Download" placement="top">
-                    <motion.button
+                      <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => window.open(purchase.musicFile, '_blank')}
+                        onClick={() =>
+                          window.open(purchase.musicFile, "_blank")
+                        }
                         className="text-gray-300 hover:text-blue-400"
-                    >
+                      >
                         <FontAwesomeIcon icon={faDownload} />
-                    </motion.button>
+                      </motion.button>
                     </Tooltip>
-                    <span className="text-xs text-gray-400">Direct Download</span>
-                </div>
+                    <span className="text-xs text-gray-400">
+                      Direct Download
+                    </span>
+                  </div>
 
-                <Tooltip 
-                    content={currentSongIndex === index && isPlaying ? "Pause" : "Play"} 
+                  <Tooltip
+                    content={
+                      currentSongIndex === index && isPlaying ? "Pause" : "Play"
+                    }
                     placement="top"
-                >
+                  >
                     <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => handlePlaySong(index)}
-                    className={`rounded-full p-2 w-8 h-8 flex items-center justify-center ${
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handlePlaySong(index)}
+                      className={`rounded-full p-2 w-8 h-8 flex items-center justify-center ${
                         currentSongIndex === index && isPlaying
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                    }`}
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                      }`}
                     >
-                    <FontAwesomeIcon
-                        icon={currentSongIndex === index && isPlaying ? faPause : faPlay}
+                      <FontAwesomeIcon
+                        icon={
+                          currentSongIndex === index && isPlaying
+                            ? faPause
+                            : faPlay
+                        }
                         className="text-xs"
-                    />
+                      />
                     </motion.button>
-                </Tooltip>
+                  </Tooltip>
                 </div>
               </motion.div>
             ))}
@@ -238,7 +245,7 @@ export default function DashMyPurchases() {
 
           {/* Pagination */}
           <motion.div
-            className="flex justify-between items-center px-6 py-4 bg-gray-900 border border-gray-800 rounded-lg"
+            className="flex justify-between items-center px-6 py-4   rounded-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
@@ -251,8 +258,10 @@ export default function DashMyPurchases() {
                 setCurrentPage((prev) => Math.max(prev - 1, 1));
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`px-4 py-2 rounded-lg border border-gray-700 text-gray-300 ${
-                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'
+              className={`px-4 py-2 rounded-lg border border-gray-400 text-gray-300 ${
+                currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-800"
               }`}
             >
               Previous
@@ -272,8 +281,10 @@ export default function DashMyPurchases() {
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages));
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`px-4 py-2 rounded-lg border border-gray-700 text-gray-300 ${
-                currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'
+              className={`px-4 py-2 rounded-lg border border-gray-400 text-gray-300 ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-800"
               }`}
             >
               Next
@@ -296,7 +307,7 @@ export default function DashMyPurchases() {
 
       {/* Full Image Modal */}
       {expandedImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
           onClick={closeFullImage}
         >

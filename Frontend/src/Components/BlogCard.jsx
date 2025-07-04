@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export default function BlogCard({ blog }) {
   return (
     <motion.div 
-      className="bg-gradient-to-br from-[#0119FF] to-[#3AF7F0] rounded-xl shadow-xl overflow-hidden h-full  flex flex-col"
+      className="border border-[#0093FF] bg-gray-800 rounded-xl shadow-xl overflow-hidden h-full  flex flex-col"
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
     >
