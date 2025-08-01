@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import Header from "./Components/Header";
 import Home from "./Pages/Home";
 import SignUp from "./Pages/SignUp";
@@ -56,9 +57,10 @@ const FooterWrapper = () => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
+    <HelmetProvider>
+      <BrowserRouter>
+        <Header />
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
@@ -91,5 +93,6 @@ export default function App() {
       </Routes>
       <FooterWrapper />
     </BrowserRouter>
+    </HelmetProvider>
   );
 }

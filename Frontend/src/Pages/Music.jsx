@@ -10,6 +10,7 @@ import {
   faPause,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
+import SEO from "../Components/SEO";
 
 export default function Music() {
   const [musicList, setMusicList] = useState([]);
@@ -134,7 +135,31 @@ export default function Music() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8">
+    <>
+      <SEO 
+        title="Christian Music Collection - Stream Tamil, English & Multi-Language Songs | aMusicBible"
+        description="Stream and download Christian music in Tamil, English, and multiple languages on aMusicBible. Discover worship songs, spiritual music, and biblical songs. Experience the Holy Bible through beautiful melodies and sacred music."
+        keywords="aMusicBible music, Christian music streaming, Tamil Christian songs, English Christian songs, worship music, spiritual songs, biblical music, gospel music, devotional songs, holy bible songs"
+        url="/musics"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "MusicPlaylist",
+          "name": "aMusicBible Christian Music Collection",
+          "description": "Collection of Christian music in Tamil, English and multiple languages on aMusicBible platform",
+          "genre": ["Christian", "Gospel", "Worship"],
+          "inLanguage": ["ta", "en"],
+          "creator": {
+            "@type": "Organization",
+            "name": "aMusicBible",
+            "url": "https://amusicbible.com"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "FAITE (PVT) Ltd"
+          }
+        }}
+      />
+      <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -258,6 +283,7 @@ export default function Music() {
           </motion.div>
         ))}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

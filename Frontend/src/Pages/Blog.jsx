@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { HiCalendar, HiClock } from "react-icons/hi";
+import SEO from "../Components/SEO";
 
 const BlogHeroSection = () => (
   <motion.div
@@ -417,7 +418,30 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt- pb-12 px-4 md:px-8">
+    <>
+      <SEO 
+        title="aMusicBible Blog - Christian Spiritual Insights & Faith Articles"
+        description="Read inspiring Christian blog posts, spiritual insights, and faith-based articles on aMusicBible. Discover biblical wisdom, worship guidance, and spiritual growth content for your Christian journey through music and faith."
+        keywords="aMusicBible blog, Christian blog, spiritual articles, faith blog, biblical insights, Christian wisdom, worship guidance, spiritual growth, Christian lifestyle, devotional articles, faith stories"
+        url="/blog"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "aMusicBible Blog",
+          "description": "Christian blog with spiritual insights and faith-based articles from aMusicBible",
+          "url": "https://amusicbible.com/blog",
+          "author": {
+            "@type": "Organization",
+            "name": "aMusicBible"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "FAITE (PVT) Ltd",
+            "url": "http://www.faite.tech/"
+          }
+        }}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt- pb-12 px-4 md:px-8">
       <BlogHeroSection />
 
       {featuredBlogs.length > 0 && (
@@ -442,7 +466,8 @@ const Blog = () => {
         formatDate={formatDate}
         estimateReadTime={estimateReadTime}
       />
-    </div>
+      </div>
+    </>
   );
 };
 

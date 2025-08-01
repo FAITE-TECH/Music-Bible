@@ -20,6 +20,7 @@ import {
   faHeart as faHeartOutline,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
+import SEO from "../Components/SEO";
 
 // Utility function to get audio duration
 const getAudioDuration = (url) => {
@@ -440,11 +441,36 @@ const toggleFavorite = async (musicId) => {
     );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-black text-white p-4 md:p-8"
-    >
+    <>
+      <SEO 
+        title="Christian Music Albums - Tamil & English Collections | aMusicBible"
+        description="Browse our extensive collection of Christian music albums in Tamil, English, and multiple languages on aMusicBible. Stream complete album collections of worship songs, spiritual music, and gospel albums. Experience the Holy Bible through music."
+        keywords="aMusicBible albums, Christian music albums, Tamil Christian album, English Christian album, worship album, gospel album collection, spiritual music albums, Christian song compilation, devotional albums, holy bible music albums"
+        url="/album"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "MusicAlbum",
+          "name": "aMusicBible Christian Music Album Collection",
+          "description": "Collection of Christian music albums in Tamil, English and multiple languages on aMusicBible platform",
+          "genre": ["Christian", "Gospel", "Worship"],
+          "inLanguage": ["ta", "en"],
+          "albumProductionType": "CompilationAlbum",
+          "byArtist": {
+            "@type": "MusicGroup",
+            "name": "Various Christian Artists"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "aMusicBible",
+            "url": "https://amusicbible.com"
+          }
+        }}
+      />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="min-h-screen bg-black text-white p-4 md:p-8"
+      >
       <motion.div
         className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
         initial={{ y: -50, opacity: 0 }}
@@ -1107,6 +1133,7 @@ const toggleFavorite = async (musicId) => {
         }
         onError={(e) => console.error("Audio error:", e)}
       /> 
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

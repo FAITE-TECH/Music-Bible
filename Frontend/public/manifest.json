@@ -1,0 +1,38 @@
+{
+  "name": "aMusicBible - Experience Holy Bible Through Music",
+  "short_name": "aMusicBible",
+  "description": "Experience the Holy Bible through beautiful music and spiritual songs. Revolutionary Christian music platform in Tamil, English, and multiple languages.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0119FF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/newlogo-D9O6xs8i.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/newlogo-D9O6xs8i.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["music", "entertainment", "lifestyle", "education", "books"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player",
+      "id": "com.faite.project.music_bible_music_player"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/id6618135650",
+      "id": "6618135650"
+    }
+  ]
+}

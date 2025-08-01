@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { HiArrowLeft, HiCalendar, HiUser, HiTag } from "react-icons/hi";
 import { FaFacebook, FaTwitter, FaWhatsapp, FaLinkedin } from "react-icons/fa";
+import SEO from "../Components/SEO";
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -120,7 +121,48 @@ const BlogPost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt-20 pb-12 px-4 md:px-8">
+    <>
+      {post && (
+        <SEO 
+          title={`${post.title} | aMusicBible Blog`}
+          description={post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : 'Read this inspiring article on aMusicBible blog about Christian faith and spiritual growth'}
+          keywords={`${post.category}, aMusicBible, Christian article, faith blog, spiritual insights, ${post.title}`}
+          url={`/blog/${id}`}
+          type="article"
+          image={post.image ? getImageUrl(post.image) : 'https://amusicbible.com/assets/newlogo-D9O6xs8i.png'}
+          author={post.authorName || 'aMusicBible'}
+          publishedTime={post.createdAt}
+          modifiedTime={post.updatedAt}
+          section={post.category}
+          tags={post.category ? [post.category] : []}
+          schema={{
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 160) : '',
+            "image": post.image ? getImageUrl(post.image) : 'https://amusicbible.com/assets/newlogo-D9O6xs8i.png',
+            "author": {
+              "@type": "Person",
+              "name": post.authorName || "aMusicBible Team"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "aMusicBible",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://amusicbible.com/assets/newlogo-D9O6xs8i.png"
+              }
+            },
+            "datePublished": post.createdAt,
+            "dateModified": post.updatedAt || post.createdAt,
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://amusicbible.com/blog/${id}`
+            }
+          }}
+        />
+      )}
+      <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white pt-20 pb-12 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-96">
@@ -360,7 +402,8 @@ const BlogPost = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

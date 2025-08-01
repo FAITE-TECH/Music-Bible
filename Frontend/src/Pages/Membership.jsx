@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
+import SEO from "../Components/SEO";
 
 export default function MembershipForm() {
   const { currentUser } = useSelector((state) => state.user);
@@ -78,7 +79,32 @@ export default function MembershipForm() {
   };
 
   return (
-    <div className="bg-[url('https://w0.peakpx.com/wallpaper/246/920/HD-wallpaper-live-through-music-live-music-through-black-headphones-blue.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center ">
+    <>
+      <SEO 
+        title="Join aMusicBible Membership - Premium Christian Music Experience"
+        description="Join aMusicBible membership for exclusive access to premium Christian music content in Tamil, Telugu, and multiple languages. Experience unlimited streaming, exclusive content, and spiritual growth resources."
+        keywords="aMusicBible membership, premium Christian music, aMusicBible subscription, Christian music club, spiritual music membership, exclusive Christian content"
+        url="/membership"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "MembershipProgram",
+          "name": "aMusicBible Membership",
+          "description": "Premium membership program for aMusicBible Christian music platform",
+          "url": "https://amusicbible.com/membership",
+          "provider": {
+            "@type": "Organization",
+            "name": "aMusicBible",
+            "url": "https://amusicbible.com"
+          },
+          "benefits": [
+            "Unlimited access to Christian music",
+            "Exclusive content in English, Tamil and multiple languages",
+            "Premium spiritual music collection",
+            "Ad-free streaming experience"
+          ]
+        }}
+      />
+      <div className="bg-[url('https://w0.peakpx.com/wallpaper/246/920/HD-wallpaper-live-through-music-live-music-through-black-headphones-blue.jpg')] bg-cover bg-center min-h-screen flex justify-center items-center ">
       {/* Animated form container */}
       <motion.div
         variants={slideInFromLeft} // Apply the animation
@@ -174,6 +200,7 @@ export default function MembershipForm() {
           {submissionError && <p className="text-red-400 text-center">{submissionError}</p>}
         </form>
       </motion.div>
-    </div>
+      </div>
+    </>
   );
 }

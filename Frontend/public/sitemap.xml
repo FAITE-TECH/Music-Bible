@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://amusicbible.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+    <image:image>
+      <image:loc>https://amusicbible.com/assets/newlogo-D9O6xs8i.png</image:loc>
+      <image:title>aMusicBible Logo</image:title>
+      <image:caption>aMusicBible - Experience Holy Bible Through Music</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/musics</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/album</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/membership</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/contactus</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://amusicbible.com/bible/ai</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2025-01-31T00:00:00+00:00</lastmod>
+  </url>
+</urlset>

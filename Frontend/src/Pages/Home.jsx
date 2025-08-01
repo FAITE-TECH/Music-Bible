@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import SEO from "../Components/SEO";
 import video from "../assets/Logo/Designs.mp4";
 import logo from "../assets/Logo/newlogo.png";
 import first from "../assets/Logo/firstpage.png";
@@ -71,6 +72,36 @@ export default function Home() {
 
   return (
     <>
+      <SEO 
+        title="aMusicBible - Experience Holy Bible Through Music | Christian Music App"
+        description="Experience the Holy Bible through beautiful music and spiritual songs. Stream Christian music in Tamil, English, and multiple languages. Download our revolutionary Christian music app and transform your spiritual journey with aMusicBible."
+        keywords="aMusicBible, music bible, holy bible music, Christian music app, Tamil Christian songs, English Christian songs, spiritual music, biblical music, worship songs, Christian app, bible through music, FAITE"
+        url="/"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "MobileApplication",
+          "name": "aMusicBible",
+          "description": "Revolutionary Christian music platform offering the Holy Bible through music in Tamil, English and multiple languages",
+          "url": "https://amusicbible.com",
+          "applicationCategory": "MusicApplication",
+          "operatingSystem": ["iOS", "Android", "Web"],
+          "downloadUrl": [
+            "https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player",
+            "https://apps.apple.com/app/id6618135650"
+          ],
+          "publisher": {
+            "@type": "Organization",
+            "name": "FAITE (PVT) Ltd",
+            "url": "http://www.faite.tech/"
+          },
+          "genre": ["Christian", "Gospel", "Worship", "Spiritual"],
+          "inLanguage": ["ta", "en"],
+          "sameAs": [
+            "https://www.facebook.com/share/16egcyoU5s/",
+            "https://youtube.com/@amusicbible?si=2gK7hJ9LU27CcANG"
+          ]
+        }}
+      />
       <section
         className="relative bg-black text-white py-6 px-4 min-h-screen flex flex-col items-center justify-center overflow-hidden h-full  "
         ref={ref}

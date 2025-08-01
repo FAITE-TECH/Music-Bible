@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useSelector } from 'react-redux';
+import SEO from '../Components/SEO';
 
 export default function ContactUs() {
   const { currentUser } = useSelector((state) => state.user);
@@ -47,7 +48,32 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="bg-black text-white min-h-screen flex flex-col justify-center items-center py-10 px-4">
+    <>
+      <SEO 
+        title="Contact aMusicBible - Get in Touch | Christian Music Support"
+        description="Contact aMusicBible for support, feedback, or questions about our Christian music platform. Get in touch with our team for help with Tamil and multi-language spiritual music content."
+        keywords="contact aMusicBible, aMusicBible support, Christian music help, aMusicBible contact form, spiritual music support, customer service"
+        url="/contactus"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact aMusicBible",
+          "description": "Contact page for aMusicBible - Christian music platform",
+          "url": "https://amusicbible.com/contactus",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "aMusicBible",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+1-647-771-8426",
+              "contactType": "customer service",
+              "email": "amusicbible@gmail.com",
+              "availableLanguage": ["English", "Tamil"]
+            }
+          }
+        }}
+      />
+      <div className="bg-black text-white min-h-screen flex flex-col justify-center items-center py-10 px-4">
       <div className="container mx-auto text-center mb-12" data-aos="fade-down">
         <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent" data-aos="zoom-in">
           Get in Touch
@@ -179,6 +205,7 @@ export default function ContactUs() {
           background: url('https://www.transparenttextures.com/patterns/wave.png');
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }
