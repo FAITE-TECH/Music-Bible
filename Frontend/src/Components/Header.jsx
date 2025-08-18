@@ -5,7 +5,7 @@ import { signOut } from '../redux/user/userSlice';
 import { AnimatePresence, motion } from 'framer-motion';
 import logo from '../assets/Logo/newlogo.png';
 import txtLogo from '../assets/Logo/txtnewlogo.png';
-import { HiMenu, HiX, HiHome, HiMusicNote, HiBookOpen, HiMail, HiCollection, HiUser, HiUserGroup, HiUserCircle } from 'react-icons/hi';
+import { HiMenu, HiX, HiHome, HiMusicNote, HiBookOpen, HiMail, HiCollection, HiUser, HiUserGroup, HiUserCircle, HiOutlineBookOpen } from 'react-icons/hi';
 import { FaPhone } from 'react-icons/fa';
 
 export default function Header() {
@@ -44,6 +44,7 @@ export default function Header() {
         { name: "Album", path: "/album", icon: <HiCollection size={20} /> },
          { name: "Blog", path: "/blog", icon: <HiBookOpen size={20} /> },
         { name: "Membership", path: "/membership", icon: <HiUserGroup size={20} /> },
+        { name: "Reading-Bible", path: "/reading", icon: <HiOutlineBookOpen size={20} /> },
         { name: "Contact Us", path: "/contactus", icon: <FaPhone size={20} /> },
     ];
 

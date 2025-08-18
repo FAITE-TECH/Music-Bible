@@ -19,6 +19,7 @@ import aistripeRoutes from './routes/aistripe.route.js';
 import aiorderRoutes from './routes/aiorder.routes.js';
 import blogRoutes from './routes/blog.route.js';
 import purchaseRoutes from './routes/purchase.route.js';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 dotenv.config();
 
@@ -65,6 +66,22 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   }
   res.json({ success: true, fileUrl: `/uploads/${req.file.filename}` });
 });
+
+app.use('/api/proxy/bolls', createProxyMiddleware({
+  target: 'https://bolls.life',
+  changeOrigin: true,
+  pathRewrite: { '^/api/proxy/bolls': '' },
+  secure: false
+}));
+
+app.use('/api/proxy/bible', createProxyMiddleware({
+  target: 'https://api.scripture.api.bible/v1/bibles',
+  changeOrigin: true,
+  pathRewrite: { '^/api/proxy/bible': '' },
+  headers: {
+    'api-key': process.env.BIBLE_API_KEY || '2641dfc33a1910ef977df34e39c2fac0'
+  }
+}));
 
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
