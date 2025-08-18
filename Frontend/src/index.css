@@ -1,9 +1,15 @@
 @import 'flowbite';
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Set Inter as default font for all elements */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Your existing animations (unchanged) */
 @-webkit-keyframes zoomIn {
   0% {
     -webkit-transform: scale(0);
@@ -81,23 +87,22 @@
       }
 }
 
-  @keyframes viewContent {
+@keyframes viewContent {
     0% {
         opacity: 0;
-        
-        
     }
     100% {
         opacity: 1;
-        
     }
-  }
+}
+
 .animate-view-content {
   animation: viewContent 0.2s ease-in-out forwards;
 }
+
 .type_loader_container{
     -webkit-animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
-  animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+    animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
 }
 
 .typing_loader{
@@ -107,26 +112,23 @@
     -webkit-animation: typing 1.5s linear infinite alternate;
        -moz-animation: Typing 1.5s linear infinite alternate;
             animation: typing 1.5s linear infinite alternate;
-            
-    margin: 8px 2px; /* Not necessary- its only for layouting*/  
+    margin: 8px 2px;
     position: relative;
-   
 }
 
+/* Tamil font class remains for specific use cases */
 .tamil-font {
   font-family: 'Noto Sans Tamil', sans-serif;
 }
 
-/* For better touch targets on mobile */
+/* Responsive styles (unchanged) */
 @media (max-width: 640px) {
   .volume-slider-container {
     padding: 8px 0;
   }
-  
- 
 }
 
-/* For Firefox */
+/* Range input styles (unchanged) */
 input[type="range"] {
   -moz-appearance: none;
   background: transparent;
@@ -141,7 +143,6 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
-/* For Webkit browsers */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 12px;
@@ -152,7 +153,6 @@ input[type="range"]::-webkit-slider-thumb {
   margin-top: -0px;
 }
 
-/* Tablet-specific vertical slider styling */
 @media (min-width: 640px) and (max-width: 768px) {
   .volume-slider-container {
     height: 100px;
@@ -167,7 +167,6 @@ input[type="range"]::-webkit-slider-thumb {
   }
 }
 
-/* Firefox tablet fix */
 @-moz-document url-prefix() {
   @media (min-width: 640px) and (max-width: 768px) {
     .volume-slider-container input[type="range"] {
