@@ -469,7 +469,7 @@ export default function Home() {
           </h2>
 
           {/* Content */}
-          <p className="text-lg sm:text-xl leading-relaxed">
+          <p className="text-lg sm:text-xl leading-relaxed font-sans">
             aMusicBible is a revolutionary app designed for everyone, offering a
             unique way to experience the Bible. This innovative platform
             transforms the Scriptures into a musical journey, presenting the

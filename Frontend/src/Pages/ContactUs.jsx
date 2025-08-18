@@ -74,7 +74,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-medium text-gray-300">Email</h3>
-                  <p className="text-sm sm:text-base text-gray-400">support@amusicbible.com</p>
+                  <p className="text-sm sm:text-base text-gray-400">amusicbible@gmail.com</p>
                 </div>
               </div>
 
@@ -86,7 +86,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-medium text-gray-300">Phone</h3>
-                  <p className="text-sm sm:text-base text-gray-400">+1 234 567 890</p>
+                  <p className="text-sm sm:text-base text-gray-400">+1 (647) 771-8426</p>
                 </div>
               </div>
 
