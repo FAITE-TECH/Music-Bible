@@ -75,6 +75,12 @@ export default function Header() {
                         >
                             Bible/AI
                         </button>
+                         <button
+                            onClick={() => { navigate('/bible/ai'); setMenuOpen(false); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-md font-bold text-sm text-center"
+                        >
+                            Reading Bible
+                        </button>
 
                         {currentUser ? (
                             <>
@@ -229,6 +235,12 @@ export default function Header() {
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
                         >
                             Bible/AI
+                        </button>
+                        <button
+                            onClick={() => { navigate('/bible/ai'); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
+                        >
+                            Reading Bible
                         </button>
                     </nav>
                 </div>
