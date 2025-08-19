@@ -89,7 +89,7 @@ export default function SignIn() {
               className="h-96 w-auto mx-auto"
             />
           </Link>
-          <p className="text-lg font-cinzel text-gray-200 mt-6 max-w-lg mx-auto">
+          <p className="text-lg  text-gray-200 mt-6 max-w-lg mx-auto">
             Music expresses that which cannot be said and on which it is
             impossible to be silent. Music in itself is healing. It's an
             explosive expression of humanity. It's something we are all touched

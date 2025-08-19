@@ -10,9 +10,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        tangerine: ['Tangerine'],
-        cinzel: ['Cinzel'],
-        Lavish: ['sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        //tangerine: ['Tangerine'],
+        //cinzel: ['Cinzel'],
+        //Lavish: ['sans-serif'],
       },
     },
   },
