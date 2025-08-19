@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaPhone } from "react-icons/fa";
-import { HiMail, HiMusicNote, HiCollection, HiUserGroup, HiBookOpen } from "react-icons/hi";
+import {
+  HiMail,
+  HiMusicNote,
+  HiCollection,
+  HiUserGroup,
+  HiBookOpen,
+} from "react-icons/hi";
 import logo from "../assets/Logo/newlogo.png";
 import txtLogo from "../assets/Logo/txtnewlogo.png";
 
@@ -275,8 +281,8 @@ const Footer = () => {
               Coming Soon!
             </h3>
             <p className="text-gray-300 mb-6">
-              We're currently working on the Reading Bible feature. This will
-              be available in our next update!
+              We're currently working on the Reading Bible feature. This will be
+              available in our next update!
             </p>
             <div className="flex justify-end">
               <button

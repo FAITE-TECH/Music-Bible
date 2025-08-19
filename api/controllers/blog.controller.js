@@ -106,7 +106,7 @@ export const createBlog = async (req, res, next) => {
 
 export const getBlogs = async (req, res, next) => {
   try {
-    const { searchTerm, category, page = 1, limit = 4, showAll = false } = req.query;
+    const { searchTerm, category, page = 1, limit = 6, showAll = false } = req.query;
     const queryOptions = {};
 
     if (searchTerm) {
@@ -123,7 +123,7 @@ export const getBlogs = async (req, res, next) => {
 
     // Convert to numbers with proper defaults
     const pageNum = Math.max(parseInt(page) || 1, 1);
-    const limitNum = showAll === 'true' ? 0 : Math.min(parseInt(limit) || 4, 20);
+    const limitNum = showAll === 'true' ? 0 : Math.min(parseInt(limit) || 6, 20);
     const skip = (pageNum - 1) * limitNum;
 
     // Get counts
