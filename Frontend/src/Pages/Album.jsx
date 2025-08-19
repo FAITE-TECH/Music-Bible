@@ -25,10 +25,10 @@ import { motion } from "framer-motion";
 const getAudioDuration = (url) => {
   return new Promise((resolve) => {
     const audio = new Audio();
-    audio.addEventListener('loadedmetadata', () => {
+    audio.addEventListener("loadedmetadata", () => {
       resolve(audio.duration);
     });
-    audio.addEventListener('error', () => {
+    audio.addEventListener("error", () => {
       resolve(0); // Return 0 if there's an error
     });
     audio.src = url;
@@ -87,8 +87,6 @@ export default function Album() {
     }
   };
 
-
-
   const handleVolumeChange = (index, newVolume) => {
     const updatedVolumes = { ...volumes, [index]: newVolume };
     setVolumes(updatedVolumes);
@@ -130,68 +128,67 @@ export default function Album() {
     fetchCategories();
   }, []);
 
- useEffect(() => {
-  const fetchFavorites = async () => {
-    if (!currentUser) return;
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!currentUser) return;
+      try {
+        const res = await fetch("/api/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ userId: currentUser._id }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          const favoritesObj = data.favorites.reduce((acc, fav) => {
+            acc[fav._id] = true;
+            return acc;
+          }, {});
+          setFavorites(favoritesObj);
+        }
+      } catch (error) {
+        console.error("Failed to fetch favorites:", error);
+      }
+    };
+    fetchFavorites();
+  }, [currentUser]);
+
+  const toggleFavorite = async (musicId) => {
     try {
-      const res = await fetch("/api/favorites", { 
-        method: "POST", 
+      if (!currentUser) {
+        navigate("/sign-in");
+        return;
+      }
+
+      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ userId: currentUser._id }), 
+        body: JSON.stringify({ userId: currentUser._id }),
       });
-      
       const data = await res.json();
-      if (res.ok) {
-        
-        const favoritesObj = data.favorites.reduce((acc, fav) => {
-          acc[fav._id] = true;
-          return acc;
-        }, {});
-        setFavorites(favoritesObj);
-      }
+
+      if (!res.ok)
+        throw new Error(data.message || "Failed to update favorites");
+
+      setFavorites((prev) => {
+        const newFavorites = { ...prev };
+        if (newFavorites[musicId]) {
+          delete newFavorites[musicId];
+        } else {
+          newFavorites[musicId] = true;
+        }
+        return newFavorites;
+      });
     } catch (error) {
-      console.error("Failed to fetch favorites:", error);
+      console.error("Favorite error:", error);
     }
   };
-  fetchFavorites();
-}, [currentUser]);
-
-const toggleFavorite = async (musicId) => {
-  try {
-    if (!currentUser) {
-      navigate("/sign-in");
-      return;
-    }
-
-    const res = await fetch(`/api/favorites/toggle/${musicId}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: "include",
-      body: JSON.stringify({ userId: currentUser._id }),
-    });
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || "Failed to update favorites");
-
-    
-    setFavorites(prev => {
-      const newFavorites = {...prev};
-      if (newFavorites[musicId]) {
-        delete newFavorites[musicId];
-      } else {
-        newFavorites[musicId] = true;
-      }
-      return newFavorites;
-    });
-  } catch (error) {
-    console.error("Favorite error:", error);
-  }
-};
 
   useEffect(() => {
     const fetchMusicByCategory = async () => {
@@ -203,15 +200,14 @@ const toggleFavorite = async (musicId) => {
         );
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
-        
-       
+
         const musicWithDurations = await Promise.all(
           data.music.map(async (music) => {
             const duration = await getAudioDuration(music.music);
             return { ...music, duration };
           })
         );
-        
+
         setMusicList(musicWithDurations);
         setShowFavoritesForAlbum(null);
       } catch (error) {
@@ -420,9 +416,9 @@ const toggleFavorite = async (musicId) => {
 
   // Filter music list based on current album and favorite status
   const filteredMusicList =
-  showFavoritesForAlbum === category
-    ? musicList.filter((music) => favorites[music._id])
-    : musicList;
+    showFavoritesForAlbum === category
+      ? musicList.filter((music) => favorites[music._id])
+      : musicList;
 
   if (loading)
     return (
@@ -611,7 +607,347 @@ const toggleFavorite = async (musicId) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <div className="flex flex-col sm:flex-row items-center gap-1">
+            {/* Mobile View - Single Line Layout */}
+            <div className="flex flex-col sm:hidden">
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex-1 min-w-0">
+                  <span className="tamil-font text-sm text-white truncate block">
+                    {music.title}
+                  </span>
+                  {music.description && (
+                    <span className="tamil-font text-xs text-gray-400 truncate block">
+                      {music.description}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 ml-2">
+                  {/* Favorite Button */}
+                  <button
+                    onClick={() => toggleFavorite(music._id)}
+                    className={`p-1 ${
+                      favorites[music._id] ? "text-red-500" : "text-gray-400"
+                    }`}
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        favorites[music._id] ? faHeartSolid : faHeartOutline
+                      }
+                      size="xs"
+                    />
+                  </button>
+
+                  {/* Play/Pause Button */}
+                  <button
+                    onClick={() => handlePlaySong(index)}
+                    className={`p-1 ${
+                      currentSongIndex === index && isPlaying
+                        ? "text-purple-400"
+                        : "text-white"
+                    }`}
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        currentSongIndex === index && isPlaying
+                          ? faPause
+                          : faPlay
+                      }
+                      size="xs"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Progress Bar - Mobile */}
+              <div className="flex items-center gap-2 w-full mb-2">
+                <span className="text-xxs text-gray-400 w-6">
+                  {formatTime(index === currentSongIndex ? currentTime : 0)}
+                </span>
+                <input
+                  type="range"
+                  min="0"
+                  max={
+                    index === currentSongIndex
+                      ? duration || 100
+                      : music.duration || 100
+                  }
+                  value={index === currentSongIndex ? currentTime : 0}
+                  onChange={handleSeek}
+                  className="flex-1 h-1 rounded-lg appearance-none cursor-pointer m-2 bg-gray-600"
+                  style={{
+                    background: `linear-gradient(to right, #8b5cf6 ${
+                      ((index === currentSongIndex ? currentTime : 0) /
+                        (index === currentSongIndex
+                          ? duration || 100
+                          : music.duration || 100)) *
+                      100
+                    }%, #4b5563 ${
+                      ((index === currentSongIndex ? currentTime : 0) /
+                        (index === currentSongIndex
+                          ? duration || 100
+                          : music.duration || 100)) *
+                      100
+                    }%)`,
+                  }}
+                />
+                <span className="text-xxs text-gray-400 w-6">
+                  {formatTime(music.duration || 0)}
+                </span>
+              </div>
+
+              {/* Controls Row - Mobile */}
+              <div className="flex items-center w-full">
+                {/* Left: Navigation Controls */}
+                <div className="flex flex-1 justify-start gap-1">
+                  <button
+                    onClick={handlePrevious}
+                    className="text-gray-400 hover:text-white p-1"
+                  >
+                    <FontAwesomeIcon icon={faStepBackward} size="xs" />
+                  </button>
+                  <button
+                    onClick={handleSeekBackward}
+                    className="text-gray-400 hover:text-white p-1"
+                  >
+                    <FontAwesomeIcon icon={faBackward} size="xs" />
+                  </button>
+                  <button
+                    onClick={handleSeekForward}
+                    className="text-gray-400 hover:text-white p-1"
+                  >
+                    <FontAwesomeIcon icon={faForward} size="xs" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="text-gray-400 hover:text-white p-1"
+                  >
+                    <FontAwesomeIcon icon={faStepForward} size="xs" />
+                  </button>
+                </div>
+
+                {/* Center: Volume & Shuffle */}
+                <div className="flex flex-1 justify-center gap-2">
+                  <div className="relative flex items-center">
+                    <button
+                      onClick={() => toggleMute(index)}
+                      className="text-gray-400 hover:text-white p-1"
+                    >
+                      <FontAwesomeIcon
+                        icon={mutedTracks[index] ? faVolumeMute : faVolumeUp}
+                        size="xs"
+                      />
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={mutedTracks[index] ? 0 : volumes[index] || 0.7}
+                      onChange={(e) =>
+                        handleVolumeChange(index, parseFloat(e.target.value))
+                      }
+                      className="w-12 h-1 rounded-lg appearance-none cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, #8b5cf6 ${
+                          (mutedTracks[index] ? 0 : volumes[index] || 0.7) * 100
+                        }%, #4b5563 ${
+                          (mutedTracks[index] ? 0 : volumes[index] || 0.7) * 100
+                        }%)`,
+                        outline: "none",
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={handleShuffle}
+                    className={`p-1 ${
+                      shuffle ? "text-purple-400" : "text-gray-400"
+                    }`}
+                  >
+                    <FontAwesomeIcon icon={faRandom} size="xs" />
+                  </button>
+                </div>
+
+                {/* Right: Download & Share */}
+                <div className="flex flex-1 justify-end gap-1">
+                  <button
+                    onClick={() => handleDownload(music)}
+                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white p-1 rounded"
+                  >
+                    <FontAwesomeIcon icon={faDownload} size="xs" />
+                  </button>
+                  <button
+                    onClick={() => handleShare(music)}
+                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white p-1 rounded"
+                  >
+                    <FontAwesomeIcon icon={faShareAlt} size="xs" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Tablet View (641px - 1023px) */}
+            <div className="hidden sm:flex lg:hidden flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex-1 min-w-0">
+                  <p className="tamil-font text-base text-white truncate">
+                    {music.title}
+                  </p>
+                  {music.description && (
+                    <p className="tamil-font text-sm text-gray-400 truncate">
+                      {music.description}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 ml-4">
+                  <button
+                    onClick={() => toggleFavorite(music._id)}
+                    className={`p-1 ${
+                      favorites[music._id] ? "text-red-500" : "text-gray-400"
+                    }`}
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        favorites[music._id] ? faHeartSolid : faHeartOutline
+                      }
+                      size="sm"
+                    />
+                  </button>
+                  <button
+                    onClick={() => handleDownload(music)}
+                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded text-sm"
+                  >
+                    <FontAwesomeIcon icon={faDownload} size="sm" />
+                  </button>
+                  <button
+                    onClick={() => handleShare(music)}
+                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded text-sm"
+                  >
+                    <FontAwesomeIcon icon={faShareAlt} size="sm" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={handlePrevious}
+                  className="text-gray-400 hover:text-white p-1"
+                >
+                  <FontAwesomeIcon icon={faStepBackward} size="sm" />
+                </button>
+                <button
+                  onClick={handleSeekBackward}
+                  className="text-gray-400 hover:text-white p-1"
+                >
+                  <FontAwesomeIcon icon={faBackward} size="sm" />
+                </button>
+                <button
+                  onClick={() => handlePlaySong(index)}
+                  className={`${
+                    currentSongIndex === index && isPlaying
+                      ? "bg-purple-600"
+                      : "bg-blue-600"
+                  } rounded-full p-2 w-10 h-10 flex items-center justify-center`}
+                >
+                  <FontAwesomeIcon
+                    icon={
+                      currentSongIndex === index && isPlaying ? faPause : faPlay
+                    }
+                  />
+                </button>
+                <button
+                  onClick={handleSeekForward}
+                  className="text-gray-400 hover:text-white p-1"
+                >
+                  <FontAwesomeIcon icon={faForward} size="sm" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="text-gray-400 hover:text-white p-1"
+                >
+                  <FontAwesomeIcon icon={faStepForward} size="sm" />
+                </button>
+
+                {/* Volume Control */}
+                <div className="flex items-center gap-2 ml-2">
+                  <button
+                    onClick={() => toggleMute(index)}
+                    className="text-gray-400 hover:text-white p-1"
+                  >
+                    <FontAwesomeIcon
+                      icon={mutedTracks[index] ? faVolumeMute : faVolumeUp}
+                      size="sm"
+                    />
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={mutedTracks[index] ? 0 : volumes[index] || 0.7}
+                    onChange={(e) =>
+                      handleVolumeChange(index, parseFloat(e.target.value))
+                    }
+                    className="w-16 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #8b5cf6 ${
+                        (mutedTracks[index] ? 0 : volumes[index] || 0.7) * 100
+                      }%, #4b5563 ${
+                        (mutedTracks[index] ? 0 : volumes[index] || 0.7) * 100
+                      }%)`,
+                    }}
+                  />
+                </div>
+
+                {/* Progress Bar*/}
+                <div className="flex-1 flex items-center gap-2 mx-2">
+                  <span className="text-xs text-gray-400 w-8">
+                    {formatTime(index === currentSongIndex ? currentTime : 0)}
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max={
+                      index === currentSongIndex
+                        ? duration || 100
+                        : music.duration || 100
+                    }
+                    value={index === currentSongIndex ? currentTime : 0}
+                    onChange={handleSeek}
+                    className="flex-1 h-1 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #8b5cf6 ${
+                        ((index === currentSongIndex ? currentTime : 0) /
+                          (index === currentSongIndex
+                            ? duration || 100
+                            : music.duration || 100)) *
+                        100
+                      }%, #4b5563 ${
+                        ((index === currentSongIndex ? currentTime : 0) /
+                          (index === currentSongIndex
+                            ? duration || 100
+                            : music.duration || 100)) *
+                        100
+                      }%)`,
+                    }}
+                  />
+                  <span className="text-xs text-gray-400 w-8">
+                    {formatTime(music.duration || 0)}
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleShuffle}
+                  className={`p-1 ${
+                    shuffle ? "text-purple-400" : "text-gray-400"
+                  }`}
+                >
+                  <FontAwesomeIcon icon={faRandom} size="sm" />
+                </button>
+              </div>
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden lg:flex flex-row items-center gap-4">
               <div className="flex flex-col w-full sm:w-1/4 max-w-xs text-center sm:text-left">
                 <span className="tamil-font text-base sm:text-lg text-white truncate">
                   {music.title}
@@ -807,7 +1143,11 @@ const toggleFavorite = async (musicId) => {
                 <input
                   type="range"
                   min="0"
-                  max={index === currentSongIndex ? duration || 100 : music.duration || 100}
+                  max={
+                    index === currentSongIndex
+                      ? duration || 100
+                      : music.duration || 100
+                  }
                   value={index === currentSongIndex ? currentTime : 0}
                   onChange={(e) => {
                     if (
@@ -819,7 +1159,7 @@ const toggleFavorite = async (musicId) => {
                     }
                     handleSeek(e);
                   }}
-                  className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer min-w-[60px] max-w-[120px] ${
+                  className={`flex-1 h-1 rounded-lg appearance-none cursor-pointer bg-gray-600 min-w-[60px] max-w-[120px] ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "bg-gray-500 cursor-not-allowed"
                       : "bg-gray-600"
@@ -827,11 +1167,15 @@ const toggleFavorite = async (musicId) => {
                   style={{
                     background: `linear-gradient(to right, #8b5cf6 ${
                       ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : music.duration || 100)) *
+                        (index === currentSongIndex
+                          ? duration || 100
+                          : music.duration || 100)) *
                       100
                     }%, #4b5563 ${
                       ((index === currentSongIndex ? currentTime : 0) /
-                        (index === currentSongIndex ? duration || 100 : music.duration || 100)) *
+                        (index === currentSongIndex
+                          ? duration || 100
+                          : music.duration || 100)) *
                       100
                     }%)`,
                   }}
@@ -1046,9 +1390,9 @@ const toggleFavorite = async (musicId) => {
                   }
                 >
                   <FontAwesomeIcon
-                      icon={favorites[music._id] ? faHeartSolid : faHeartOutline}
-                      size="xs"
-                    />
+                    icon={favorites[music._id] ? faHeartSolid : faHeartOutline}
+                    size="xs"
+                  />
                 </motion.button>
 
                 {/* Download button */}
@@ -1106,7 +1450,7 @@ const toggleFavorite = async (musicId) => {
           currentSongIndex !== null ? musicList[currentSongIndex]?.music : ""
         }
         onError={(e) => console.error("Audio error:", e)}
-      /> 
+      />
     </motion.div>
   );
 }
