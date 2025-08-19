@@ -598,7 +598,7 @@ const toggleFavorite = async (musicId) => {
         {filteredMusicList.map((music, index) => (
           <motion.div
             key={music._id}
-            className={`p-3 rounded-lg ${
+            className={`p-3 pt-1 pb-1 rounded-lg ${
               index === currentSongIndex
                 ? "bg-gray-900 border-l-4 border-blue-500"
                 : "bg-gray-800"
@@ -611,7 +611,7 @@ const toggleFavorite = async (musicId) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <div className="flex flex-col sm:flex-row items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center gap-1">
               <div className="flex flex-col w-full sm:w-1/4 max-w-xs text-center sm:text-left">
                 <span className="tamil-font text-base sm:text-lg text-white truncate">
                   {music.title}
