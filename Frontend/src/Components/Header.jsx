@@ -44,7 +44,6 @@ export default function Header() {
         { name: "Album", path: "/album", icon: <HiCollection size={20} /> },
          { name: "Blog", path: "/blog", icon: <HiBookOpen size={20} /> },
         { name: "Membership", path: "/membership", icon: <HiUserGroup size={20} /> },
-        { name: "Reading-Bible", path: "/reading", icon: <HiOutlineBookOpen size={20} /> },
         { name: "Contact Us", path: "/contactus", icon: <FaPhone size={20} /> },
     ];
 
@@ -75,6 +74,13 @@ export default function Header() {
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-md font-bold text-sm text-center"
                         >
                             Bible/AI
+                        </button>
+
+                         <button
+                            onClick={() => { navigate('/reading'); setMenuOpen(false); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-md font-bold text-sm text-center"
+                        >
+                            Reading Bible
                         </button>
 
                         {currentUser ? (
@@ -230,6 +236,12 @@ export default function Header() {
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
                         >
                             Bible/AI
+                        </button>
+                         <button
+                            onClick={() => { navigate('/reading'); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
+                        >
+                            Reading Bible
                         </button>
                     </nav>
                 </div>
