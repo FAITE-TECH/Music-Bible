@@ -148,7 +148,7 @@ export default function DashBlogs() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="p-3 md:mx-auto w-full max-w-screen-2xl md:w-3/4"
+      className="min-h-screen bg-black text-white p-4 md:p-8"
     >
       <div className="max-w-7xl mx-auto items-center text-center justify-center">
         <motion.div
@@ -189,8 +189,8 @@ export default function DashBlogs() {
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Button
             onClick={() => navigate("/addblogs")}
-            gradientDuoTone="purpleToBlue"
-            className="px-6 py-2.5 rounded-lg shadow-md w-full md:w-auto"
+           
+            className="px-6 py-1 rounded-lg shadow-md w-full md:w-auto bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-700 hover:to-blue-900"
           >
             <div className="flex items-center gap-2">
               <FaPlus />
@@ -271,7 +271,7 @@ export default function DashBlogs() {
           </div>
         ) : blogs.length > 0 ? (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-col-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-col-3 gap-6"
             variants={container}
             initial="hidden"
             animate="show"

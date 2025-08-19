@@ -97,91 +97,265 @@ export default function DashMusicPurchase() {
   };
 
   const generatePDFReport = () => {
+    const date = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const time = new Date().toLocaleTimeString();
+
     const content = `
-      <style>
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 8px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f2f2f2;
-          font-size: 14px;
-        }
-        td {
-          font-size: 12px;
-        }
-        .music-img {
-          width: 50px;
-          height: 50px;
-          object-fit: cover;
-        }
-        .summary {
-          margin-bottom: 20px;
-        }
-        .summary-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 5px;
-        }
-        .summary-value {
-          font-weight: bold;
-        }
-      </style>
-      <h1><b>Music Purchases Report</b></h1>
-      <div class="summary">
-        <div class="summary-item">
-          <span>Total Purchases:</span>
-          <span class="summary-value">${totalPurchases}</span>
-        </div>
-        <div class="summary-item">
-          <span>Total Revenue:</span>
-          <span class="summary-value">$${totalRevenue.toFixed(2)}</span>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #3AF7F0;
+        page-break-after: avoid;
+      }
+      
+      .title {
+        color: #0119FF;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        margin-bottom: 10px;
+      }
+    
+      .subtitle {
+        color: #0093FF;
+        font-size: 16px;
+        margin: 5px 0 0 0;
+        margin-bottom: 10px;
+      }
+      .report-info {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+      }
+      .stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+        page-break-after: avoid;
+      }
+      
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      .stat-title {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      
+      .stat-value {
+        font-size: 22px;
+        font-weight: bold;
+        color: #0119FF;
+      }
+      .stat-change {
+        font-size: 12px;
+        color: #0093FF;
+        margin-top: 5px;
+      }
+      
+      .stat-change svg {
+        margin-right: 5px;
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th {
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        text-align: left;
+        padding: 12px;
+        font-size: 14px;
+      }
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
+      }
+      
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+     
+      .listen-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background: linear-gradient(to right, #0119FF, #0093FF);
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+        margin: 0 auto;
+        text-align: center;
+      }
+      
+      .listen-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(1, 25, 255, 0.2);
+      }
+      
+      .status-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .status-completed {
+        background-color: #e6ffed;
+        color: #22863a;
+      }
+      
+      .status-pending {
+        background-color: #fff5b1;
+        color: #735c0f;
+      }
+      
+      .music-img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      
+      .order-id {
+        font-family: monospace;
+        background-color: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+    </style>
+
+    <div class="header">
+      <div>
+        <h1 class="title">Music Purchases Report</h1>
+        <p class="subtitle">Comprehensive overview of music purchases and revenue</p>
+      </div>
+      <div class="report-info">
+        Generated on ${date}<br>
+        At ${time}
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-title">Total Purchases</div>
+        <div class="stat-value">${totalPurchases}</div>
+        <div class="stat-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0093FF">
+            <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+          </svg>
+          ${purchases.length} shown in this report
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Music</th>
-            <th>Date</th>
-            <th>Order ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th>Price</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${purchases.map((purchase) => `
-            <tr>
-              <td>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <img src="${purchase.musicImage}" alt="${purchase.musicTitle}" class="music-img" />
-                  <span>${purchase.musicTitle}</span>
-                </div>
-              </td>
-              <td>${new Date(purchase.createdAt).toLocaleDateString()}</td>
-              <td>${formatOrderId(purchase.orderId)}</td>
-              <td>${purchase.username}</td>
-              <td>${purchase.email}</td>
-              <td>${purchase.mobile || 'N/A'}</td>
-              <td>$${(purchase.price).toFixed(2)}</td>
-              <td>${purchase.status}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>  
-    `;
+      
+      <div class="stat-card">
+        <div class="stat-title">Total Revenue</div>
+        <div class="stat-value">$${totalRevenue.toFixed(2)}</div>
+        <div class="stat-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0093FF">
+            <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7z"/>
+          </svg>
+          Average: $${(totalRevenue / totalPurchases).toFixed(2)} per purchase
+        </div>
+      </div>
+    </div>
 
-    html2pdf()
-      .from(content)
-      .set({ margin: 1, filename: "music_purchases_report.pdf" })
-      .save();
+    <table>
+      <thead>
+        <tr>
+          <th>Music</th>
+          
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${purchases
+          .map(
+            (purchase) => `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+              
+                <div>
+                  <div style="font-weight: 600;">${purchase.musicTitle}</div>
+                  <div style="font-size: 11px; color: #666;">${purchase.email}</div>
+                </div>
+              </div>
+            </td>
+            
+            <td><span class="order-id">${formatOrderId(purchase.orderId)}</span></td>
+            <td>
+              <div style="font-weight: 500;">${purchase.username}</div>
+              <div style="font-size: 11px; color: #666;">${purchase.mobile || 'N/A'}</br>${new Date(purchase.createdAt).toLocaleDateString()}</div>
+            </td>
+            <td style="font-weight: 600;">$${purchase.price.toFixed(2)}</td>
+            <td>
+              <span class="status-tag status-${purchase.status}">
+                ${purchase.status}
+              </span>
+            </td>
+            <td><a href="${purchase.musicFile}" target="_blank" class="listen-btn">Download</a></td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+    const options = {
+      margin: [20, 20, 30, 20],
+      filename: `music_purchases_report_${date.replace(/ /g, "_")}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        letterRendering: true,
+        logging: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        hotfixes: ["px_scaling"],
+        putOnlyUsedFonts: true,
+      },
+    };
+
+    html2pdf().set(options).from(content).save();
   };
 
   return (
@@ -189,7 +363,7 @@ export default function DashMusicPurchase() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="p-3 w-full max-w-screen-2xl mx-auto"
+      className="min-h-screen bg-black text-white p-4 md:p-8"
     >
       {/* Header Section */}
       <motion.div
@@ -198,7 +372,7 @@ export default function DashMusicPurchase() {
         transition={{ delay: 0.2 }}
         className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-blue-400 to-cyan-300 text-transparent bg-clip-text">
+        <h1 className="text-3xl py-2 font-bold  bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-transparent bg-clip-text">
           Music Purchases Management
         </h1>
         <p className="text-gray-500 mt-2">
@@ -229,7 +403,7 @@ export default function DashMusicPurchase() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={generatePDFReport}
-          className="whitespace-nowrap bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-200"
+          className="whitespace-nowrap bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-200"
         >
           Generate Report
         </motion.button>
@@ -245,7 +419,7 @@ export default function DashMusicPurchase() {
         {/* Total Purchases Card */}
         <motion.div
           whileHover={{ scale: 1.03 }}
-          className="p-6 rounded-xl shadow-lg bg-gradient-to-r from-blue-600 via-blue-400 to-cyan-300"
+          className="p-6 rounded-xl shadow-lg  bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] "
         >
           <div className="flex justify-between items-center">
             <div>
@@ -263,7 +437,7 @@ export default function DashMusicPurchase() {
         {/* Total Revenue Card */}
         <motion.div
           whileHover={{ scale: 1.03 }}
-          className="p-6 rounded-xl shadow-lg bg-gradient-to-r from-green-600 via-green-400 to-teal-300"
+          className="p-6 rounded-xl shadow-lg  bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]"
         >
           <div className="flex justify-between items-center">
             <div>
