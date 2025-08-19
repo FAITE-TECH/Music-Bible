@@ -27,6 +27,7 @@ import UpdateBlogs from './Pages/UpdateBlogs'
 import Blog from "./Pages/Blog";
 import BlogPost from "./Pages/BlogPost";
 import Footer from "./Components/Footer";
+import ReadingBible from "./Pages/ReadingBible";
 
 // Create a component to conditionally render the Footer
 const FooterWrapper = () => {
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/bible/ai" element={<ChatAI />} />
+        <Route path="/reading" element={<ReadingBible/>} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/resetpassword/:id/:token" element={<ResetPassword />} />
 

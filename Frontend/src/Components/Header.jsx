@@ -5,7 +5,7 @@ import { signOut } from '../redux/user/userSlice';
 import { AnimatePresence, motion } from 'framer-motion';
 import logo from '../assets/Logo/newlogo.png';
 import txtLogo from '../assets/Logo/txtnewlogo.png';
-import { HiMenu, HiX, HiHome, HiMusicNote, HiBookOpen, HiMail, HiCollection, HiUser, HiUserGroup, HiUserCircle } from 'react-icons/hi';
+import { HiMenu, HiX, HiHome, HiMusicNote, HiBookOpen, HiMail, HiCollection, HiUser, HiUserGroup, HiUserCircle, HiOutlineBookOpen } from 'react-icons/hi';
 import { FaPhone } from 'react-icons/fa';
 
 export default function Header() {
@@ -74,6 +74,13 @@ export default function Header() {
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-md font-bold text-sm text-center"
                         >
                             Bible/AI
+                        </button>
+
+                         <button
+                            onClick={() => { navigate('/reading'); setMenuOpen(false); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-md font-bold text-sm text-center"
+                        >
+                            Reading Bible
                         </button>
 
                         {currentUser ? (
@@ -229,6 +236,12 @@ export default function Header() {
                             className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
                         >
                             Bible/AI
+                        </button>
+                         <button
+                            onClick={() => { navigate('/reading'); }}
+                            className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-full font-bold shadow-lg text-sm h-8 transition-all duration-300 ml-2"
+                        >
+                            Reading Bible
                         </button>
                     </nav>
                 </div>
