@@ -8,17 +8,20 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiX,
+  FiPlay,
+  FiPause,
+  FiVolume2,
 } from "react-icons/fi";
 
 export default function ReadingBible() {
-  // Already declared above, do not redeclare footerRef and arrowFixed
+  // State declarations
   const [arrowFixedMobile, setArrowFixedMobile] = useState(true);
   const footerRef = useRef(null);
   const [arrowFixed, setArrowFixed] = useState(true);
   const [search, setSearch] = useState("");
   const [book, setBook] = useState("MAT");
   const [chapter, setChapter] = useState(1);
-  const [version, setVersion] = useState("06125adad2d5898a-01"); // Default to NIV
+  const [version, setVersion] = useState("06125adad2d5898a-01");
   const [openSettings, setOpenSettings] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,6 +43,15 @@ export default function ReadingBible() {
   const [showNumbers, setShowNumbers] = useState(true);
   const [theme, setTheme] = useState("light");
   const [lineHeight, setLineHeight] = useState("normal");
+
+  // TTS State
+  const [isPlayingTTS, setIsPlayingTTS] = useState(false);
+  const [ttsVoices, setTtsVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [ttsRate, setTtsRate] = useState(1);
+  const [ttsPitch, setTtsPitch] = useState(1);
+  const [ttsVolume, setTtsVolume] = useState(1);
+  const [highlightedVerse, setHighlightedVerse] = useState(null);
 
   const versions = [
     {
@@ -82,6 +94,34 @@ export default function ReadingBible() {
   const API_KEY = "2641dfc33a1910ef977df34e39c2fac0";
   const BASE_URL = "https://api.scripture.api.bible/v1/bibles";
   const BOLLS_URL = "https://bolls.life/api";
+
+  // Initialize TTS
+  useEffect(() => {
+    const initTTS = () => {
+      if ('speechSynthesis' in window) {
+        // Get available voices
+        const voices = speechSynthesis.getVoices();
+        setTtsVoices(voices);
+        
+        // Try to find a default voice (prefer English voices)
+        const defaultVoice = voices.find(voice => 
+          voice.lang.includes('en')
+        ) || voices[0];
+        
+        if (defaultVoice) {
+          setSelectedVoice(defaultVoice);
+        }
+        
+        // Update voices when they change
+        speechSynthesis.onvoiceschanged = () => {
+          const updatedVoices = speechSynthesis.getVoices();
+          setTtsVoices(updatedVoices);
+        };
+      }
+    };
+    
+    initTTS();
+  }, []);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -281,11 +321,15 @@ export default function ReadingBible() {
     setBook(selectedBook.id);
     setChapter(chapterNum);
     setShowChapterModal(false);
+    // Stop TTS when changing chapters
+    stopTTS();
   };
 
   const handleVersionChange = (e) => {
     setVersion(e.target.value);
     setShowParallel(false);
+    // Stop TTS when changing versions
+    stopTTS();
   };
 
   const toggleParallelView = () => {
@@ -309,6 +353,60 @@ export default function ReadingBible() {
     } else if (direction === "next") {
       setChapter(chapter + 1);
     }
+    // Stop TTS when navigating chapters
+    stopTTS();
+  };
+
+  // TTS Functions
+  const playTTS = () => {
+    if (!verses.length) return;
+    
+    if (isPlayingTTS) {
+      // If already playing, pause
+      window.speechSynthesis.cancel();
+      setIsPlayingTTS(false);
+      setHighlightedVerse(null);
+      return;
+    }
+    
+    // Combine all verses into a single text
+    const fullText = verses.map(v => v.text).join('. ');
+    
+    // Create utterance
+    const utterance = new SpeechSynthesisUtterance(fullText);
+    
+    // Set voice properties
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    utterance.rate = ttsRate;
+    utterance.pitch = ttsPitch;
+    utterance.volume = ttsVolume;
+    
+    // Event handlers
+    utterance.onstart = () => {
+      setIsPlayingTTS(true);
+    };
+    
+    utterance.onend = () => {
+      setIsPlayingTTS(false);
+      setHighlightedVerse(null);
+    };
+    
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event);
+      setIsPlayingTTS(false);
+      setHighlightedVerse(null);
+    };
+    
+    // Start speaking
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopTTS = () => {
+    window.speechSynthesis.cancel();
+    setIsPlayingTTS(false);
+    setHighlightedVerse(null);
   };
 
   const renderBibleContent = (versesToRender, versionId) => {
@@ -324,7 +422,10 @@ export default function ReadingBible() {
         )}
         <div className="space-y-4">
           {versesToRender.map((verse) => (
-            <p key={verse.id} className="leading-relaxed">
+            <p 
+              key={verse.id} 
+              className={`leading-relaxed ${highlightedVerse === verse.id ? 'bg-yellow-200 dark:bg-yellow-800 rounded p-2' : ''}`}
+            >
               {showNumbers && verse.id && (
                 <sup className="text-gray-500 text-xs mr-1">{verse.id}</sup>
               )}
@@ -385,6 +486,95 @@ export default function ReadingBible() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Add TTS controls to the settings modal
+  const renderTTSSettings = () => (
+    <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
+        Text-to-Speech Settings
+      </h3>
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Voice
+          </label>
+          <select
+            value={selectedVoice ? selectedVoice.name : ''}
+            onChange={(e) => {
+              const voice = ttsVoices.find(v => v.name === e.target.value);
+              setSelectedVoice(voice);
+            }}
+            className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          >
+            {ttsVoices.map(voice => (
+              <option key={voice.name} value={voice.name}>
+                {voice.name} ({voice.lang})
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Speed: {ttsRate.toFixed(1)}
+          </label>
+          <input
+            type="range"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value={ttsRate}
+            onChange={(e) => setTtsRate(parseFloat(e.target.value))}
+            className="w-full"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Pitch: {ttsPitch.toFixed(1)}
+          </label>
+          <input
+            type="range"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value={ttsPitch}
+            onChange={(e) => setTtsPitch(parseFloat(e.target.value))}
+            className="w-full"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            Volume: {ttsVolume.toFixed(1)}
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={ttsVolume}
+            onChange={(e) => setTtsVolume(parseFloat(e.target.value))}
+            className="w-full"
+          />
+        </div>
+        
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={playTTS}
+            className={`px-4 py-2 rounded-md font-medium ${
+              isPlayingTTS 
+                ? 'bg-red-500 hover:bg-red-600 text-white' 
+                : 'bg-blue-500 hover:bg-blue-600 text-white'
+            }`}
+          >
+            {isPlayingTTS ? 'Stop Reading' : 'Read Aloud'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -603,6 +793,9 @@ export default function ReadingBible() {
                   </span>
                 </label>
               </div>
+
+              {/* TTS Settings */}
+              {renderTTSSettings()}
             </div>
 
             <div className="border-t border-slate-200 dark:border-gray-700 p-6 flex justify-end">
@@ -756,8 +949,9 @@ export default function ReadingBible() {
             >
               <span className="hidden md:inline">📑</span> Parallel
             </button>
+{/*
 
-            <button
+ <button
               onClick={playAudio}
               disabled={!audioAvailable}
               className={`w-10 h-10 flex items-center justify-center rounded-full border shadow ${
@@ -769,6 +963,23 @@ export default function ReadingBible() {
               }`}
             >
               🔊
+            </button>
+
+*/}
+           
+
+            {/* TTS Button */}
+            <button
+              onClick={playTTS}
+              className={`w-10 h-10 flex items-center justify-center rounded-full border shadow ${
+                isPlayingTTS
+                  ? "bg-red-500 text-white"
+                  : theme === "dark"
+                  ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
+                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+              } transition`}
+            >
+              {isPlayingTTS ? <FiPause /> : <FiVolume2 />}
             </button>
 
             <button
