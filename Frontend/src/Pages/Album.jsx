@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { MoonLoader } from "react-spinners";
@@ -21,17 +27,44 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
-// Utility function to get audio duration
-const getAudioDuration = (url) => {
+// Cache for API responses
+const apiCache = {
+  categories: null,
+  favorites: null,
+  music: {},
+};
+
+// Utility function to get audio duration (with caching)
+const getAudioDuration = async (url) => {
+  const cacheKey = `duration_${url}`;
+  const cached = sessionStorage.getItem(cacheKey);
+
+  if (cached) {
+    return parseFloat(cached);
+  }
+
   return new Promise((resolve) => {
     const audio = new Audio();
     audio.addEventListener("loadedmetadata", () => {
-      resolve(audio.duration);
+      const duration = audio.duration || 0;
+      sessionStorage.setItem(cacheKey, duration.toString());
+      resolve(duration);
     });
     audio.addEventListener("error", () => {
-      resolve(0); // Return 0 if there's an error
+      sessionStorage.setItem(cacheKey, "0");
+      resolve(0);
     });
     audio.src = url;
+  });
+};
+
+// Preload images function
+const preloadImage = (url) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = resolve;
+    img.onerror = resolve;
+    img.src = url;
   });
 };
 
@@ -56,6 +89,12 @@ export default function Album() {
   const [shuffle, setShuffle] = useState(false);
   const [hoveredVolumeIndex, setHoveredVolumeIndex] = useState(null);
   const [showFavoritesForAlbum, setShowFavoritesForAlbum] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Memoized category data
+  const currentCategoryData = useMemo(() => {
+    return categories.find((cat) => cat.albumName === category) || {};
+  }, [categories, category]);
 
   // Initialize volumes when musicList changes
   useEffect(() => {
@@ -71,55 +110,81 @@ export default function Album() {
     }
   }, [musicList]);
 
-  const togglePlaybackRateMenu = (index) => {
-    setOpenPlaybackRateIndex(openPlaybackRateIndex === index ? null : index);
-  };
+  const togglePlaybackRateMenu = useCallback(
+    (index) => {
+      setOpenPlaybackRateIndex(openPlaybackRateIndex === index ? null : index);
+    },
+    [openPlaybackRateIndex]
+  );
 
-  const handleShuffle = () => {
+  const handleShuffle = useCallback(() => {
     setShuffle(!shuffle);
-  };
+  }, [shuffle]);
 
-  const toggleShowFavorites = () => {
+  const toggleShowFavorites = useCallback(() => {
     if (showFavoritesForAlbum === category) {
       setShowFavoritesForAlbum(null);
     } else {
       setShowFavoritesForAlbum(category);
     }
-  };
+  }, [showFavoritesForAlbum, category]);
 
-  const handleVolumeChange = (index, newVolume) => {
-    const updatedVolumes = { ...volumes, [index]: newVolume };
-    setVolumes(updatedVolumes);
+  const handleVolumeChange = useCallback(
+    (index, newVolume) => {
+      const updatedVolumes = { ...volumes, [index]: newVolume };
+      setVolumes(updatedVolumes);
 
-    if (index === currentSongIndex && audioRef.current) {
-      audioRef.current.volume = newVolume;
-      audioRef.current.muted = newVolume === 0;
-    }
+      if (index === currentSongIndex && audioRef.current) {
+        audioRef.current.volume = newVolume;
+        audioRef.current.muted = newVolume === 0;
+      }
 
-    if (newVolume === 0) {
-      setMutedTracks((prev) => ({ ...prev, [index]: true }));
-    } else if (mutedTracks[index]) {
-      setMutedTracks((prev) => ({ ...prev, [index]: false }));
-    }
-  };
+      if (newVolume === 0) {
+        setMutedTracks((prev) => ({ ...prev, [index]: true }));
+      } else if (mutedTracks[index]) {
+        setMutedTracks((prev) => ({ ...prev, [index]: false }));
+      }
+    },
+    [volumes, currentSongIndex, mutedTracks]
+  );
 
-  const toggleMute = (index) => {
-    const newMutedState = !mutedTracks[index];
-    setMutedTracks((prev) => ({ ...prev, [index]: newMutedState }));
+  const toggleMute = useCallback(
+    (index) => {
+      const newMutedState = !mutedTracks[index];
+      setMutedTracks((prev) => ({ ...prev, [index]: newMutedState }));
 
-    if (index === currentSongIndex && audioRef.current) {
-      audioRef.current.muted = newMutedState;
-    }
-  };
+      if (index === currentSongIndex && audioRef.current) {
+        audioRef.current.muted = newMutedState;
+      }
+    },
+    [mutedTracks, currentSongIndex]
+  );
 
   useEffect(() => {
     const fetchCategories = async () => {
+      // Return cached data if available
+      if (apiCache.categories) {
+        setCategories(apiCache.categories);
+        setCategory(apiCache.categories[0]?.albumName || "");
+        return;
+      }
+
       try {
         const res = await fetch("/api/category/getAlbum");
         const data = await res.json();
         if (!res.ok) throw new Error("Failed to load categories");
+
+        // Cache the response
+        apiCache.categories = data;
         setCategories(data);
         setCategory(data[0]?.albumName || "");
+
+        // Preload category images
+        if (data.length > 0) {
+          data.forEach((cat) => {
+            if (cat.image) preloadImage(cat.image);
+          });
+        }
       } catch (error) {
         setError("Error fetching categories");
         console.error(error);
@@ -131,6 +196,17 @@ export default function Album() {
   useEffect(() => {
     const fetchFavorites = async () => {
       if (!currentUser) return;
+
+      // Return cached data if available
+      if (apiCache.favorites) {
+        const favoritesObj = apiCache.favorites.reduce((acc, fav) => {
+          acc[fav._id] = true;
+          return acc;
+        }, {});
+        setFavorites(favoritesObj);
+        return;
+      }
+
       try {
         const res = await fetch("/api/favorites", {
           method: "POST",
@@ -143,6 +219,9 @@ export default function Album() {
 
         const data = await res.json();
         if (res.ok) {
+          // Cache the response
+          apiCache.favorites = data.favorites;
+
           const favoritesObj = data.favorites.reduce((acc, fav) => {
             acc[fav._id] = true;
             return acc;
@@ -156,43 +235,55 @@ export default function Album() {
     fetchFavorites();
   }, [currentUser]);
 
-  const toggleFavorite = async (musicId) => {
-    try {
-      if (!currentUser) {
-        navigate("/sign-in");
-        return;
-      }
-
-      const res = await fetch(`/api/favorites/toggle/${musicId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ userId: currentUser._id }),
-      });
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Failed to update favorites");
-
-      setFavorites((prev) => {
-        const newFavorites = { ...prev };
-        if (newFavorites[musicId]) {
-          delete newFavorites[musicId];
-        } else {
-          newFavorites[musicId] = true;
+  const toggleFavorite = useCallback(
+    async (musicId) => {
+      try {
+        if (!currentUser) {
+          navigate("/sign-in");
+          return;
         }
-        return newFavorites;
-      });
-    } catch (error) {
-      console.error("Favorite error:", error);
-    }
-  };
+
+        const res = await fetch(`/api/favorites/toggle/${musicId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ userId: currentUser._id }),
+        });
+        const data = await res.json();
+
+        if (!res.ok)
+          throw new Error(data.message || "Failed to update favorites");
+
+        setFavorites((prev) => {
+          const newFavorites = { ...prev };
+          if (newFavorites[musicId]) {
+            delete newFavorites[musicId];
+          } else {
+            newFavorites[musicId] = true;
+          }
+          return newFavorites;
+        });
+      } catch (error) {
+        console.error("Favorite error:", error);
+      }
+    },
+    [currentUser, navigate]
+  );
 
   useEffect(() => {
     const fetchMusicByCategory = async () => {
       if (!category) return;
+
+      // Return cached data if available
+      if (apiCache.music[category]) {
+        setMusicList(apiCache.music[category]);
+        setShowFavoritesForAlbum(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         const response = await fetch(
@@ -201,12 +292,16 @@ export default function Album() {
         if (!response.ok) throw new Error("Failed to fetch music data");
         const data = await response.json();
 
+        // Get durations in parallel with a limit to avoid overloading
         const musicWithDurations = await Promise.all(
           data.music.map(async (music) => {
             const duration = await getAudioDuration(music.music);
             return { ...music, duration };
           })
         );
+
+        // Cache the response
+        apiCache.music[category] = musicWithDurations;
 
         setMusicList(musicWithDurations);
         setShowFavoritesForAlbum(null);
@@ -243,37 +338,40 @@ export default function Album() {
     };
   }, [currentSongIndex, musicList, shuffle]);
 
-  const handlePlaySong = (index) => {
-    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
-      alert("This song will be available soon!");
-      return;
-    }
-    if (currentSongIndex === index) {
-      setIsPlaying(!isPlaying);
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current
-          .play()
-          .catch((e) => console.error("Playback failed:", e));
+  const handlePlaySong = useCallback(
+    (index) => {
+      if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+        alert("This song will be available soon!");
+        return;
       }
-    } else {
-      setCurrentSongIndex(index);
-      setIsPlaying(true);
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.volume = volumes[index] || 0.7;
-          audioRef.current.muted = mutedTracks[index] || false;
-          audioRef.current.playbackRate = playbackRate;
+      if (currentSongIndex === index) {
+        setIsPlaying(!isPlaying);
+        if (isPlaying) {
+          audioRef.current.pause();
+        } else {
           audioRef.current
             .play()
             .catch((e) => console.error("Playback failed:", e));
         }
-      }, 100);
-    }
-  };
+      } else {
+        setCurrentSongIndex(index);
+        setIsPlaying(true);
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.volume = volumes[index] || 0.7;
+            audioRef.current.muted = mutedTracks[index] || false;
+            audioRef.current.playbackRate = playbackRate;
+            audioRef.current
+              .play()
+              .catch((e) => console.error("Playback failed:", e));
+          }
+        }, 100);
+      }
+    },
+    [category, currentSongIndex, isPlaying, mutedTracks, playbackRate, volumes]
+  );
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentSongIndex === null || musicList.length === 0) return;
 
     let newIndex;
@@ -299,9 +397,16 @@ export default function Album() {
           .catch((e) => console.error("Auto-play failed:", e));
       }
     }, 100);
-  };
+  }, [
+    currentSongIndex,
+    musicList,
+    shuffle,
+    mutedTracks,
+    playbackRate,
+    volumes,
+  ]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentSongIndex === null || musicList.length === 0) return;
 
     let newIndex;
@@ -327,30 +432,37 @@ export default function Album() {
           .catch((e) => console.error("Auto-play failed:", e));
       }
     }, 100);
-  };
+  }, [
+    currentSongIndex,
+    musicList,
+    shuffle,
+    mutedTracks,
+    playbackRate,
+    volumes,
+  ]);
 
-  const handleSeek = (e) => {
+  const handleSeek = useCallback((e) => {
     const seekTime = parseFloat(e.target.value);
     audioRef.current.currentTime = seekTime;
     setCurrentTime(seekTime);
-  };
+  }, []);
 
-  const handlePlaybackRateChange = (rate, index) => {
+  const handlePlaybackRateChange = useCallback((rate, index) => {
     setPlaybackRate(rate);
     if (audioRef.current) {
       audioRef.current.playbackRate = rate;
     }
     setOpenPlaybackRateIndex(null);
-  };
+  }, []);
 
-  const formatTime = (time) => {
+  const formatTime = useCallback((time) => {
     if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+  }, []);
 
-  const handleAlbumShare = () => {
+  const handleAlbumShare = useCallback(() => {
     if (navigator.share) {
       navigator
         .share({
@@ -361,40 +473,46 @@ export default function Album() {
     } else {
       alert(`Share this album: ${window.location.href}`);
     }
-  };
+  }, [category]);
 
-  const handleDownload = (music) => {
-    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
-      alert("This song will be available soon!");
-      return;
-    }
-    currentUser
-      ? navigate("/order-summary", { state: { musicItem: music } })
-      : navigate("/sign-in");
-  };
+  const handleDownload = useCallback(
+    (music, index) => {
+      if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+        alert("This song will be available soon!");
+        return;
+      }
+      currentUser
+        ? navigate("/order-summary", { state: { musicItem: music } })
+        : navigate("/sign-in");
+    },
+    [category, currentUser, navigate]
+  );
 
-  const handleShare = (music) => {
-    if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
-      alert("This song will be available soon!");
-      return;
-    }
-    if (navigator.share) {
-      navigator
-        .share({
-          title: `${music.title}`,
-          url: music.music,
-        })
-        .catch((error) => console.error("Error sharing music:", error));
-    } else {
-      alert(`Share this song: ${music.title}\n${music.music}`);
-    }
-  };
+  const handleShare = useCallback(
+    (music, index) => {
+      if (category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0) {
+        alert("This song will be available soon!");
+        return;
+      }
+      if (navigator.share) {
+        navigator
+          .share({
+            title: `${music.title}`,
+            url: music.music,
+          })
+          .catch((error) => console.error("Error sharing music:", error));
+      } else {
+        alert(`Share this song: ${music.title}\n${music.music}`);
+      }
+    },
+    [category]
+  );
 
-  const handleCategoryChange = (e) => {
+  const handleCategoryChange = useCallback((e) => {
     setCategory(e.target.value);
-  };
+  }, []);
 
-  const handleSeekBackward = () => {
+  const handleSeekBackward = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.max(
         0,
@@ -402,9 +520,9 @@ export default function Album() {
       );
       setCurrentTime(audioRef.current.currentTime);
     }
-  };
+  }, []);
 
-  const handleSeekForward = () => {
+  const handleSeekForward = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.min(
         duration,
@@ -412,13 +530,24 @@ export default function Album() {
       );
       setCurrentTime(audioRef.current.currentTime);
     }
-  };
+  }, [duration]);
 
   // Filter music list based on current album and favorite status
-  const filteredMusicList =
-    showFavoritesForAlbum === category
+  const filteredMusicList = useMemo(() => {
+    return showFavoritesForAlbum === category
       ? musicList.filter((music) => favorites[music._id])
       : musicList;
+  }, [showFavoritesForAlbum, category, musicList, favorites]);
+
+  // Preload the current category image
+  useEffect(() => {
+    if (currentCategoryData.image) {
+      setImageLoaded(false);
+      preloadImage(currentCategoryData.image).then(() => {
+        setImageLoaded(true);
+      });
+    }
+  }, [currentCategoryData.image]);
 
   if (loading)
     return (
@@ -434,7 +563,6 @@ export default function Album() {
         Error: {error}
       </div>
     );
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -472,19 +600,16 @@ export default function Album() {
       </motion.div>
 
       <div className="flex flex-col md:flex-row gap-6 mb-8">
-        <motion.div
-          className="w-full md:w-1/4"
-          initial={{ x: "-100vw" }}
-          animate={{ x: 0 }}
-          transition={{ type: "spring", stiffness: 50, duration: 1.8 }}
-        >
+        <motion.div className="w-full md:w-1/4">
           <img
             src={
-              categories.find((cat) => cat.albumName === category)?.image ||
-              "https://via.placeholder.com/300"
+              imageLoaded
+                ? currentCategoryData.image || "https://via.placeholder.com/300"
+                : "https://via.placeholder.com/300"
             }
             alt={category}
             className="w-full max-w-xs h-auto max-h-80 object-contain rounded-lg shadow-lg mx-auto"
+            onLoad={() => setImageLoaded(true)}
           />
         </motion.div>
 
@@ -594,7 +719,7 @@ export default function Album() {
         {filteredMusicList.map((music, index) => (
           <motion.div
             key={music._id}
-            className={`p-3 pt-1 pb-1 rounded-lg ${
+            className={`p-2 pt-1 pb-1 rounded-lg ${
               index === currentSongIndex
                 ? "bg-gray-900 border-l-4 border-blue-500"
                 : "bg-gray-800"
@@ -625,8 +750,10 @@ export default function Album() {
                   {/* Favorite Button */}
                   <button
                     onClick={() => toggleFavorite(music._id)}
-                    className={`p-1 ${
-                      favorites[music._id] ? "text-red-500" : "text-gray-400"
+                    className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                      favorites[music._id]
+                        ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
+                        : "text-gray-200 bg-gray-700"
                     }`}
                   >
                     <FontAwesomeIcon
@@ -801,8 +928,10 @@ export default function Album() {
                 <div className="flex items-center gap-3 ml-4">
                   <button
                     onClick={() => toggleFavorite(music._id)}
-                    className={`p-1 ${
-                      favorites[music._id] ? "text-red-500" : "text-gray-400"
+                    className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                      favorites[music._id]
+                        ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
+                        : "text-gray-200 bg-gray-700"
                     }`}
                   >
                     <FontAwesomeIcon
@@ -948,12 +1077,13 @@ export default function Album() {
 
             {/* Desktop View */}
             <div className="hidden lg:flex flex-row items-center gap-4">
-              <div className="flex flex-col w-full sm:w-1/4 max-w-xs text-center sm:text-left">
-                <span className="tamil-font text-base sm:text-lg text-white truncate">
+              {/* Title and Description side by side */}
+              <div className="flex flex-row items-center w-full sm:w-1/4 max-w-xs text-left gap-2">
+                <span className="tamil-font text-base sm:text-lg text-white truncate block lg:w-auto">
                   {music.title}
                 </span>
                 {music.description && (
-                  <span className="tamil-font text-xs sm:text-sm text-gray-400 mt-0.5 truncate">
+                  <span className="tamil-font text-xs sm:text-sm text-gray-400 truncate block lg:w-auto">
                     {music.description}
                   </span>
                 )}
@@ -1033,11 +1163,11 @@ export default function Album() {
                 {/* Play/Pause Button */}
                 <motion.button
                   onClick={() => handlePlaySong(index)}
-                  className={`text-white ${
+                  className={`text-white pl-0.5 size-1 ${
                     currentSongIndex === index && isPlaying
                       ? "bg-purple-600"
                       : "bg-blue-600"
-                  } rounded-full p-2 w-8 h-8 flex items-center justify-center ${
+                  } rounded-full  w-7 h-7 flex items-center justify-center ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1372,7 +1502,7 @@ export default function Album() {
                   onClick={() => toggleFavorite(music._id)}
                   className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
                     favorites[music._id]
-                      ? "text-red-800 bg-red-500 bg-opacity-20"
+                      ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
                       : "text-gray-200 bg-gray-700"
                   } ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
@@ -1398,11 +1528,12 @@ export default function Album() {
                 {/* Download button */}
                 <motion.button
                   onClick={() => handleDownload(music, index)}
-                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-0.5 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
                   }`}
+                  style={{ minHeight: "1.5rem", height: "1.5rem" }}
                   whileHover={{
                     scale:
                       category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
@@ -1420,11 +1551,12 @@ export default function Album() {
                 {/* Share button */}
                 <motion.button
                   onClick={() => handleShare(music, index)}
-                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-0.5 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
                   }`}
+                  style={{ minHeight: "1.5rem", height: "1.5rem" }}
                   whileHover={{
                     scale:
                       category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
