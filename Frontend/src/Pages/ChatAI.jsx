@@ -1,44 +1,8 @@
-// SizeSelector for mobile view under answer section
-import React, { useState } from "react";
-
-// SizeSelector now controls answer box size
-const SizeSelector = ({ selected, setSelected }) => {
-  const sizes = [
-    { id: "Square", icon: "⬛" },
-    { id: "Landscape", icon: "▭" },
-    { id: "Portrait", icon: "▯" },
-  ];
-  return (
-    <div className="bg-black text-white p-6 rounded-lg w-full max-w-md mx-auto mt-4">
-      <h2 className="text-lg font-semibold mb-4">Select a Size</h2>
-      <div className="flex space-x-4">
-        {sizes.map((size) => (
-          <button
-            key={size.id}
-            onClick={() => setSelected(size.id)}
-            className={`flex flex-col items-center justify-center px-4 py-3 rounded-lg border transition 
-              ${
-                selected === size.id
-                  ? "border-blue-500 bg-blue-500/20"
-                  : "border-gray-600 hover:border-gray-400"
-              }`}
-          >
-            <div className="w-10 h-10 flex items-center justify-center text-xl">
-              {size.icon}
-            </div>
-            <span className="mt-2 text-sm">{size.id}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import logo from "../assets/Logo/newlogo.png";
 import { motion, AnimatePresence } from "framer-motion";
-import searchIcon from "../assets/Logo/circleArrow.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShoppingCart,
@@ -46,6 +10,7 @@ import {
   faVolumeUp,
   faCopy,
   faShareAlt,
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 const TamilFontStyle = () => (
@@ -60,7 +25,55 @@ const TamilFontStyle = () => (
   `}</style>
 );
 
+// SizeSelector component for mobile view
+const SizeSelector = ({ selectedSize, setSelectedSize }) => {
+  const sizes = [
+    { id: "Square", icon: "⬛", className: "h-[400px] w-full" },
+    { id: "Landscape", icon: "▭", className: "h-[300px] w-full" },
+    { id: "Portrait", icon: "▯", className: "h-[500px] w-full" },
+  ];
+
+  return (
+    <div className="bg-black text-white p-4 rounded-lg w-full max-w-md mx-auto mt-4">
+      <h2 className="text-lg font-semibold mb-4">
+        {selectedSize === "Square"
+          ? "Square Size"
+          : selectedSize === "Landscape"
+          ? "Landscape Size"
+          : "Portrait Size"}
+      </h2>
+      <div className="flex space-x-4 justify-center">
+        {sizes.map((size) => (
+          <button
+            key={size.id}
+            onClick={() => setSelectedSize(size.id)}
+            className={`flex flex-col items-center justify-center px-3 py-2 rounded-lg border transition 
+              ${
+                selectedSize === size.id
+                  ? "border-blue-500 bg-blue-500/20"
+                  : "border-gray-600 hover:border-gray-400"
+              }`}
+          >
+            <div className="w-8 h-8 flex items-center justify-center text-xl">
+              {size.icon}
+            </div>
+            <span className="mt-1 text-xs">{size.id}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const ChatAI = () => {
+  
+  // Custom style for hiding textarea scrollbar
+  const HideScrollbarStyle = () => (
+    <style>{`
+      .hide-scrollbar::-webkit-scrollbar { display: none; }
+      .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+    `}</style>
+  );
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -70,6 +83,7 @@ const ChatAI = () => {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("Square");
   const [voices, setVoices] = useState([]);
   const [voiceSupport, setVoiceSupport] = useState({
     recognition: false,
@@ -418,13 +432,24 @@ const ChatAI = () => {
     );
   };
 
+  // Get the height class based on selected size
+  const getAnswerBoxHeight = () => {
+    switch (selectedSize) {
+      case "Square":
+        return "h-[400px]";
+      case "Landscape":
+        return "h-[300px]";
+      case "Portrait":
+        return "h-[500px]";
+      default:
+        return "h-[400px]";
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#D4E8FF]">
       <TamilFontStyle />
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
+      <HideScrollbarStyle />
 
       {/* Header and Info Box Container */}
       <div className="relative px-4 sm:px-6 md:px-8 lg:px-12 pb-2 sm:pb-3 md:pb-4 flex-shrink-0">
@@ -537,76 +562,70 @@ const ChatAI = () => {
                 ? "உங்கள் எண்ணங்களைக் கேளுங்கள்"
                 : "Ask your thoughts"}
             </div>
-            <div className="relative">
-              <textarea
-                className="px-4 py-2 w-full h-12 sm:h-14 text-gray-800 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white p-32 resize-none hide-scrollbar placeholder-center-left"
-                placeholder={
-                  language === "ta"
-                    ? "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?"
-                    : "How to be a good Christian?"
-                }
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    sendQuery();
-                  }
-                }}
-                style={{
-                  whiteSpace: "normal",
-                  overflow: "visible",
-                }}
-              />
-              <style>{`
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .placeholder-center-left::placeholder {
-          text-align: left;
-          vertical-align: middle;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          margin-top:15;
-        }
-      `}</style>
-              <button
-                onClick={sendQuery}
-                className="absolute right-0 top-0 h-full aspect-square flex items-center justify-center cursor-pointer"
-              >
-                <img
-                  src={searchIcon}
-                  alt="send"
-                  className="w-10 h-10 sm:w-12 sm:h-12 hover:opacity-80 transition"
-                />
-              </button>
-              <button
-                onClick={isListening ? stopListening : startListening}
-                className={`absolute right-12 sm:right-14 top-1/2 transform -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full ${
-                  isListening ? "bg-red-500 animate-pulse" : "bg-blue-500"
-                }`}
-                disabled={
-                  !voiceSupport.recognition ||
-                  (language === "ta" && !voiceSupport.tamilRecognition)
-                }
-                title={
-                  !voiceSupport.recognition
-                    ? language === "ta"
-                      ? "குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
-                      : "Voice input not supported"
-                    : language === "ta" && !voiceSupport.tamilRecognition
-                    ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
-                    : language === "ta"
-                    ? "குரல் உள்ளீடு"
-                    : "Voice input"
-                }
-              >
-                <FontAwesomeIcon
-                  icon={faMicrophone}
-                  className={`text-white ${
-                    isListening ? "text-lg" : "text-md"
-                  }`}
-                />
-              </button>
+            <div className="w-full flex flex-col items-stretch">
+              <div className="relative w-full">
+                <div className="flex items-center w-full border border-gray-300 rounded-2xl bg-white shadow-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
+                  <textarea
+                    className="flex-1 px-2 py-2 text-gray-800 bg-transparent border-none outline-none rounded-2xl text-base min-w-0 resize-none h-14 sm:h-16 max-h-40 hide-scrollbar"
+                    placeholder={
+                      language === "ta"
+                        ? "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?"
+                        : "How to be a good Christian?"
+                    }
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendQuery();
+                      }
+                    }}
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      overflow: "auto",
+                    }}
+                    rows={2}
+                  />
+                  <button
+                    onClick={isListening ? stopListening : startListening}
+                    className={`ml-2 w-10 h-10 flex items-center justify-center rounded-full ${
+                      isListening ? "bg-red-500 animate-pulse" : "bg-blue-500"
+                    }`}
+                    disabled={
+                      !voiceSupport.recognition ||
+                      (language === "ta" && !voiceSupport.tamilRecognition)
+                    }
+                    title={
+                      !voiceSupport.recognition
+                        ? language === "ta"
+                          ? "குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
+                          : "Voice input not supported"
+                        : language === "ta" && !voiceSupport.tamilRecognition
+                        ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
+                        : language === "ta"
+                        ? "குரல் உள்ளீடு"
+                        : "Voice input"
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={faMicrophone}
+                      className={`text-white ${
+                        isListening ? "text-lg" : "text-md"
+                      }`}
+                    />
+                  </button>
+                  <button
+                    onClick={sendQuery}
+                    className="ml-2 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition flex items-center justify-center"
+                  >
+                    <FontAwesomeIcon
+                      icon={faQuestionCircle}
+                      className="text-sm"
+                    />
+                    <span className="hidden sm:inline ml-2">Ask Question</span>
+                  </button>
+                </div>
+              </div>
             </div>
             {/* App Store Buttons: only show on mobile (block on xs, hidden on sm+) */}
             <div className="flex sm:hidden flex-col gap-3 mt-6 mb-4 justify-center items-center">
@@ -647,7 +666,10 @@ const ChatAI = () => {
             </div>
             {/* SizeSelector only on mobile view, under answer section */}
             <div className="block sm:hidden">
-              <SizeSelector />
+              <SizeSelector
+                selectedSize={selectedSize}
+                setSelectedSize={setSelectedSize}
+              />
             </div>
           </div>
 
@@ -695,8 +717,10 @@ const ChatAI = () => {
               )}
             </div>
             <div className="relative">
-              {/* Answer box with decorative images touching edges */}
-              <div className="p-4 border border-gray-600 shadow-2xl relative min-h-[400px] flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-[30px]">
+              {/* Answer box with dynamic height based on selected size */}
+              <div
+                className={`p-4 border border-gray-600 shadow-2xl relative flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-[30px] ${getAnswerBoxHeight()}`}
+              >
                 {loading ? (
                   <div className="flex h-full text-gray-400 italic items-center justify-center">
                     {language === "ta"
@@ -704,7 +728,7 @@ const ChatAI = () => {
                       : "Preparing your answer..."}
                   </div>
                 ) : answer ? (
-                  <div className="h-[400px] overflow-y-auto">
+                  <div className="h-full overflow-y-auto">
                     <ParseText text={answer} isTamil={language === "ta"} />
                   </div>
                 ) : (
