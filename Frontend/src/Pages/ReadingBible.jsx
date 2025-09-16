@@ -11,8 +11,12 @@ import {
   FiPlay,
   FiPause,
   FiVolume2,
+  FiEdit,
+  FiTrash2,
+  FiPlus
 } from "react-icons/fi";
-
+import logo from '../assets/Logo/newlogo.png';
+import { Link, NavLink, useNavigate } from "react-router-dom";
 export default function ReadingBible() {
   // State declarations
   const [arrowFixedMobile, setArrowFixedMobile] = useState(true);
@@ -35,6 +39,125 @@ export default function ReadingBible() {
   const [chapters, setChapters] = useState([]);
   const [showChapterModal, setShowChapterModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchType, setSearchType] = useState("books"); // "books" or "verses"
+  const [verseSearchResults, setVerseSearchResults] = useState([]);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+  const [footerNotes, setFooterNotes] = useState([]);
+  const [showFooterNotes, setShowFooterNotes] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
+  const [newNoteText, setNewNoteText] = useState("");
+  const [showAddNote, setShowAddNote] = useState(false);
+  const [highlightPalettePosition, setHighlightPalettePosition] = useState({ top: 0, left: 0 });
+  const [showHighlightPalette, setShowHighlightPalette] = useState(false);
+
+
+   const [showModal, setShowModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+
+  useEffect(() => {
+    // Check if user is on a mobile device
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      return /android|iphone|ipad|ipod/i.test(userAgent);
+    };
+    
+    setIsMobile(checkMobile());
+  }, []);
+
+const handleGetAppClick = () => {
+  
+  setShowModal(true);
+};
+
+  const handleOSSelection = (os) => {
+    setShowModal(false);
+    if (os === 'android') {
+      window.location.href = 'https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player';
+    } else if (os === 'ios') {
+      window.location.href = 'https://apps.apple.com/app/id6618135650';
+    }
+  };
+
+  useEffect(() => {
+    const savedNotes = localStorage.getItem('bible-footer-notes');
+    if (savedNotes) {
+      setFooterNotes(JSON.parse(savedNotes));
+    }
+  }, []);
+
+  // Save footer notes to localStorage
+  useEffect(() => {
+    localStorage.setItem('bible-footer-notes', JSON.stringify(footerNotes));
+  }, [footerNotes]);
+
+  // Add new footer note
+  const addFooterNote = () => {
+    if (!newNoteText.trim()) return;
+    
+    const note = {
+      id: Date.now(),
+      text: newNoteText.trim(),
+      book,
+      chapter,
+      verse: null, // Can be expanded to specific verses later
+      version,
+      timestamp: new Date().toISOString()
+    };
+    
+    setFooterNotes([...footerNotes, note]);
+    setNewNoteText("");
+    setShowAddNote(false);
+  };
+
+  // Update existing footer note
+  const updateFooterNote = () => {
+    if (!newNoteText.trim() || !editingNote) return;
+    
+    setFooterNotes(footerNotes.map(note => 
+      note.id === editingNote.id 
+        ? { ...note, text: newNoteText.trim(), timestamp: new Date().toISOString() }
+        : note
+    ));
+    
+    setEditingNote(null);
+    setNewNoteText("");
+  };
+
+  // Delete footer note
+  const deleteFooterNote = (noteId) => {
+    setFooterNotes(footerNotes.filter(note => note.id !== noteId));
+  };
+
+  // Start editing a note
+  const startEditingNote = (note) => {
+    setEditingNote(note);
+    setNewNoteText(note.text);
+    setShowAddNote(true);
+  };
+
+  // Cancel editing/adding
+  const cancelNoteEdit = () => {
+    setEditingNote(null);
+    setNewNoteText("");
+    setShowAddNote(false);
+  };
+
+  // Get notes for current chapter
+  const getCurrentChapterNotes = () => {
+    return footerNotes.filter(note => 
+      note.book === book && note.chapter === chapter && note.version === version
+    );
+  };
+
+ 
+
+  // Bookmark state
+  const [bookmarks, setBookmarks] = useState([]);
+  const [showBookmarks, setShowBookmarks] = useState(false);
 
   // Text settings state
   const [fontSize, setFontSize] = useState("medium");
@@ -52,6 +175,222 @@ export default function ReadingBible() {
   const [ttsPitch, setTtsPitch] = useState(1);
   const [ttsVolume, setTtsVolume] = useState(1);
   const [highlightedVerse, setHighlightedVerse] = useState(null);
+  const [highlights, setHighlights] = useState([]);
+const [highlightColor, setHighlightColor] = useState("yellow");
+const [isSelectingText, setIsSelectingText] = useState(false);
+const [selectionRange, setSelectionRange] = useState(null);
+const [currentVerseForHighlight, setCurrentVerseForHighlight] = useState(null);
+
+  useEffect(() => {
+  const savedHighlights = localStorage.getItem('bible-highlights');
+  if (savedHighlights) {
+    setHighlights(JSON.parse(savedHighlights));
+  }
+}, []);
+
+// Save highlights to localStorage
+useEffect(() => {
+  const savedHighlights = localStorage.getItem('bible-highlights');
+  if (savedHighlights) {
+    setHighlights(JSON.parse(savedHighlights));
+  }
+}, []);
+const addPartialHighlight = (verseId, color) => {
+  if (!selectionRange || !currentVerseForHighlight || currentVerseForHighlight !== verseId) return;
+  
+  const selectedText = selectionRange.toString();
+  const verseKey = `${book}-${chapter}-${verseId}-${version}`;
+  
+  // Create a unique ID for this highlight
+  const highlightId = `${verseKey}-${Date.now()}`;
+  
+  // Add the highlight
+  const newHighlight = {
+    id: highlightId,
+    key: verseKey,
+    book,
+    chapter,
+    verse: verseId,
+    version,
+    color: color || highlightColor,
+    text: selectedText,
+    timestamp: new Date().toISOString(),
+    isPartial: true
+  };
+  
+  setHighlights([...highlights, newHighlight]);
+  
+  // Clear selection and close palette
+  window.getSelection().removeAllRanges();
+  setIsSelectingText(false);
+  setSelectionRange(null);
+  setCurrentVerseForHighlight(null);
+  setShowHighlightPalette(false);
+};
+
+// Save highlights to localStorage
+useEffect(() => {
+  localStorage.setItem('bible-highlights', JSON.stringify(highlights));
+}, [highlights]);
+
+const handleTextSelection = (verseId, event) => {
+  const selection = window.getSelection();
+  const selectedText = selection.toString().trim();
+  
+  if (selectedText.length > 0) {
+    setIsSelectingText(true);
+    setCurrentVerseForHighlight(verseId);
+    setSelectionRange(selection.getRangeAt(0));
+    
+    // Always position the palette at the center of the viewport
+    setHighlightPalettePosition({
+      top: window.innerHeight / 2,
+      left: window.innerWidth / 2
+    });
+    
+    setShowHighlightPalette(true);
+  } else {
+    setIsSelectingText(false);
+    setCurrentVerseForHighlight(null);
+    setSelectionRange(null);
+    setShowHighlightPalette(false);
+  }
+};
+
+
+// Function to remove a highlight
+const removeHighlight = (highlightId) => {
+  setHighlights(highlights.filter(h => h.id !== highlightId));
+};
+
+// Get all highlights for a specific verse
+const getVerseHighlights = (verseId) => {
+  const verseKey = `${book}-${chapter}-${verseId}-${version}`;
+  return highlights.filter(h => h.key === verseKey);
+};
+
+const renderHighlightedText = (verse) => {
+    const verseHighlights = getVerseHighlights(verse.id);
+    let text = verse.text;
+    
+    if (verseHighlights.length === 0) {
+      return text;
+    }
+    
+    // Sort highlights by their position in the text for proper rendering
+    const sortedHighlights = [...verseHighlights].sort((a, b) => {
+      return text.indexOf(a.text) - text.indexOf(b.text);
+    });
+    
+    let result = [];
+    let lastIndex = 0;
+    
+    sortedHighlights.forEach((highlight) => {
+      const startIndex = text.indexOf(highlight.text, lastIndex);
+      
+      if (startIndex === -1) {
+        // Highlight text not found (might be due to text changes)
+        return;
+      }
+      
+      // Add text before the highlight
+      if (startIndex > lastIndex) {
+        result.push(text.substring(lastIndex, startIndex));
+      }
+      
+      // Add the highlighted text with inline styles
+      const colorStyle = highlightColors[highlight.color] || highlightColors.yellow;
+      result.push(
+        <span 
+          key={highlight.id} 
+          className="relative group mx-0.5 rounded px-1"
+          style={{
+            backgroundColor: theme === 'dark' ? colorStyle.darkBg : colorStyle.bg,
+            color: theme === 'dark' ? '#fff' : colorStyle.text
+          }}
+        >
+          {highlight.text}
+          <button
+            onClick={() => removeHighlight(highlight.id)}
+            className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-0.5 shadow border text-xs"
+            style={{ zIndex: 10 }}
+            title="Remove highlight"
+          >
+            <FiX className="w-3 h-3" />
+          </button>
+        </span>
+      );
+      
+      lastIndex = startIndex + highlight.text.length;
+    });
+  
+  // Add remaining text after the last highlight
+  if (lastIndex < text.length) {
+    result.push(text.substring(lastIndex));
+  }
+  
+  return result;
+};
+
+const renderHighlightColorOptions = () => (
+    <div className="grid grid-cols-4 gap-2 mb-6">
+      {Object.entries(highlightColors).map(([color, colorInfo]) => (
+        <button
+          key={color}
+          onClick={() => setHighlightColor(color)}
+          className={`p-3 rounded-lg font-semibold shadow transition ${
+            highlightColor === color
+              ? "ring-2 ring-gray-700 scale-105"
+              : "hover:scale-105"
+          }`}
+          style={{ backgroundColor: colorInfo.bg }}
+          title={color.charAt(0).toUpperCase() + color.slice(1)}
+        >
+          <div 
+            className="w-6 h-6 rounded-full mx-auto"
+            style={{ backgroundColor: colorInfo.bg, border: `2px solid ${theme === 'dark' ? colorInfo.darkBg : '#00000020'}` }}
+          ></div>
+        </button>
+      ))}
+    </div>
+  );
+
+
+// Toggle highlight for a verse
+const toggleHighlight = (verseId) => {
+  const verseKey = `${book}-${chapter}-${verseId}-${version}`;
+  const isHighlighted = highlights.some(h => h.key === verseKey);
+  
+  if (isHighlighted) {
+    // Remove highlight
+    setHighlights(highlights.filter(h => h.key !== verseKey));
+  } else {
+    // Add highlight
+    setHighlights([...highlights, {
+      key: verseKey,
+      book,
+      chapter,
+      verse: verseId,
+      version,
+      color: highlightColor,
+      timestamp: new Date().toISOString(),
+      text: verses.find(v => v.id === verseId)?.text || ''
+    }]);
+  }
+};
+
+// Check if a verse is highlighted
+const isVerseHighlighted = (verseId) => {
+  const verseKey = `${book}-${chapter}-${verseId}-${version}`;
+  return highlights.some(h => h.key === verseKey);
+};
+
+// Get highlight color for a verse
+const getVerseHighlightColor = (verseId) => {
+  const verseKey = `${book}-${chapter}-${verseId}-${version}`;
+  const highlight = highlights.find(h => h.key === verseKey);
+  return highlight ? highlight.color : null;
+};
 
   const versions = [
     {
@@ -78,8 +417,8 @@ export default function ReadingBible() {
   ];
 
   const API_KEY = "2641dfc33a1910ef977df34e39c2fac0";
-  const BASE_URL = "https://api.scripture.api.bible/v1/bibles";
-  const BOLLS_URL = "https://bolls.life/api";
+  const BASE_URL = "/api/proxy/bible";
+  const BOLLS_URL = "https://api.amusicbible.com/api/proxy/bolls";
 
   // Check if current version is Tamil
   const isTamilVersion = ["TBSI", "TAMBL98", "TAMOVR"].includes(version);
@@ -88,11 +427,9 @@ export default function ReadingBible() {
   useEffect(() => {
     const initTTS = () => {
       if ('speechSynthesis' in window) {
-        // Get available voices
         const voices = speechSynthesis.getVoices();
         setTtsVoices(voices);
         
-        // Try to find a default voice (prefer English voices)
         const defaultVoice = voices.find(voice => 
           voice.lang.includes('en')
         ) || voices[0];
@@ -101,7 +438,6 @@ export default function ReadingBible() {
           setSelectedVoice(defaultVoice);
         }
         
-        // Update voices when they change
         speechSynthesis.onvoiceschanged = () => {
           const updatedVoices = speechSynthesis.getVoices();
           setTtsVoices(updatedVoices);
@@ -112,6 +448,43 @@ export default function ReadingBible() {
     initTTS();
   }, []);
 
+  // Load bookmarks from localStorage
+  useEffect(() => {
+    const savedBookmarks = localStorage.getItem('bible-bookmarks');
+    if (savedBookmarks) {
+      setBookmarks(JSON.parse(savedBookmarks));
+    }
+  }, []);
+
+  // Save bookmarks to localStorage
+  useEffect(() => {
+    localStorage.setItem('bible-bookmarks', JSON.stringify(bookmarks));
+  }, [bookmarks]);
+
+  // Handle click outside search results
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (showHighlightPalette) {
+      const palette = document.querySelector('.highlight-palette');
+      if (palette && !palette.contains(event.target)) {
+        // Check if the click is on selected text
+        const selection = window.getSelection();
+        if (!selection.toString().trim()) {
+          setShowHighlightPalette(false);
+          setIsSelectingText(false);
+          setCurrentVerseForHighlight(null);
+          setSelectionRange(null);
+        }
+      }
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [showHighlightPalette]);
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -121,7 +494,7 @@ export default function ReadingBible() {
         setError(null);
 
         if (["TBSI", "TAMBL98", "TAMOVR"].includes(version)) {
-          const response = await fetch(`/api/bolls/get-books/${version}/`);
+          const response = await fetch(`${BOLLS_URL}/get-books/${version}/`);
           if (!response.ok) throw new Error("Failed to fetch Tamil books");
           const data = await response.json();
 
@@ -133,7 +506,7 @@ export default function ReadingBible() {
 
           setBooks(formattedBooks);
         } else {
-          const response = await fetch(`/api/bible/${version}/books`, {
+          const response = await fetch(`${BASE_URL}/${version}/books`, {
             headers: { "api-key": API_KEY },
           });
           if (!response.ok) throw new Error("Failed to fetch books");
@@ -160,7 +533,7 @@ export default function ReadingBible() {
           setChapters(Array.from({ length: maxChapters }, (_, i) => i + 1));
         } else {
           const response = await fetch(
-            `/api/bible/${version}/books/${book}/chapters`,
+            `${BASE_URL}/${version}/books/${book}/chapters`,
             {
               headers: { "api-key": API_KEY },
             }
@@ -179,47 +552,61 @@ export default function ReadingBible() {
     fetchChapters();
   }, [book, version]);
 
-  useEffect(() => {
-    const fetchVerses = async () => {
-      try {
-        if (!book || !chapter || !version) return;
+useEffect(() => {
+  const fetchVerses = async () => {
+    try {
+      if (!book || !chapter || !version) return;
 
-        setLoading(true);
-        setError(null);
+      setLoading(true);
+      setError(null);
 
-        if (["TBSI", "TAMBL98", "TAMOVR"].includes(version)) {
-          const response = await fetch(
-            `/api/bolls/get-text/${version}/${book}/${chapter}/`
-          );
-          if (!response.ok) throw new Error("Failed to fetch Tamil verses");
-          const data = await response.json();
-
-          const formattedVerses = data.map((verse) => ({
-            id: verse.verse,
-            text: verse.text,
-          }));
-
-          setVerses(formattedVerses);
-        } else {
-          const response = await fetch(
-            `/api/bible/${version}/passages/${book}.${chapter}?content-type=text&include-notes=false&include-titles=true`,
-            { headers: { "api-key": API_KEY } }
-          );
-          if (!response.ok) throw new Error("Failed to fetch verses");
-          const data = await response.json();
-          setVerses([{ id: 1, text: data.data.content }]);
+      if (["TBSI", "TAMBL98", "TAMOVR"].includes(version)) {
+        const response = await fetch(
+          `${BOLLS_URL}/get-text/${version}/${book}/${chapter}/`
+        );
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Chapter not found in this version");
+          }
+          throw new Error("Failed to fetch Tamil verses");
         }
+        const data = await response.json();
 
-        setAudioAvailable(!["TBSI", "TAMBL98", "TAMOVR"].includes(version));
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        // Tamil API returns verses in the correct format already
+        const formattedVerses = data.map((verse) => ({
+          id: verse.verse,
+          text: verse.text,
+        }));
+
+        setVerses(formattedVerses);
+      } else {
+        const response = await fetch(
+          `${BASE_URL}/${version}/passages/${book}.${chapter}?content-type=text&include-notes=false&include-titles=true`,
+          { headers: { "api-key": API_KEY } }
+        );
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Chapter not found in this version");
+          }
+          throw new Error("Failed to fetch verses");
+        }
+        const data = await response.json();
+        
+        // Parse the content to extract individual verses
+        const verseContent = parseVersesFromContent(data.data.content);
+        setVerses(verseContent);
       }
-    };
 
-    fetchVerses();
-  }, [book, chapter, version]);
+      setAudioAvailable(!["TBSI", "TAMBL98", "TAMOVR"].includes(version));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchVerses();
+}, [book, chapter, version]);
 
   useEffect(() => {
     const fetchParallelVerses = async () => {
@@ -230,7 +617,7 @@ export default function ReadingBible() {
 
         if (["TBSI", "TAMBL98", "TAMOVR"].includes(parallelVersion)) {
           const response = await fetch(
-            `/api/bolls/get-text/${parallelVersion}/${book}/${chapter}/`
+            `${BOLLS_URL}/get-text/${parallelVersion}/${book}/${chapter}/`
           );
           if (!response.ok)
             throw new Error("Failed to fetch parallel Tamil verses");
@@ -244,12 +631,13 @@ export default function ReadingBible() {
           setParallelVerses(formattedVerses);
         } else {
           const response = await fetch(
-            `/api/bible/${parallelVersion}/passages/${book}.${chapter}?content-type=text&include-notes=false&include-titles=true`,
+            `${BASE_URL}/${parallelVersion}/passages/${book}.${chapter}?content-type=text&include-notes=false&include-titles=true`,
             { headers: { "api-key": API_KEY } }
           );
           if (!response.ok) throw new Error("Failed to fetch parallel verses");
           const data = await response.json();
-          setParallelVerses([{ id: 1, text: data.data.content }]);
+          const verseContent = parseVersesFromContent(data.data.content);
+          setParallelVerses(verseContent);
         }
       } catch (err) {
         console.error("Error fetching parallel verses:", err);
@@ -263,44 +651,233 @@ export default function ReadingBible() {
 
   const getMaxChapters = (bookId) => {
     const chapterCounts = {
-      MAT: 28,
-      MRK: 16,
-      LUK: 24,
-      JHN: 21,
-      ACT: 28,
-      ROM: 16,
-      "1CO": 16,
-      "2CO": 13,
-      GAL: 6,
-      EPH: 6,
-      PHP: 4,
-      COL: 4,
-      "1TH": 5,
-      "2TH": 3,
-      "1TI": 6,
-      "2TI": 4,
-      TIT: 3,
-      PHM: 1,
-      HEB: 13,
-      JAS: 5,
-      "1PE": 5,
-      "2PE": 3,
-      "1JN": 5,
-      "2JN": 1,
-      "3JN": 1,
-      JUD: 1,
-      REV: 22,
+      MAT: 28, MRK: 16, LUK: 24, JHN: 21, ACT: 28, ROM: 16,
+      "1CO": 16, "2CO": 13, GAL: 6, EPH: 6, PHP: 4, COL: 4,
+      "1TH": 5, "2TH": 3, "1TI": 6, "2TI": 4, TIT: 3, PHM: 1,
+      HEB: 13, JAS: 5, "1PE": 5, "2PE": 3, "1JN": 5, "2JN": 1,
+      "3JN": 1, JUD: 1, REV: 22,
     };
     return chapterCounts[bookId] || 1;
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Search:", search);
+const parseVersesFromContent = (content) => {
+  // If content is already in verse format (like Tamil API), return as is
+  if (Array.isArray(content)) {
+    return content;
+  }
+  
+  // For English Bible content - parse the HTML structure
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, 'text/html');
+  
+  const verses = [];
+  const verseElements = doc.querySelectorAll('span.v, .verse, [data-number]');
+  
+  verseElements.forEach((verseElement) => {
+    const verseNumber = verseElement.getAttribute('data-number') || 
+                       verseElement.textContent.match(/\d+/)?.[0];
+    
+    if (verseNumber) {
+      const verseId = parseInt(verseNumber);
+      
+      // Get the text content after the verse number
+      let verseText = '';
+      let nextNode = verseElement.nextSibling;
+      
+      while (nextNode && 
+             (!nextNode.classList || 
+              !nextNode.classList.contains('v') && 
+              !nextNode.hasAttribute('data-number'))) {
+        if (nextNode.textContent) {
+          verseText += nextNode.textContent;
+        }
+        nextNode = nextNode.nextSibling;
+      }
+      
+      // Clean up the text (remove extra spaces, etc.)
+      verseText = verseText.trim().replace(/\s+/g, ' ');
+      
+      verses.push({ id: verseId, text: verseText });
+    }
+  });
+  
+  // If no verses were found using the DOM method, try regex fallback
+  if (verses.length === 0) {
+    const verseRegex = /<span data-number="(\d+)" data-id="\d+" class="v">(\d+)<\/span>/g;
+    let match;
+    let lastIndex = 0;
+    
+    while ((match = verseRegex.exec(content)) !== null) {
+      const verseNum = parseInt(match[1]);
+      const verseStart = match.index + match[0].length;
+      
+      // Find the next verse or end of content
+      let verseEnd = content.length;
+      const nextVerseMatch = verseRegex.exec(content);
+      if (nextVerseMatch) {
+        verseEnd = nextVerseMatch.index;
+        verseRegex.lastIndex = verseStart; // Reset for next iteration
+      }
+      
+      const verseText = content.substring(verseStart, verseEnd)
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .trim();
+      
+      verses.push({ id: verseNum, text: verseText });
+    }
+  }
+  
+  // If still no verses found, return the entire content as a single verse
+  if (verses.length === 0) {
+    const cleanText = content.replace(/<[^>]*>/g, '').trim();
+    return [{ id: 1, text: cleanText }];
+  }
+  
+  return verses;
+};
+
+const handleSearch = async (e) => {
+  e.preventDefault();
+  if (!search.trim()) {
+    setShowSearchResults(false);
+    return;
+  }
+  
+  if (searchType === "books") {
+    // Filter books based on search query
+    const results = books.filter(book => 
+      book.name.toLowerCase().includes(search.toLowerCase()) ||
+      (book.abbreviation && book.abbreviation.toLowerCase().includes(search.toLowerCase()))
+    );
+    
+    setSearchResults(results);
+    setShowSearchResults(true);
+  } else {
+    // Search within verses
+    try {
+      setLoading(true);
+      let searchResponse;
+      
+      if (["TBSI", "TAMBL98", "TAMOVR"].includes(version)) {
+        searchResponse = await fetch(
+          `${BOLLS_URL}/search/${version}/${encodeURIComponent(search)}/`
+        );
+      } else {
+        // Fix for English Bible API - use the correct endpoint format
+        searchResponse = await fetch(
+          `${BASE_URL}/${version}/search?query=${encodeURIComponent(search)}`,
+          { 
+            headers: { 
+              "api-key": API_KEY,
+              "Content-Type": "application/json"
+            } 
+          }
+        );
+      }
+      
+      if (!searchResponse.ok) {
+        const errorData = await searchResponse.json().catch(() => ({}));
+        throw new Error(`Search failed: ${searchResponse.status} ${searchResponse.statusText}`);
+      }
+      
+      const data = await searchResponse.json();
+      
+      // Format search results based on API response
+      let formattedResults = [];
+      
+      if (["TBSI", "TAMBL98", "TAMOVR"].includes(version)) {
+        // Tamil Bible search results format
+        formattedResults = data.map(item => ({
+          book: item.book,
+          chapter: item.chapter,
+          verse: item.verse,
+          text: item.text
+        }));
+      } else {
+        // English Bible search results format - handle different response structures
+        if (data.data && data.data.verses) {
+          formattedResults = data.data.verses.map(verse => ({
+            book: verse.bookId,
+            chapter: verse.chapterId,
+            verse: verse.id || verse.verseId,
+            text: verse.text || verse.content
+          }));
+        } else if (Array.isArray(data)) {
+          formattedResults = data.map(item => ({
+            book: item.bookId || item.book,
+            chapter: item.chapterId || item.chapter,
+            verse: item.verseId || item.verse,
+            text: item.text || item.content
+          }));
+        }
+      }
+      
+      setVerseSearchResults(formattedResults);
+      setShowSearchResults(true);
+    } catch (err) {
+      console.error("Search error:", err);
+      setVerseSearchResults([]);
+      setShowSearchResults(true);
+      
+      // Show error message to user
+      setError(`Search failed: ${err.message}`);
+      setTimeout(() => setError(null), 5000);
+    } finally {
+      setLoading(false);
+    }
+  }
+};
+
+const highlightColors = {
+  yellow: { bg: '#FFEB3B', darkBg: '#FBC02D', text: '#000' },
+  blue: { bg: '#42A5F5', darkBg: '#1976D2', text: '#000' },
+  green: { bg: '#66BB6A', darkBg: '#388E3C', text: '#000' },
+  pink: { bg: '#F48FB1', darkBg: '#D81B60', text: '#000' },
+  purple: { bg: '#BA68C8', darkBg: '#7B1FA2', text: '#000' },
+  orange: { bg: '#FFB74D', darkBg: '#F57C00', text: '#000' }
+};
+
+  const selectBookFromSearch = (book) => {
+    setBook(book.id);
+    setSelectedBook({ id: book.id, name: book.name });
+    setShowChapterModal(true);
+    setSearch("");
+    setShowSearchResults(false);
   };
 
-  const handleBookChange = (e) => {
-    const selectedBookId = e.target.value;
+ const selectVerseFromSearch = (result) => {
+  // Ensure book ID is in the correct format (uppercase 3-4 letters)
+  const bookId = result.book.length <= 4 ? result.book.toUpperCase() : result.book;
+  
+  // Check if the book exists in our books list
+  const bookExists = books.some(b => b.id === bookId);
+  
+  if (bookExists) {
+    setBook(bookId);
+    setChapter(parseInt(result.chapter));
+    setShowSearchResults(false);
+    setSearch("");
+    
+    // Scroll to the verse after a short delay to allow content to load
+    setTimeout(() => {
+      const verseElement = document.getElementById(`verse-${result.verse}`);
+      if (verseElement) {
+        verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        verseElement.classList.add('bg-yellow-300', 'animate-pulse');
+        setTimeout(() => {
+          verseElement.classList.remove('bg-yellow-300', 'animate-pulse');
+        }, 3000);
+      }
+    }, 1000);
+  } else {
+    // If book doesn't exist, show error
+    setError(`Book ${bookId} not found in current version`);
+    setTimeout(() => setError(null), 3000);
+  }
+};
+
+  const handleBookChange = (selectedBookId) => {
+    setBook(selectedBookId);
     const selectedBookName = books.find((b) => b.id === selectedBookId)?.name;
     setSelectedBook({ id: selectedBookId, name: selectedBookName });
     setShowChapterModal(true);
@@ -310,14 +887,12 @@ export default function ReadingBible() {
     setBook(selectedBook.id);
     setChapter(chapterNum);
     setShowChapterModal(false);
-    // Stop TTS when changing chapters
     stopTTS();
   };
 
   const handleVersionChange = (e) => {
     setVersion(e.target.value);
     setShowParallel(false);
-    // Stop TTS when changing versions
     stopTTS();
   };
 
@@ -332,18 +907,92 @@ export default function ReadingBible() {
     setShowParallel(!showParallel);
   };
 
-  const playAudio = () => {
-    console.log("Playing audio for", book, chapter);
-  };
-
   const navigateChapter = (direction) => {
     if (direction === "prev" && chapter > 1) {
       setChapter(chapter - 1);
     } else if (direction === "next") {
       setChapter(chapter + 1);
     }
-    // Stop TTS when navigating chapters
     stopTTS();
+  };
+
+  // Bookmark Functions
+  const toggleBookmark = () => {
+    const currentBookmark = {
+      book,
+      chapter,
+      version,
+      bookName: books.find(b => b.id === book)?.name || book,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Check if already bookmarked
+    const isBookmarked = bookmarks.some(b => 
+      b.book === book && b.chapter === chapter && b.version === version
+    );
+    
+    if (isBookmarked) {
+      // Remove bookmark
+      setBookmarks(bookmarks.filter(b => 
+        !(b.book === book && b.chapter === chapter && b.version === version)
+      ));
+    } else {
+      // Add bookmark
+      setBookmarks([...bookmarks, currentBookmark]);
+    }
+  };
+
+  const isCurrentBookmarked = () => {
+    return bookmarks.some(b => 
+      b.book === book && b.chapter === chapter && b.version === version
+    );
+  };
+
+  const goToBookmark = (bookmark) => {
+    setBook(bookmark.book);
+    setChapter(bookmark.chapter);
+    setVersion(bookmark.version);
+    setShowBookmarks(false);
+    stopTTS();
+  };
+
+  const removeBookmark = (bookmarkToRemove, e) => {
+    e.stopPropagation();
+    setBookmarks(bookmarks.filter(b => 
+      !(b.book === bookmarkToRemove.book && 
+        b.chapter === bookmarkToRemove.chapter && 
+        b.version === bookmarkToRemove.version)
+    ));
+  };
+
+  // Share Functions
+  const shareContent = () => {
+    const bookName = books.find(b => b.id === book)?.name || book;
+    const versionName = versions.find(v => v.id === version)?.displayName || version;
+    const text = `${bookName} ${chapter} (${versionName})`;
+    const url = window.location.href;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Bible Reading',
+        text: `Check out this Bible passage: ${text}`,
+        url: url,
+      })
+      .catch(error => {
+        console.log('Error sharing:', error);
+        copyToClipboard(`${text} - ${url}`);
+      });
+    } else {
+      copyToClipboard(`${text} - ${url}`);
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
   };
 
   // TTS Functions
@@ -351,20 +1000,15 @@ export default function ReadingBible() {
     if (!verses.length || isTamilVersion) return;
     
     if (isPlayingTTS) {
-      // If already playing, pause
       window.speechSynthesis.cancel();
       setIsPlayingTTS(false);
       setHighlightedVerse(null);
       return;
     }
     
-    // Combine all verses into a single text
     const fullText = verses.map(v => v.text).join('. ');
-    
-    // Create utterance
     const utterance = new SpeechSynthesisUtterance(fullText);
     
-    // Set voice properties
     if (selectedVoice) {
       utterance.voice = selectedVoice;
     }
@@ -372,7 +1016,6 @@ export default function ReadingBible() {
     utterance.pitch = ttsPitch;
     utterance.volume = ttsVolume;
     
-    // Event handlers
     utterance.onstart = () => {
       setIsPlayingTTS(true);
     };
@@ -388,7 +1031,6 @@ export default function ReadingBible() {
       setHighlightedVerse(null);
     };
     
-    // Start speaking
     window.speechSynthesis.speak(utterance);
   };
 
@@ -397,51 +1039,106 @@ export default function ReadingBible() {
     setIsPlayingTTS(false);
     setHighlightedVerse(null);
   };
+const renderBibleContent = (versesToRender, versionId) => {
+  const versionName =
+    versions.find((v) => v.id === versionId)?.displayName || "";
 
-  const renderBibleContent = (versesToRender, versionId) => {
-    const versionName =
-      versions.find((v) => v.id === versionId)?.displayName || "";
-
-    return (
-      <div
-        className={`${showParallel ? "w-full md:w-1/2 px-2" : "w-full px-4"}`}
-      >
-        {showParallel && (
-          <h3 className="text-center text-md font-bold mb-4">{versionName}</h3>
-        )}
-        <div className="space-y-4">
-          {versesToRender.map((verse) => (
+  return (
+    <div
+      className={`${showParallel ? "w-full md:w-1/2 px-2" : "w-full px-4"}`}
+    >
+      {showParallel && (
+        <h3 className="text-center text-md font-bold mb-4">{versionName}</h3>
+      )}
+      <div className="space-y-4">
+        {versesToRender.map((verse) => (
+          <div 
+            key={verse.id} 
+            id={`verse-${verse.id}`}
+            className="relative group"
+            onMouseUp={(e) => handleTextSelection(verse.id, e)}
+          >
             <p 
-              key={verse.id} 
-              className={`leading-relaxed ${highlightedVerse === verse.id ? 'bg-yellow-200 dark:bg-yellow-800 rounded p-2' : ''}`}
+              className="leading-relaxed select-text"
+              style={{ lineHeight: lineHeight === "compact" ? "1.4" : lineHeight === "normal" ? "1.6" : "1.8" }}
             >
               {showNumbers && verse.id && (
                 <sup className="text-gray-500 text-xs mr-1">{verse.id}</sup>
               )}
-              {verse.text}
+              {renderHighlightedText(verse)}
             </p>
-          ))}
-        </div>
+            
+            {/* Full verse highlight button */}
+            <button
+              onClick={() => toggleHighlight(verse.id)}
+              className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full bg-white shadow border"
+              title="Highlight entire verse"
+            >
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </div>
+        ))}
       </div>
-    );
-  };
+
+      {/* Highlight Palette - Fixed positioning at center of viewport */}
+      {showHighlightPalette && (
+        <div 
+          className="fixed bg-white p-3 rounded-lg shadow-lg border border-gray-200 z-50 flex items-center gap-2"
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Highlight selection:</span>
+          <div className="flex gap-1">
+            {Object.entries(highlightColors).map(([color, colorInfo]) => (
+              <button
+                key={color}
+                onClick={() => addPartialHighlight(currentVerseForHighlight, color)}
+                className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-gray-800 transition-all"
+                style={{ backgroundColor: colorInfo.bg }}
+                title={`Highlight with ${color}`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => {
+              window.getSelection().removeAllRanges();
+              setIsSelectingText(false);
+              setSelectionRange(null);
+              setCurrentVerseForHighlight(null);
+              setShowHighlightPalette(false);
+            }}
+            className="ml-2 p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+          >
+            <FiX size={16} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+// Add useEffect to handle scroll and resize events to reposition the palette
+
 
   const getTextSettingsStyles = () => {
     let styles = {};
 
-    // Font size
     if (fontSize === "small") styles.fontSize = "0.875rem";
     else if (fontSize === "medium") styles.fontSize = "1rem";
     else if (fontSize === "large") styles.fontSize = "1.25rem";
 
-    // Font family
     if (fontFamily === "Inter") styles.fontFamily = "'Inter', sans-serif";
     else if (fontFamily === "Serif") styles.fontFamily = "'Georgia', serif";
     else if (fontFamily === "OpenDyslexic") styles.fontFamily = "'OpenDyslexic', sans-serif";
     else if (fontFamily === "Atkinson") styles.fontFamily = "'Atkinson Hyperlegible', sans-serif";
     else if (fontFamily === "Roboto") styles.fontFamily = "'Roboto', sans-serif";
 
-    // Line height
     if (lineHeight === "compact") styles.lineHeight = "1.4";
     else if (lineHeight === "normal") styles.lineHeight = "1.6";
     else if (lineHeight === "spacious") styles.lineHeight = "1.8";
@@ -458,28 +1155,17 @@ export default function ReadingBible() {
         return;
       }
       const footerRect = footer.getBoundingClientRect();
-      // Desktop: If the footer is visible in the viewport, set arrows to absolute above footer
       if (window.innerWidth >= 768) {
-        if (footerRect.top < window.innerHeight - 80) {
-          setArrowFixed(false);
-        } else {
-          setArrowFixed(true);
-        }
+        setArrowFixed(footerRect.top >= window.innerHeight - 80);
       }
-      // Mobile: If the footer is visible, set arrows to absolute above footer
       if (window.innerWidth < 768) {
-        if (footerRect.top < window.innerHeight - 80) {
-          setArrowFixedMobile(false);
-        } else {
-          setArrowFixedMobile(true);
-        }
+        setArrowFixedMobile(footerRect.top >= window.innerHeight - 80);
       }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Add TTS controls to the settings modal
   const renderTTSSettings = () => (
     <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
       <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
@@ -563,7 +1249,7 @@ export default function ReadingBible() {
               className={`px-4 py-2 rounded-md font-medium ${
                 isPlayingTTS 
                   ? 'bg-red-500 hover:bg-red-600 text-white' 
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+                  : 'bg-blue-500 hover:blue-600 text-white'
               }`}
             >
               {isPlayingTTS ? 'Stop Reading' : 'Read Aloud'}
@@ -584,36 +1270,91 @@ export default function ReadingBible() {
           : "bg-gradient-to-br from-white via-blue-100 to-blue-300 text-gray-900"
       }`}
     >
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50">
-          <div className="bg-white w-4/5 h-full p-4">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-xl font-bold">ReadingBible</h1>
+      
+
+       {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-sm w-full p-6">
+            <h3 className="text-lg font-bold mb-4 text-center">Choose your device</h3>
+            <div className="space-y-3">
               <button
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => handleOSSelection('android')}
+                className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold flex items-center justify-center gap-2"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M17.523 15.341a1 1 0 01-1.394.248 1 1 0 01-.248-1.394 1 1 0 011.394-.248 1 1 0 01.248 1.394zm-11.046 0a1 1 0 001.394.248 1 1 0 00.248-1.394 1 1 0 00-1.394-.248 1 1 0 00-.248 1.394zM6 10a1 1 0 100-2 1 1 0 000 2zm12 0a1 1 0 100-2 1 1 0 000 2zM3 7a4 4 0 014-4h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7zm4-2a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H7z"/>
+                </svg>
+                Google Play Store
+              </button>
+              <button
+                onClick={() => handleOSSelection('ios')}
+                className="w-full py-3 bg-black hover:bg-gray-800 text-white rounded-lg font-semibold flex items-center justify-center gap-2"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.56-1.702z"/>
+                </svg>
+                Apple App Store
+              </button>
+            </div>
+            <button
+              onClick={() => setShowModal(false)}
+              className="w-full mt-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bookmarks Modal */}
+      {showBookmarks && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b p-4">
+              <h3 className="text-lg font-bold">Bookmarks</h3>
+              <button
+                onClick={() => setShowBookmarks(false)}
                 className="p-1 rounded-full hover:bg-gray-100"
               >
                 <FiX className="text-lg" />
               </button>
             </div>
-            <nav className="flex flex-col space-y-4">
-              <a href="#" className="py-2 px-2 hover:bg-gray-100 rounded">
-                Bible
-              </a>
-              <a href="#" className="py-2 px-2 hover:bg-gray-100 rounded">
-                Plans
-              </a>
-              <a href="#" className="py-2 px-2 hover:bg-gray-100 rounded">
-                Videos
-              </a>
-              <a
-                href="#"
-                className="py-2 px-2 hover:bg-gray-100 rounded text-blue-600"
+            <div className="p-4">
+              {bookmarks.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No bookmarks yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {bookmarks.map((bookmark, index) => (
+                    <div
+                      key={index}
+                      onClick={() => goToBookmark(bookmark)}
+                      className="p-3 rounded-lg bg-gray-50 hover:bg-blue-50 cursor-pointer flex justify-between items-center"
+                    >
+                      <div>
+                        <div className="font-medium">{bookmark.bookName} {bookmark.chapter}</div>
+                        <div className="text-sm text-gray-500">
+                          {versions.find(v => v.id === bookmark.version)?.displayName}
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => removeBookmark(bookmark, e)}
+                        className="p-1 text-red-500 hover:bg-red-100 rounded-full"
+                      >
+                        <FiX />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t">
+              <button
+                onClick={() => setShowBookmarks(false)}
+                className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
               >
-                Get the app
-              </a>
-            </nav>
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -766,6 +1507,7 @@ export default function ReadingBible() {
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
                 THEME
               </h4>
+
               <div className="grid grid-cols-3 gap-2 mb-6">
                 <button
                   onClick={() => setTheme("light")}
@@ -799,6 +1541,30 @@ export default function ReadingBible() {
                 </button>
               </div>
 
+              
+<h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
+  HIGHLIGHT COLOR
+</h4>
+<div className="grid grid-cols-4 gap-2 mb-6">
+  {["yellow", "blue", "green", "pink", "purple", "orange"].map((color) => (
+    <button
+      key={color}
+      onClick={() => setHighlightColor(color)}
+      className={`p-3 rounded-lg font-semibold shadow transition ${
+        highlightColor === color
+          ? "ring-2 ring-gray-700 scale-105"
+          : "hover:scale-105"
+      }`}
+      style={{ backgroundColor: `var(--${color}-200)` }}
+    >
+      <div 
+        className="w-6 h-6 rounded-full mx-auto"
+        style={{ backgroundColor: `var(--${color}-500)` }}
+      ></div>
+    </button>
+  ))}
+</div>
+
               <div className="space-y-4 text-base">
                 <label className="flex items-center gap-3">
                   <input
@@ -824,7 +1590,6 @@ export default function ReadingBible() {
                 </label>
               </div>
 
-              {/* TTS Settings */}
               {renderTTSSettings()}
             </div>
 
@@ -851,171 +1616,380 @@ export default function ReadingBible() {
       >
         <div className="flex items-center justify-between px-4 py-3 md:px-8">
           <div className="flex items-center gap-4">
-            <button
-              className="md:hidden p-2 rounded-full hover:bg-blue-100 bg-white shadow"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <FiMenu className="text-lg" />
-            </button>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-400 to-blue-200 bg-clip-text text-transparent">
-              Reading Bible
+            
+            
+            <h1 className="text-2xl md:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-blue-400 to-blue-200 bg-clip-text text-transparent">
+             Reading aMusicBible 
             </h1>
           </div>
 
-          <nav className="hidden md:flex items-center gap-6 text-base font-semibold">
-            <a href="#" className="hover:text-blue-700 transition">
-              Bible
-            </a>
-            <a href="#" className="hover:text-blue-700 transition">
-              Plans
-            </a>
-            <a href="#" className="hover:text-blue-700 transition">
-              Videos
-            </a>
-          </nav>
-
-          <div className="hidden md:block flex-1 max-w-xl mx-4">
+          {/* Desktop Search - Fixed */}
+          <div className="hidden md:block flex-1 max-w-xl mx-4 relative" ref={searchRef}>
             <form onSubmit={handleSearch} className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FiSearch className="text-blue-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search Bible, devotionals, videos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="block w-full pl-10 pr-24 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
-              />
-              <button
-                type="submit"
-                className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-4 py-1.5 rounded-md text-base font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-blue-400" />
+            </div>
+            <input
+              type="text"
+              placeholder={searchType === "books" ? "Search Bible books..." : "Search verses..."}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (searchType === "books" && e.target.value.trim()) {
+                  const results = books.filter(book => 
+                    book.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                    (book.abbreviation && book.abbreviation.toLowerCase().includes(e.target.value.toLowerCase()))
+                  );
+                  setSearchResults(results);
+                  setShowSearchResults(true);
+                } else {
+                  setShowSearchResults(false);
+                }
+              }}
+              onFocus={() => {
+                if (search.trim() && searchResults.length > 0 && searchType === "books") {
+                  setShowSearchResults(true);
+                }
+              }}
+              className="block w-full pl-10 pr-20 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
+            />
+            <div className="absolute right-14 top-1/2 transform -translate-y-1/2">
+              <select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+                className="bg-white border border-gray-300 rounded-md px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
               >
-                Search
-              </button>
-            </form>
-          </div>
+                <option value="books">Books</option>
+                <option value="verses">Verses</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Go
+            </button>
+          </form>
+          
+          {/* Mobile Search Results Dropdown */}
+          {showSearchResults && searchType === "books" && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              {searchResults.map((book) => (
+                <div
+                  key={book.id}
+                  className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                  onClick={() => selectBookFromSearch(book)}
+                >
+                  <div className="font-medium text-gray-900">{book.name}</div>
+                  {book.abbreviation && (
+                    <div className="text-sm text-gray-500">{book.abbreviation}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "books" && searchResults.length === 0 && search.trim() && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+              <div className="text-gray-500">No books found matching "{search}"</div>
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "verses" && verseSearchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              {verseSearchResults.map((result, index) => {
+                const bookName = books.find(b => b.id === result.book)?.name || result.book;
+                return (
+                  <div
+                    key={index}
+                    className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    onClick={() => selectVerseFromSearch(result)}
+                  >
+                    <div className="font-medium text-gray-900">
+                      {bookName} {result.chapter}:{result.verse}
+                    </div>
+                    <div className="text-sm text-gray-600 truncate">{result.text}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "verses" && verseSearchResults.length === 0 && search.trim() && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+              <div className="text-gray-500">No verses found matching "{search}"</div>
+            </div>
+          )}
+        </div>
 
           <a
             href="#"
-            className="hidden md:block text-base font-semibold text-blue-700 hover:text-blue-900 transition"
+            onClick={(e) => {
+              e.preventDefault();
+              handleGetAppClick();
+            }}
+            className="py-2 px-2 hover:bg-gray-100 rounded text-blue-600"
           >
             Get the app
           </a>
         </div>
 
-        {/* Mobile Search - Only shown on mobile */}
-        <div className="md:hidden px-4 py-2">
+        {/* Mobile Search */}
+        <div className="md:hidden px-4 py-2 relative" ref={searchRef}>
           <form onSubmit={handleSearch} className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FiSearch className="text-blue-400" />
             </div>
             <input
               type="text"
-              placeholder="Search Bible..."
+              placeholder={searchType === "books" ? "Search Bible books..." : "Search verses..."}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="block w-full pl-10 pr-12 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                if (searchType === "books" && e.target.value.trim()) {
+                  const results = books.filter(book => 
+                    book.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                    (book.abbreviation && book.abbreviation.toLowerCase().includes(e.target.value.toLowerCase()))
+                  );
+                  setSearchResults(results);
+                  setShowSearchResults(true);
+                } else {
+                  setShowSearchResults(false);
+                }
+              }}
+              onFocus={() => {
+                if (search.trim() && searchResults.length > 0 && searchType === "books") {
+                  setShowSearchResults(true);
+                }
+              }}
+              className="block w-full pl-10 pr-20 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
             />
+            <div className="absolute right-14 top-1/2 transform -translate-y-1/2">
+              <select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+                className="bg-white border border-gray-300 rounded-md px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+              >
+                <option value="books">Books</option>
+                <option value="verses">Verses</option>
+              </select>
+            </div>
             <button
               type="submit"
-              className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-4 py-1.5 rounded-md text-base font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Go
             </button>
           </form>
-        </div>
-
-        <div
-          className={`flex items-center justify-between px-4 py-3 border-t md:gap-8 md:px-8 overflow-x-auto ${
-            theme === "dark" 
-              ? "border-gray-700" 
-              : theme === "sepia"
-              ? "border-amber-200"
-              : "border-blue-200"
-          }`}
-        >
-          <div className="flex items-center gap-2 min-w-max">
-            <select
-              value={book}
-              onChange={handleBookChange}
-              className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
-                theme === "dark" ? "text-gray-900" : "text-blue-900"
-              }`}
-              disabled={loading}
-            >
-              {loading ? (
-                <option>Loading books...</option>
-              ) : (
-                books.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))
-              )}
-            </select>
-
-            <span className="font-semibold text-base">Chapter {chapter}</span>
-          </div>
-
-          <div className="flex items-center gap-2 min-w-max">
-            <select
-              value={version}
-              onChange={handleVersionChange}
-              className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
-                theme === "dark" ? "text-gray-900" : "text-blue-900"
-              }`}
-              disabled={loading}
-            >
-              {versions.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.displayName}
-                </option>
+          
+          {/* Mobile Search Results Dropdown */}
+          {showSearchResults && searchType === "books" && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              {searchResults.map((book) => (
+                <div
+                  key={book.id}
+                  className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                  onClick={() => selectBookFromSearch(book)}
+                >
+                  <div className="font-medium text-gray-900">{book.name}</div>
+                  {book.abbreviation && (
+                    <div className="text-sm text-gray-500">{book.abbreviation}</div>
+                  )}
+                </div>
               ))}
-            </select>
-
-            <button
-              onClick={toggleParallelView}
-              className={`flex items-center gap-1 text-base font-semibold px-3 py-2 rounded-lg shadow ${
-                showParallel
-                  ? "bg-blue-600 text-white"
-                  : theme === "dark"
-                  ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
-                  : theme === "sepia"
-                  ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
-                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-              } transition`}
-            >
-              <span className="hidden md:inline">📑</span> Parallel
-            </button>
-
-            {/* TTS Button - Disabled for Tamil versions */}
-            <button
-              onClick={playTTS}
-              disabled={isTamilVersion}
-              className={`w-10 h-10 flex items-center justify-center rounded-full border shadow ${
-                isPlayingTTS
-                  ? "bg-red-500 text-white"
-                  : isTamilVersion
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : theme === "dark"
-                  ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
-                  : theme === "sepia"
-                  ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
-                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-              } transition`}
-              title={isTamilVersion ? "TTS not available for Tamil versions" : "Read aloud"}
-            >
-              {isPlayingTTS ? <FiPause /> : <FiVolume2 />}
-            </button>
-
-            <button
-              onClick={() => setOpenSettings(true)}
-              className="w-10 h-10 flex items-center justify-center rounded-full border shadow bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold text-lg"
-            >
-              AA
-            </button>
-          </div>
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "books" && searchResults.length === 0 && search.trim() && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+              <div className="text-gray-500">No books found matching "{search}"</div>
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "verses" && verseSearchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              {verseSearchResults.map((result, index) => {
+                const bookName = books.find(b => b.id === result.book)?.name || result.book;
+                return (
+                  <div
+                    key={index}
+                    className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    onClick={() => selectVerseFromSearch(result)}
+                  >
+                    <div className="font-medium text-gray-900">
+                      {bookName} {result.chapter}:{result.verse}
+                    </div>
+                    <div className="text-sm text-gray-600 truncate">{result.text}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          
+          {showSearchResults && searchType === "verses" && verseSearchResults.length === 0 && search.trim() && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+              <div className="text-gray-500">No verses found matching "{search}"</div>
+            </div>
+          )}
         </div>
+
+<div
+  className={`flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-t md:gap-8 md:px-8 overflow-x-auto ${
+    theme === "dark" 
+      ? "border-gray-700" 
+      : theme === "sepia"
+      ? "border-amber-200"
+      : "border-blue-200"
+  }`}
+>
+  {/* First row: Book selection and Chapter number */}
+  <div className="flex items-center gap-2 min-w-max mb-2 md:mb-0">
+    <select
+      value={book}
+      onChange={(e) => handleBookChange(e.target.value)}
+      className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
+        theme === "dark" ? "text-gray-900" : "text-blue-900"
+      }`}
+      disabled={loading}
+    >
+      {loading ? (
+        <option>Loading books...</option>
+      ) : (
+        books.map((b) => (
+          <option key={b.id} value={b.id}>
+            {b.name}
+          </option>
+        ))
+      )}
+    </select>
+
+    <span className="font-semibold text-base">Chapter {chapter}</span>
+  </div>
+
+  {/* Desktop: Version selection and buttons on the right side */}
+  <div className="hidden md:flex items-center gap-2 min-w-max">
+    <select
+      value={version}
+      onChange={handleVersionChange}
+      className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
+        theme === "dark" ? "text-gray-900" : "text-blue-900"
+      }`}
+      disabled={loading}
+    >
+      {versions.map((v) => (
+        <option key={v.id} value={v.id}>
+          {v.displayName}
+        </option>
+      ))}
+    </select>
+
+    <button
+      onClick={toggleParallelView}
+      className={`flex items-center gap-1 text-base font-semibold px-3 py-2 rounded-lg shadow ${
+        showParallel
+          ? "bg-blue-600 text-white"
+          : theme === "dark"
+          ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
+          : theme === "sepia"
+          ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
+          : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+      } transition`}
+    >
+      <span className="hidden md:inline">📑</span> Parallel
+    </button>
+
+    <button
+      onClick={playTTS}
+      disabled={isTamilVersion}
+      className={`w-10 h-10 flex items-center justify-center rounded-full border shadow ${
+        isPlayingTTS
+          ? "bg-red-500 text-white"
+          : isTamilVersion
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : theme === "dark"
+          ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
+          : theme === "sepia"
+          ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
+          : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+      } transition`}
+      title={isTamilVersion ? "TTS not available for Tamil versions" : "Read aloud"}
+    >
+      {isPlayingTTS ? <FiPause /> : <FiVolume2 />}
+    </button>
+
+    <button
+      onClick={() => setOpenSettings(true)}
+      className="w-10 h-10 flex items-center justify-center rounded-full border shadow bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold text-lg"
+    >
+      AA
+    </button>
+  </div>
+
+  {/* Mobile: Version selection and buttons in separate rows */}
+  <div className="md:hidden w-full">
+    {/* Version selection row */}
+    <div className="flex items-center gap-2 min-w-max mb-2">
+      <select
+        value={version}
+        onChange={handleVersionChange}
+        className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg flex-1 ${
+          theme === "dark" ? "text-gray-900" : "text-blue-900"
+        }`}
+        disabled={loading}
+      >
+        {versions.map((v) => (
+          <option key={v.id} value={v.id}>
+            {v.displayName}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Action buttons row - left aligned */}
+    <div className="flex items-center gap-2 min-w-max justify-start">
+      <button
+        onClick={toggleParallelView}
+        className={`flex items-center gap-1 text-base font-semibold px-3 py-2 rounded-lg shadow ${
+          showParallel
+            ? "bg-blue-600 text-white"
+            : theme === "dark"
+            ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
+            : theme === "sepia"
+            ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
+            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+        } transition`}
+      >
+        <span className="hidden md:inline">📑</span> Parallel
+      </button>
+
+      <button
+        onClick={playTTS}
+        disabled={isTamilVersion}
+        className={`w-10 h-10 flex items-center justify-center rounded-full border shadow ${
+          isPlayingTTS
+            ? "bg-red-500 text-white"
+            : isTamilVersion
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : theme === "dark"
+            ? "bg-gray-800 text-blue-300 hover:bg-blue-900"
+            : theme === "sepia"
+            ? "bg-amber-200 text-amber-900 hover:bg-amber-300"
+            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+        } transition`}
+        title={isTamilVersion ? "TTS not available for Tamil versions" : "Read aloud"}
+      >
+        {isPlayingTTS ? <FiPause /> : <FiVolume2 />}
+      </button>
+
+      <button
+        onClick={() => setOpenSettings(true)}
+        className="w-10 h-10 flex items-center justify-center rounded-full border shadow bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold text-lg"
+      >
+        AA
+      </button>
+    </div>
+  </div>
+</div>
 
         {showParallel && (
           <div
@@ -1076,6 +2050,14 @@ export default function ReadingBible() {
                 </button>
               ))}
             </div>
+            <div className="p-4 border-t">
+              <button
+                onClick={() => setShowChapterModal(false)}
+                className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1104,13 +2086,8 @@ export default function ReadingBible() {
           <FiChevronRight className="text-4xl text-blue-500 drop-shadow" />
         </button>
 
-        {/* Mobile Chapter Navigation - Fixed or absolute above footer, same color */}
-        <div
-          className={`md:hidden ${
-            arrowFixedMobile ? "fixed" : "absolute"
-          } bottom-4 left-0 right-0 flex justify-center gap-4 z-40 pointer-events-none`}
-          style={!arrowFixedMobile ? { top: "auto", bottom: "120px" } : {}}
-        >
+        {/* Mobile Chapter Navigation - Fixed to bottom corners */}
+        <div className="md:hidden fixed bottom-4 left-0 right-0 flex justify-between px-4 z-40 pointer-events-none">
           <button
             onClick={() => navigateChapter("prev")}
             disabled={chapter <= 1 || loading}
@@ -1181,25 +2158,226 @@ export default function ReadingBible() {
                   </div>
                 )}
 
-                <div
-                  className="mt-8 flex justify-between items-center"
-                  id="bible-footer"
-                  ref={footerRef}
+            <div
+        className="mt-8 flex flex-wrap justify-center gap-2 md:justify-between items-center"
+        id="bible-footer"
+        ref={footerRef}
+      >
+        <button 
+          onClick={() => setShowFooterNotes(true)}
+          className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg bg-gradient-to-r from-purple-500 via-purple-400 to-purple-300 text-white font-semibold shadow hover:scale-105 transition"
+        >
+          <FiEdit className="text-sm md:text-base" /> 
+          <span className="hidden xs:inline">
+            Notes ({getCurrentChapterNotes().length})
+          </span>
+        </button>
+  <button 
+    onClick={toggleBookmark}
+    className={`flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:scale-105 transition ${
+      isCurrentBookmarked()
+        ? "bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-300 text-white"
+        : "bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300 text-white"
+    }`}
+  >
+    <FiBookmark className="text-sm md:text-base" /> 
+    <span className="hidden xs:inline">
+      {isCurrentBookmarked() ? "Bookmarked" : "Bookmark"}
+    </span>
+  </button>
+  
+  <button 
+    onClick={() => setShowBookmarks(true)}
+    className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg bg-gray-200 hover:bg-gray-300 font-semibold shadow hover:scale-105 transition"
+  >
+    <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+    </svg>
+    <span className="hidden sm:inline">View Bookmarks</span>
+  </button>
+  
+  <button 
+    onClick={shareContent}
+    className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg bg-gradient-to-r from-green-500 via-green-400 to-green-300 text-white font-semibold shadow hover:scale-105 transition"
+  >
+    <FiShare2 className="text-sm md:text-base" />
+    <span className="hidden xs:inline">Share</span>
+  </button>
+</div>
+
+{showFooterNotes && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b p-4 sticky top-0 bg-white">
+              <h3 className="text-lg font-bold">Chapter Notes</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAddNote(true)}
+                  className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                  title="Add new note"
                 >
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300 text-white font-semibold shadow hover:scale-105 transition">
-                    <FiBookmark /> Bookmark
+                  <FiPlus className="text-sm" />
+                </button>
+                <button
+                  onClick={() => setShowFooterNotes(false)}
+                  className="p-1 rounded-full hover:bg-gray-100"
+                >
+                  <FiX className="text-lg" />
+                </button>
+              </div>
+            </div>
+
+            {/* Add/Edit Note Form */}
+            {showAddNote && (
+              <div className="p-4 border-b bg-gray-50">
+                <textarea
+                  value={newNoteText}
+                  onChange={(e) => setNewNoteText(e.target.value)}
+                  placeholder="Type your note here..."
+                  className="w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  rows={3}
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={editingNote ? updateFooterNote : addFooterNote}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    {editingNote ? "Update" : "Add"} Note
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300 text-white font-semibold shadow hover:scale-105 transition">
-                    <FiShare2 /> Share
+                  <button
+                    onClick={cancelNoteEdit}
+                    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                  >
+                    Cancel
                   </button>
                 </div>
+              </div>
+            )}
+
+            <div className="p-4">
+              {getCurrentChapterNotes().length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <FiEdit className="text-4xl mx-auto mb-4 text-gray-300" />
+                  <p>No notes yet for this chapter</p>
+                  <button
+                    onClick={() => setShowAddNote(true)}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Add First Note
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getCurrentChapterNotes()
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .map((note) => (
+                      <div
+                        key={note.id}
+                        className="p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs text-gray-500">
+                            {new Date(note.timestamp).toLocaleDateString()} at{" "}
+                            {new Date(note.timestamp).toLocaleTimeString()}
+                          </span>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => startEditingNote(note)}
+                              className="p-1 text-blue-500 hover:bg-blue-100 rounded"
+                              title="Edit note"
+                            >
+                              <FiEdit className="text-sm" />
+                            </button>
+                            <button
+                              onClick={() => deleteFooterNote(note.id)}
+                              className="p-1 text-red-500 hover:bg-red-100 rounded"
+                              title="Delete note"
+                            >
+                              <FiTrash2 className="text-sm" />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-gray-800 whitespace-pre-wrap">{note.text}</p>
+                      </div>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t sticky bottom-0 bg-white">
+              <button
+                onClick={() => setShowFooterNotes(false)}
+                className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+{showBookmarks && (
+  <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto mx-4">
+      <div className="flex justify-between items-center border-b p-4 sticky top-0 bg-white">
+        <h3 className="text-lg font-bold">Bookmarks</h3>
+        <button
+          onClick={() => setShowBookmarks(false)}
+          className="p-1 rounded-full hover:bg-gray-100"
+        >
+          <FiX className="text-lg" />
+        </button>
+      </div>
+      <div className="p-4">
+        {bookmarks.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No bookmarks yet</p>
+        ) : (
+          <div className="space-y-2">
+            {bookmarks.map((bookmark, index) => (
+              <div
+                key={index}
+                onClick={() => goToBookmark(bookmark)}
+                className="p-3 rounded-lg bg-gray-50 hover:bg-blue-50 cursor-pointer flex justify-between items-center"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">{bookmark.bookName} {bookmark.chapter}</div>
+                  <div className="text-sm text-gray-500 truncate">
+                    {versions.find(v => v.id === bookmark.version)?.displayName}
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => removeBookmark(bookmark, e)}
+                  className="p-1 text-red-500 hover:bg-red-100 rounded-full flex-shrink-0 ml-2"
+                >
+                  <FiX />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="p-4 border-t sticky bottom-0 bg-white">
+        <button
+          onClick={() => setShowBookmarks(false)}
+          className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
               </div>
             </>
           )}
         </main>
       </div>
 
-      {/* Add font styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');

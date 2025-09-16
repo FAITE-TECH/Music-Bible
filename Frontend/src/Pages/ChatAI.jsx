@@ -1,16 +1,51 @@
-import { useEffect, useState } from "react";
+// SizeSelector for mobile view under answer section
+import React, { useState } from "react";
+
+// SizeSelector now controls answer box size
+const SizeSelector = ({ selected, setSelected }) => {
+  const sizes = [
+    { id: "Square", icon: "⬛" },
+    { id: "Landscape", icon: "▭" },
+    { id: "Portrait", icon: "▯" },
+  ];
+  return (
+    <div className="bg-black text-white p-6 rounded-lg w-full max-w-md mx-auto mt-4">
+      <h2 className="text-lg font-semibold mb-4">Select a Size</h2>
+      <div className="flex space-x-4">
+        {sizes.map((size) => (
+          <button
+            key={size.id}
+            onClick={() => setSelected(size.id)}
+            className={`flex flex-col items-center justify-center px-4 py-3 rounded-lg border transition 
+              ${
+                selected === size.id
+                  ? "border-blue-500 bg-blue-500/20"
+                  : "border-gray-600 hover:border-gray-400"
+              }`}
+          >
+            <div className="w-10 h-10 flex items-center justify-center text-xl">
+              {size.icon}
+            </div>
+            <span className="mt-2 text-sm">{size.id}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import logo from "../assets/Logo/newlogo.png";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import searchIcon from "../assets/Logo/circleArrow.png";
-import shareIcon from "../assets/Logo/shareIcon.png";
-import copyIcon from "../assets/Logo/copyIcon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShoppingCart,
   faMicrophone,
   faVolumeUp,
+  faCopy,
+  faShareAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 const TamilFontStyle = () => (
@@ -92,7 +127,6 @@ const ChatAI = () => {
           tamilVoice: hasTamilVoice,
           tamilRecognition: tamilRecognitionSupported,
         }));
-
         window.speechSynthesis.onvoiceschanged = () => {
           const updatedVoices = window.speechSynthesis.getVoices();
           setVoices(updatedVoices);
@@ -387,6 +421,10 @@ const ChatAI = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#D4E8FF]">
       <TamilFontStyle />
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
 
       {/* Header and Info Box Container */}
       <div className="relative px-4 sm:px-6 md:px-8 lg:px-12 pb-2 sm:pb-3 md:pb-4 flex-shrink-0">
@@ -500,9 +538,8 @@ const ChatAI = () => {
                 : "Ask your thoughts"}
             </div>
             <div className="relative">
-              <input
-                type="text"
-                className="px-4 py-2 w-full h-12 sm:h-14 text-gray-800 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white pr-14 sm:pr-16"
+              <textarea
+                className="px-4 py-2 w-full h-12 sm:h-14 text-gray-800 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-white p-32 resize-none hide-scrollbar placeholder-center-left"
                 placeholder={
                   language === "ta"
                     ? "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?"
@@ -516,11 +553,22 @@ const ChatAI = () => {
                   }
                 }}
                 style={{
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
+                  whiteSpace: "normal",
+                  overflow: "visible",
                 }}
               />
+              <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .placeholder-center-left::placeholder {
+          text-align: left;
+          vertical-align: middle;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          margin-top:15;
+        }
+      `}</style>
               <button
                 onClick={sendQuery}
                 className="absolute right-0 top-0 h-full aspect-square flex items-center justify-center cursor-pointer"
@@ -597,10 +645,11 @@ const ChatAI = () => {
                 </motion.div>
               </a>
             </div>
+            {/* SizeSelector only on mobile view, under answer section */}
+            <div className="block sm:hidden">
+              <SizeSelector />
+            </div>
           </div>
-
-          {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
-          {/* ...existing code... */}
 
           {/* Answer Section */}
           <div className="relative w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
@@ -647,7 +696,7 @@ const ChatAI = () => {
             </div>
             <div className="relative">
               {/* Answer box with decorative images touching edges */}
-              <div className="p-4 border border-gray-600 shadow-2xl relative min-h-[400px] flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-t-[30px]">
+              <div className="p-4 border border-gray-600 shadow-2xl relative min-h-[400px] flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-[30px]">
                 {loading ? (
                   <div className="flex h-full text-gray-400 italic items-center justify-center">
                     {language === "ta"
@@ -666,36 +715,51 @@ const ChatAI = () => {
                   </div>
                 )}
 
-                <div className="absolute top-3 right-4 flex space-x-2">
-                  {copyClicked && (
-                    <div className="text-gray-300 mx-10 animate-view-content text-xs sm:text-sm">
-                      {language === "ta"
-                        ? "உரை நகலெடுக்கப்பட்டது"
-                        : "Text copied"}
-                    </div>
-                  )}
-                  <button
-                    className="text-gray-300 hover:text-white text-2xl hover:scale-110 transition"
-                    onClick={handleShare}
-                    aria-label="Share"
-                  >
-                    <div className="w-8 h-8 flex items-center">
-                      <img src={shareIcon} alt="Share" className="" />
-                    </div>
-                  </button>
-                  <button
-                    className="text-gray-300 hover:text-white text-2xl hover:scale-110 transition"
-                    onClick={() => {
-                      navigator.clipboard.writeText(answer);
-                      setCopyClicked(true);
-                    }}
-                    aria-label="Copy"
-                  >
-                    <div className="w-8 h-8 flex items-center">
-                      <img src={copyIcon} alt="Copy" className="" />
-                    </div>
-                  </button>
-                </div>
+                {/* Copy and Share buttons at the bottom */}
+                {answer && (
+                  <div className="flex justify-center space-x-4 mt-4 pt-4 border-t border-gray-300">
+                    {/* Copy confirmation message */}
+                    <AnimatePresence>
+                      {copyClicked && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
+                        >
+                          {language === "ta"
+                            ? "உரை நகலெடுக்கப்பட்டது"
+                            : "Text copied"}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Share button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleShare}
+                      className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
+                    >
+                      <FontAwesomeIcon icon={faShareAlt} />
+                      <span>{language === "ta" ? "பகிர்" : "Share"}</span>
+                    </motion.button>
+
+                    {/* Copy button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(answer);
+                        setCopyClicked(true);
+                      }}
+                      className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-700 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
+                    >
+                      <FontAwesomeIcon icon={faCopy} />
+                      <span>{language === "ta" ? "நகலெடு" : "Copy"}</span>
+                    </motion.button>
+                  </div>
+                )}
               </div>
             </div>
             {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}

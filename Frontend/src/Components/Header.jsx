@@ -29,6 +29,25 @@ export default function Header() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleClick(e) {
+      // If click is outside dropdown/profile button, close
+      const dropdown = document.getElementById("profile-dropdown");
+      const profileBtn = document.getElementById("profile-btn");
+      if (
+        dropdown &&
+        !dropdown.contains(e.target) &&
+        profileBtn &&
+        !profileBtn.contains(e.target)
+      ) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [dropdownOpen]);
   const [hoveredNav, setHoveredNav] = useState(null);
 
   const handleSignOut = async () => {
@@ -83,6 +102,7 @@ export default function Header() {
                 onClick={() => {
                   navigate(item.path);
                   setMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 className={`flex items-center space-x-2 p-2 text-white hover:bg-gray-800 rounded-md transition-colors ${
                   location.pathname === item.path
@@ -124,6 +144,7 @@ export default function Header() {
             {currentUser ? (
               <>
                 <button
+                  id="profile-btn"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center space-x-2 p-2 text-white hover:bg-gray-800 rounded-md transition-colors"
                 >
@@ -136,6 +157,7 @@ export default function Header() {
                 </button>
                 {dropdownOpen && (
                   <motion.div
+                    id="profile-dropdown"
                     className="bg-gray-800 rounded-md p-2 mt-1"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
@@ -215,6 +237,7 @@ export default function Header() {
                   key={index}
                   onClick={() => {
                     navigate(item.path);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   onMouseEnter={() => setHoveredNav(item.name)}
                   onMouseLeave={() => setHoveredNav(null)}
@@ -246,6 +269,7 @@ export default function Header() {
               {currentUser ? (
                 <div className="relative">
                   <button
+                    id="profile-btn"
                     onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center justify-center h-8 w-8 rounded-full overflow-hidden"
                   >
@@ -256,7 +280,10 @@ export default function Header() {
                     />
                   </button>
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg py-2 z-50">
+                    <div
+                      id="profile-dropdown"
+                      className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg py-2 z-50"
+                    >
                       <div className="px-4 py-2">
                         <span className="block text-sm font-medium text-gray-900">
                           {currentUser.username}
@@ -299,6 +326,7 @@ export default function Header() {
             <button
               onClick={() => {
                 navigate("/bible/ai");
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className={`flex items-center space-x-1 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
                 location.pathname === "/bible/ai" ? "border border-white" : ""
@@ -311,6 +339,7 @@ export default function Header() {
             <button
               onClick={() => {
                 navigate("/reading");
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className={`flex items-center space-x-1 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
                 location.pathname === "/reading" ? "border border-white" : ""
