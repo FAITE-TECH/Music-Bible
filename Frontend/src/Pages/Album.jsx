@@ -698,7 +698,7 @@ export default function Album() {
           <h3 className="text-xl font-semibold text-purple-300">Songs</h3>
           <button
             onClick={toggleShowFavorites}
-            className={`px-3 py-1 rounded-full text-sm ${
+            className={`px-3 py-1 rounded-lg text-sm ${
               showFavoritesForAlbum === category
                 ? "bg-blue-600 text-white"
                 : "bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white"

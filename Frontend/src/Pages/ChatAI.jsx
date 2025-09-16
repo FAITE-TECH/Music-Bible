@@ -7,7 +7,11 @@ import searchIcon from "../assets/Logo/circleArrow.png";
 import shareIcon from "../assets/Logo/shareIcon.png";
 import copyIcon from "../assets/Logo/copyIcon.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShoppingCart, faMicrophone, faVolumeUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faShoppingCart,
+  faMicrophone,
+  faVolumeUp,
+} from "@fortawesome/free-solid-svg-icons";
 
 const TamilFontStyle = () => (
   <style>{`
@@ -36,7 +40,7 @@ const ChatAI = () => {
     recognition: false,
     synthesis: false,
     tamilVoice: false,
-    tamilRecognition: false
+    tamilRecognition: false,
   });
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -59,57 +63,59 @@ const ChatAI = () => {
   // Check voice support
   useEffect(() => {
     const checkVoiceSupport = () => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const hasRecognition = !!SpeechRecognition;
-      const hasSynthesis = 'speechSynthesis' in window;
-      
+      const hasSynthesis = "speechSynthesis" in window;
+
       // Check for Tamil recognition support
       let tamilRecognitionSupported = false;
       if (hasRecognition) {
         try {
           const testRecognition = new SpeechRecognition();
-          testRecognition.lang = 'ta-IN';
+          testRecognition.lang = "ta-IN";
           tamilRecognitionSupported = true;
         } catch (e) {
           console.warn("Tamil recognition not supported:", e);
         }
       }
-      
+
       if (hasSynthesis) {
         const availableVoices = window.speechSynthesis.getVoices();
-        const hasTamilVoice = availableVoices.some(voice => 
-          voice.lang.includes('ta-IN') || voice.lang.includes('ta-')
+        const hasTamilVoice = availableVoices.some(
+          (voice) => voice.lang.includes("ta-IN") || voice.lang.includes("ta-")
         );
         setVoices(availableVoices);
-        setVoiceSupport(prev => ({
+        setVoiceSupport((prev) => ({
           ...prev,
           synthesis: true,
           tamilVoice: hasTamilVoice,
-          tamilRecognition: tamilRecognitionSupported
+          tamilRecognition: tamilRecognitionSupported,
         }));
-        
+
         window.speechSynthesis.onvoiceschanged = () => {
           const updatedVoices = window.speechSynthesis.getVoices();
           setVoices(updatedVoices);
-          setVoiceSupport(prev => ({
+          setVoiceSupport((prev) => ({
             ...prev,
-            tamilVoice: updatedVoices.some(voice => 
-              voice.lang.includes('ta-IN') || voice.lang.includes('ta-')
-            )
+            tamilVoice: updatedVoices.some(
+              (voice) =>
+                voice.lang.includes("ta-IN") || voice.lang.includes("ta-")
+            ),
           }));
         };
       }
-      
-      setVoiceSupport(prev => ({
+
+      setVoiceSupport((prev) => ({
         ...prev,
         recognition: hasRecognition,
-        tamilRecognition: tamilRecognitionSupported
+        tamilRecognition: tamilRecognitionSupported,
       }));
     };
 
     checkVoiceSupport();
     return () => {
-      if ('speechSynthesis' in window) {
+      if ("speechSynthesis" in window) {
         window.speechSynthesis.onvoiceschanged = null;
       }
     };
@@ -118,16 +124,17 @@ const ChatAI = () => {
   // Initialize speech recognition
   useEffect(() => {
     if (voiceSupport.recognition) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
-      
+
       // Set language based on support
       if (language === "ta" && voiceSupport.tamilRecognition) {
-        recognitionInstance.lang = 'ta-IN';
+        recognitionInstance.lang = "ta-IN";
       } else {
-        recognitionInstance.lang = 'en-US';
+        recognitionInstance.lang = "en-US";
         if (language === "ta") {
           console.warn("Falling back to English recognition for Tamil input");
         }
@@ -143,13 +150,17 @@ const ChatAI = () => {
         console.error("Speech recognition error", event.error);
         setIsListening(false);
         if (event.error === "not-allowed") {
-          alert(language === "ta" 
-            ? "குரல் உள்ளீட்டைப் பயன்படுத்த மைக்ரோஃபோன் அனுமதியை வழங்கவும்" 
-            : "Please allow microphone access to use voice input");
+          alert(
+            language === "ta"
+              ? "குரல் உள்ளீட்டைப் பயன்படுத்த மைக்ரோஃபோன் அனுமதியை வழங்கவும்"
+              : "Please allow microphone access to use voice input"
+          );
         } else if (event.error === "language-not-supported") {
-          alert(language === "ta" 
-            ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்" 
-            : "Selected language not supported. Trying English instead");
+          alert(
+            language === "ta"
+              ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்"
+              : "Selected language not supported. Trying English instead"
+          );
           setLanguage("en");
         }
       };
@@ -172,16 +183,20 @@ const ChatAI = () => {
 
   const startListening = () => {
     if (!voiceSupport.recognition) {
-      alert(language === "ta" 
-        ? "உங்கள் உலாவியில் குரல் அங்கீகாரம் ஆதரிக்கப்படவில்லை" 
-        : "Voice recognition not supported in your browser");
+      alert(
+        language === "ta"
+          ? "உங்கள் உலாவியில் குரல் அங்கீகாரம் ஆதரிக்கப்படவில்லை"
+          : "Voice recognition not supported in your browser"
+      );
       return;
     }
 
     if (language === "ta" && !voiceSupport.tamilRecognition) {
-      alert(language === "ta" 
-        ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்" 
-        : "Tamil voice input not supported. Trying English instead");
+      alert(
+        language === "ta"
+          ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்"
+          : "Tamil voice input not supported. Trying English instead"
+      );
       setLanguage("en");
       return;
     }
@@ -192,9 +207,11 @@ const ChatAI = () => {
     } catch (error) {
       console.error("Error starting speech recognition:", error);
       setIsListening(false);
-      alert(language === "ta" 
-        ? "குரல் அங்கீகாரத்தைத் தொடங்குவதில் பிழை" 
-        : "Error starting voice recognition");
+      alert(
+        language === "ta"
+          ? "குரல் அங்கீகாரத்தைத் தொடங்குவதில் பிழை"
+          : "Error starting voice recognition"
+      );
     }
   };
 
@@ -207,29 +224,33 @@ const ChatAI = () => {
 
   const speakText = (text) => {
     if (!voiceSupport.synthesis) {
-      alert(language === "ta" 
-        ? "உங்கள் உலாவியில் உரை-க்குரல் மாற்றம் ஆதரிக்கப்படவில்லை" 
-        : "Text-to-speech not supported in your browser");
+      alert(
+        language === "ta"
+          ? "உங்கள் உலாவியில் உரை-க்குரல் மாற்றம் ஆதரிக்கப்படவில்லை"
+          : "Text-to-speech not supported in your browser"
+      );
       return;
     }
 
     if (language === "ta" && !voiceSupport.tamilVoice) {
-      alert(language === "ta" 
-        ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்" 
-        : "Tamil voice output not supported. Trying English instead");
+      alert(
+        language === "ta"
+          ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை. ஆங்கிலத்தில் முயற்சிக்கவும்"
+          : "Tamil voice output not supported. Trying English instead"
+      );
       setLanguage("en");
       return;
     }
 
     window.speechSynthesis.cancel();
-    
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language === "ta" ? "ta-IN" : "en-US";
     utterance.rate = 0.9;
-    
+
     if (language === "ta") {
-      const tamilVoice = voices.find(voice => 
-        voice.lang === 'ta-IN' || voice.lang.startsWith('ta-')
+      const tamilVoice = voices.find(
+        (voice) => voice.lang === "ta-IN" || voice.lang.startsWith("ta-")
       );
       if (tamilVoice) {
         utterance.voice = tamilVoice;
@@ -237,21 +258,21 @@ const ChatAI = () => {
         console.log("No Tamil voice found, using default");
       }
     } else {
-      const englishVoice = voices.find(voice => 
-        voice.lang === 'en-US' || voice.lang.startsWith('en-')
+      const englishVoice = voices.find(
+        (voice) => voice.lang === "en-US" || voice.lang.startsWith("en-")
       );
       if (englishVoice) {
         utterance.voice = englishVoice;
       }
     }
-    
+
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = (event) => {
       console.error("Speech synthesis error:", event);
       setIsSpeaking(false);
     };
-    
+
     window.speechSynthesis.speak(utterance);
   };
 
@@ -278,7 +299,7 @@ const ChatAI = () => {
       const data = await response.json();
       const result = typeof data === "string" ? data : data.answer;
       setAnswer(result);
-      
+
       if (result.length < 500) {
         speakText(result);
       }
@@ -298,9 +319,11 @@ const ChatAI = () => {
         })
         .catch((error) => console.error("Error sharing link:", error));
     } else {
-      alert(language === "ta" 
-        ? "உங்கள் உலாவியில் பகிர்வு செயல்பாடு ஆதரிக்கப்படவில்லை" 
-        : "Web Share API not supported in your browser");
+      alert(
+        language === "ta"
+          ? "உங்கள் உலாவியில் பகிர்வு செயல்பாடு ஆதரிக்கப்படவில்லை"
+          : "Web Share API not supported in your browser"
+      );
     }
   };
 
@@ -364,7 +387,7 @@ const ChatAI = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#D4E8FF]">
       <TamilFontStyle />
-      
+
       {/* Header and Info Box Container */}
       <div className="relative px-4 sm:px-6 md:px-8 lg:px-12 pb-2 sm:pb-3 md:pb-4 flex-shrink-0">
         {/* Header */}
@@ -404,11 +427,14 @@ const ChatAI = () => {
                         : "bg-gray-200 text-gray-700"
                     }`}
                     onClick={() => {
-                      if (voiceSupport.tamilRecognition || window.confirm(
-                        language === "ta" 
-                          ? "தமிழ் குரல் உள்ளீடு உங்கள் உலாவியில் ஆதரிக்கப்படாது. தமிழ் உரை உள்ளீட்டுடன் தொடரவா?" 
-                          : "Tamil voice input may not be supported in your browser. Continue with Tamil text input?"
-                      )) {
+                      if (
+                        voiceSupport.tamilRecognition ||
+                        window.confirm(
+                          language === "ta"
+                            ? "தமிழ் குரல் உள்ளீடு உங்கள் உலாவியில் ஆதரிக்கப்படாது. தமிழ் உரை உள்ளீட்டுடன் தொடரவா?"
+                            : "Tamil voice input may not be supported in your browser. Continue with Tamil text input?"
+                        )
+                      ) {
                         setLanguage("ta");
                       }
                     }}
@@ -429,7 +455,9 @@ const ChatAI = () => {
               Bible AI API KEY
             </h3>
             <p className="text-xs sm:text-sm mb-3 leading-snug">
-              {language === "ta" ? "ஆங்கிலத்தில் அரட்டை பெட்டி கிடைக்கும்" : "Chatbox available in English"}
+              {language === "ta"
+                ? "ஆங்கிலத்தில் அரட்டை பெட்டி கிடைக்கும்"
+                : "Chatbox available in English"}
             </p>
             <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-1 sm:space-y-0 w-full justify-center">
               <button
@@ -438,7 +466,11 @@ const ChatAI = () => {
                 className="px-3 py-1 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center"
               >
                 {isPurchasing ? (
-                  language === "ta" ? "செயலாக்கம்..." : "Processing..."
+                  language === "ta" ? (
+                    "செயலாக்கம்..."
+                  ) : (
+                    "Processing..."
+                  )
                 ) : (
                   <>
                     <FontAwesomeIcon icon={faShoppingCart} className="mr-1" />
@@ -463,7 +495,9 @@ const ChatAI = () => {
           {/* Ask your thoughts and Search Input column-wise */}
           <div className="flex flex-col gap-2 w-full max-w-2xl mx-auto mb-4 sm:mb-6">
             <div className="text-gray-500 text-start text-sm sm:text-base">
-              {language === "ta" ? "உங்கள் எண்ணங்களைக் கேளுங்கள்" : "Ask your thoughts"}
+              {language === "ta"
+                ? "உங்கள் எண்ணங்களைக் கேளுங்கள்"
+                : "Ask your thoughts"}
             </div>
             <div className="relative">
               <input
@@ -481,10 +515,10 @@ const ChatAI = () => {
                     sendQuery();
                   }
                 }}
-                style={{ 
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
+                style={{
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
                 }}
               />
               <button
@@ -502,60 +536,71 @@ const ChatAI = () => {
                 className={`absolute right-12 sm:right-14 top-1/2 transform -translate-y-1/2 z-10 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full ${
                   isListening ? "bg-red-500 animate-pulse" : "bg-blue-500"
                 }`}
-                disabled={!voiceSupport.recognition || (language === "ta" && !voiceSupport.tamilRecognition)}
+                disabled={
+                  !voiceSupport.recognition ||
+                  (language === "ta" && !voiceSupport.tamilRecognition)
+                }
                 title={
-                  !voiceSupport.recognition 
-                    ? (language === "ta" ? "குரல் உள்ளீடு ஆதரிக்கப்படவில்லை" : "Voice input not supported") 
-                    : (language === "ta" && !voiceSupport.tamilRecognition) 
-                      ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை" 
-                      : (language === "ta" ? "குரல் உள்ளீடு" : "Voice input")
+                  !voiceSupport.recognition
+                    ? language === "ta"
+                      ? "குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
+                      : "Voice input not supported"
+                    : language === "ta" && !voiceSupport.tamilRecognition
+                    ? "தமிழ் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை"
+                    : language === "ta"
+                    ? "குரல் உள்ளீடு"
+                    : "Voice input"
                 }
               >
-                <FontAwesomeIcon 
-                  icon={faMicrophone} 
-                  className={`text-white ${isListening ? "text-lg" : "text-md"}`} 
+                <FontAwesomeIcon
+                  icon={faMicrophone}
+                  className={`text-white ${
+                    isListening ? "text-lg" : "text-md"
+                  }`}
                 />
               </button>
             </div>
+            {/* App Store Buttons: only show on mobile (block on xs, hidden on sm+) */}
+            <div className="flex sm:hidden flex-col gap-3 mt-6 mb-4 justify-center items-center">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
+                    alt="Google Play"
+                    className="h-10 w-auto mx-auto"
+                  />
+                </motion.div>
+              </a>
+              <a
+                href="https://apps.apple.com/app/id6618135650"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img
+                    src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
+                    alt="Apple Store"
+                    className="h-10 w-auto mx-auto"
+                  />
+                </motion.div>
+              </a>
+            </div>
           </div>
 
-          {/* App Store Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 mb-4 justify-center items-center">
-            <a
-              href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
-                  alt="Google Play"
-                  className="h-10 sm:h-12 w-auto mx-auto"
-                />
-              </motion.div>
-            </a>
-            <a
-              href="https://apps.apple.com/app/id6618135650"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <img
-                  src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
-                  alt="Apple Store"
-                  className="h-10 sm:h-12 w-auto mx-auto"
-                />
-              </motion.div>
-            </a>
-          </div>
+          {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
+          {/* ...existing code... */}
 
           {/* Answer Section */}
           <div className="relative w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
@@ -567,23 +612,35 @@ const ChatAI = () => {
                 <button
                   onClick={isSpeaking ? stopSpeaking : () => speakText(answer)}
                   className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${
-                    isSpeaking ? "bg-red-500 text-white" : "bg-blue-500 text-white"
+                    isSpeaking
+                      ? "bg-red-500 text-white"
+                      : "bg-blue-500 text-white"
                   }`}
-                  disabled={!voiceSupport.synthesis || (language === "ta" && !voiceSupport.tamilVoice)}
+                  disabled={
+                    !voiceSupport.synthesis ||
+                    (language === "ta" && !voiceSupport.tamilVoice)
+                  }
                   title={
-                    !voiceSupport.synthesis 
-                      ? (language === "ta" ? "குரல் வெளியீடு ஆதரிக்கப்படவில்லை" : "Voice output not supported") 
-                      : (language === "ta" && !voiceSupport.tamilVoice) 
-                        ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை" 
-                        : (language === "ta" ? "குரல் வெளியீடு" : "Voice output")
+                    !voiceSupport.synthesis
+                      ? language === "ta"
+                        ? "குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
+                        : "Voice output not supported"
+                      : language === "ta" && !voiceSupport.tamilVoice
+                      ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
+                      : language === "ta"
+                      ? "குரல் வெளியீடு"
+                      : "Voice output"
                   }
                 >
                   <FontAwesomeIcon icon={faVolumeUp} />
                   <span>
-                    {isSpeaking 
-                      ? (language === "ta" ? "நிறுத்து" : "Stop") 
-                      : (language === "ta" ? "கேளுங்கள்" : "Listen")
-                    }
+                    {isSpeaking
+                      ? language === "ta"
+                        ? "நிறுத்து"
+                        : "Stop"
+                      : language === "ta"
+                      ? "கேளுங்கள்"
+                      : "Listen"}
                   </span>
                 </button>
               )}
@@ -593,7 +650,9 @@ const ChatAI = () => {
               <div className="p-4 border border-gray-600 shadow-2xl relative min-h-[400px] flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-t-[30px]">
                 {loading ? (
                   <div className="flex h-full text-gray-400 italic items-center justify-center">
-                    {language === "ta" ? "உங்கள் பதில் தயாராகிறது..." : "Preparing your answer..."}
+                    {language === "ta"
+                      ? "உங்கள் பதில் தயாராகிறது..."
+                      : "Preparing your answer..."}
                   </div>
                 ) : answer ? (
                   <div className="h-[400px] overflow-y-auto">
@@ -601,14 +660,18 @@ const ChatAI = () => {
                   </div>
                 ) : (
                   <div className="flex h-full text-gray-400 italic items-center justify-center">
-                    {language === "ta" ? "உங்கள் பதில் இங்கே தோன்றும்..." : "Your answer will appear here..."}
+                    {language === "ta"
+                      ? "உங்கள் பதில் இங்கே தோன்றும்..."
+                      : "Your answer will appear here..."}
                   </div>
                 )}
 
                 <div className="absolute top-3 right-4 flex space-x-2">
                   {copyClicked && (
                     <div className="text-gray-300 mx-10 animate-view-content text-xs sm:text-sm">
-                      {language === "ta" ? "உரை நகலெடுக்கப்பட்டது" : "Text copied"}
+                      {language === "ta"
+                        ? "உரை நகலெடுக்கப்பட்டது"
+                        : "Text copied"}
                     </div>
                   )}
                   <button
@@ -634,6 +697,43 @@ const ChatAI = () => {
                   </button>
                 </div>
               </div>
+            </div>
+            {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
+            <div className="hidden sm:flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 mb-4 justify-center items-center">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
+                    alt="Google Play"
+                    className="h-10 sm:h-12 w-auto mx-auto"
+                  />
+                </motion.div>
+              </a>
+              <a
+                href="https://apps.apple.com/app/id6618135650"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <img
+                    src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
+                    alt="Apple Store"
+                    className="h-10 sm:h-12 w-auto mx-auto"
+                  />
+                </motion.div>
+              </a>
             </div>
           </div>
         </div>
