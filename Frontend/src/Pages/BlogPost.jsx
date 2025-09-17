@@ -309,7 +309,7 @@ const BlogPost = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8 border-t border-gray-700">
               <Link
                 to="/blog"
-                className="inline-flex items-center bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-4 py-2 rounded-lg font-medium"
+                className="inline-flex items-center bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg font-medium"
               >
                 Back to Blog
               </Link>

@@ -184,7 +184,7 @@ export default function Home() {
             </p>
             <motion.a
               href="/album"
-              className="inline-block bg-orange-500 text-white px-3 py-1  rounded-lg  shadow-lg hover:bg-orange-600 transition duration-300"
+              className="inline-block bg-gradient-to-br  from-orange-600 to-blue-800 text-white px-3 py-1  rounded-lg  shadow-lg hover:from-blue-800 hover:to-orange-600  transition duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >

@@ -154,7 +154,7 @@ export default function ContactUs() {
         {/* Left: Contact Information */}
         <div className="w-full lg:w-2/5" data-aos="fade-right">
           <div className=" p-6 sm:p-8 rounded-xl shadow-lg h-full">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] bg-clip-text text-transparent">
               Contact Information
             </h2>
 
@@ -309,7 +309,7 @@ export default function ContactUs() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0]  text-white rounded-lg w-3/4 mx-auto  p-3 hover:scale-105 transition-transform"
+                className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white rounded-lg w-3/4 mx-auto  p-3 hover:scale-105 transition-transform"
               >
                 Send Message
               </button>

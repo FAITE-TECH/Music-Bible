@@ -7,6 +7,7 @@ import {
   HiCollection,
   HiUserGroup,
   HiBookOpen,
+  HiUser,
 } from "react-icons/hi";
 import logo from "../assets/Logo/newlogo.png";
 import txtLogo from "../assets/Logo/txtnewlogo.png";
@@ -100,6 +101,18 @@ const Footer = () => {
               Contact Us
             </h3>
             <ul className="space-y-3">
+              <li className="flex items-start">
+                <HiUser
+                  className="mt-1 mr-3 text-blue-400 flex-shrink-0"
+                  size={20}
+                />
+                <a
+                  href="#"
+                  className="text-blue-400 hover:text-white transition"
+                >
+                  Komahan Washington
+                </a>
+              </li>
               <li className="flex items-start">
                 <HiMail
                   className="text-gray-400 mt-1 mr-3 flex-shrink-0"
@@ -259,6 +272,8 @@ const Footer = () => {
               Designed and maintained by FAITE.
             </span>{" "}
             All rights reserved.
+            <br />
+            <span className=" text-blue-400">Komahan Washington</span>
           </p>
         </div>
       </div>

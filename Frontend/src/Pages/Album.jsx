@@ -1027,7 +1027,7 @@ export default function Album() {
                   />
                 </div>
 
-                {/* Progress Bar*/}
+                {/* Progress Bar */}
                 <div className="flex-1 flex items-center gap-2 mx-2">
                   <span className="text-xs text-gray-400 w-8">
                     {formatTime(index === currentSongIndex ? currentTime : 0)}
@@ -1073,11 +1073,6 @@ export default function Album() {
                   <FontAwesomeIcon icon={faRandom} size="sm" />
                 </button>
               </div>
-            </div>
-
-            {/* Desktop View */}
-            <div className="hidden lg:flex flex-row items-center gap-4">
-              {/* Title and Description side by side */}
               <div className="flex flex-row items-center w-full sm:w-1/4 max-w-xs text-left gap-2">
                 <span className="tamil-font text-base sm:text-lg text-white truncate block lg:w-auto">
                   {music.title}
@@ -1089,7 +1084,8 @@ export default function Album() {
                 )}
               </div>
 
-              <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4">
+              {/* Player Controls with Background - Only on Desktop */}
+              <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4 bg-gray-800 p-3 rounded-lg h-14">
                 {/* Previous Track Button */}
                 <motion.button
                   onClick={() => {
@@ -1102,7 +1098,7 @@ export default function Album() {
                     }
                     handlePrevious();
                   }}
-                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                  className={`text-gray-400 hover:text-white p-1 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1122,7 +1118,7 @@ export default function Album() {
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
                 >
-                  <FontAwesomeIcon icon={faStepBackward} />
+                  <FontAwesomeIcon icon={faStepBackward} size="sm" />
                 </motion.button>
 
                 {/* Seek Backward Button */}
@@ -1137,7 +1133,7 @@ export default function Album() {
                     }
                     handleSeekBackward();
                   }}
-                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                  className={`text-gray-400 hover:text-white p-1 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1157,17 +1153,17 @@ export default function Album() {
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
                 >
-                  <FontAwesomeIcon icon={faBackward} />
+                  <FontAwesomeIcon icon={faBackward} size="sm" />
                 </motion.button>
 
                 {/* Play/Pause Button */}
                 <motion.button
                   onClick={() => handlePlaySong(index)}
-                  className={`text-white pl-0.5 size-1 ${
+                  className={`text-white pl-0.5 ${
                     currentSongIndex === index && isPlaying
                       ? "bg-purple-600"
                       : "bg-blue-600"
-                  } rounded-full  w-7 h-7 flex items-center justify-center ${
+                  } rounded-full w-6 h-6 flex items-center justify-center ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1193,6 +1189,7 @@ export default function Album() {
                     icon={
                       currentSongIndex === index && isPlaying ? faPause : faPlay
                     }
+                    size="xs"
                   />
                 </motion.button>
 
@@ -1208,7 +1205,7 @@ export default function Album() {
                     }
                     handleSeekForward();
                   }}
-                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                  className={`text-gray-400 hover:text-white p-1 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1228,7 +1225,7 @@ export default function Album() {
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
                 >
-                  <FontAwesomeIcon icon={faForward} />
+                  <FontAwesomeIcon icon={faForward} size="sm" />
                 </motion.button>
 
                 {/* Next Track Button */}
@@ -1243,7 +1240,7 @@ export default function Album() {
                     }
                     handleNext();
                   }}
-                  className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                  className={`text-gray-400 hover:text-white p-1 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1263,7 +1260,7 @@ export default function Album() {
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
                 >
-                  <FontAwesomeIcon icon={faStepForward} />
+                  <FontAwesomeIcon icon={faStepForward} size="sm" />
                 </motion.button>
 
                 {/* Progress Bar */}
@@ -1329,7 +1326,7 @@ export default function Album() {
                     }
                     handleShuffle();
                   }}
-                  className={`p-1 sm:p-2 ${
+                  className={`p-1 ${
                     shuffle ? "text-purple-400" : "text-gray-400"
                   } hover:text-white ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
@@ -1353,7 +1350,7 @@ export default function Album() {
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                   }
                 >
-                  <FontAwesomeIcon icon={faRandom} />
+                  <FontAwesomeIcon icon={faRandom} size="sm" />
                 </motion.button>
 
                 {/* Playback Rate Menu */}
@@ -1369,7 +1366,7 @@ export default function Album() {
                       }
                       togglePlaybackRateMenu(index);
                     }}
-                    className={`text-gray-400 hover:text-white p-1 sm:p-2 ${
+                    className={`text-gray-400 hover:text-white p-1 ${
                       category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                         ? "opacity-50 cursor-not-allowed"
                         : ""
@@ -1390,7 +1387,7 @@ export default function Album() {
                       category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                     }
                   >
-                    <FontAwesomeIcon icon={faEllipsisH} />
+                    <FontAwesomeIcon icon={faEllipsisH} size="sm" />
                   </motion.button>
 
                   {openPlaybackRateIndex === index && (
@@ -1445,6 +1442,7 @@ export default function Album() {
                   >
                     <FontAwesomeIcon
                       icon={mutedTracks[index] ? faVolumeMute : faVolumeUp}
+                      size="sm"
                     />
                   </motion.button>
 
@@ -1573,6 +1571,7 @@ export default function Album() {
               </div>
             </div>
           </motion.div>
+
         ))}
       </motion.div>
 

@@ -66,7 +66,6 @@ const SizeSelector = ({ selectedSize, setSelectedSize }) => {
 };
 
 const ChatAI = () => {
-  
   // Custom style for hiding textarea scrollbar
   const HideScrollbarStyle = () => (
     <style>{`
@@ -447,25 +446,25 @@ const ChatAI = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#D4E8FF]">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#061937] to-[#020713] ">
       <TamilFontStyle />
       <HideScrollbarStyle />
 
       {/* Header and Info Box Container */}
       <div className="relative px-4 sm:px-6 md:px-8 lg:px-12 pb-2 sm:pb-3 md:pb-4 flex-shrink-0">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-6 sm:mt-0">
           <motion.div
             className="flex items-center"
             initial={{ opacity: 0, x: -300 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ type: "spring", stiffness: 60, duration: 1.6 }}
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 ">
               <img src={logo} alt="logo" className="w-full h-full" />
             </div>
             <div className="flex flex-col ml-2 sm:ml-3">
-              <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800">
+              <h1 className="text-xl sm:text-2xl md:text-3xl bg-gradient-to-r from-[#0979F0] via-[#3AF7F0] to-[#0093FF] bg-clip-text text-transparent ">
                 aMusicBible/AI
               </h1>
               <div className="flex items-center mt-1 space-x-2">
@@ -474,9 +473,9 @@ const ChatAI = () => {
                 </span>
                 <div className="flex space-x-1">
                   <button
-                    className={`text-xs px-2 py-0.5 rounded-full ${
+                    className={`text-xs px-2 py-0.5 rounded-lg ${
                       language === "en"
-                        ? "bg-blue-500 text-white"
+                        ? "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0]  text-white"
                         : "bg-gray-200 text-gray-700"
                     }`}
                     onClick={() => setLanguage("en")}
@@ -484,9 +483,9 @@ const ChatAI = () => {
                     English
                   </button>
                   <button
-                    className={`text-xs px-2 py-0.5 rounded-full ${
+                    className={`text-xs px-2 py-0.5 rounded-lg ${
                       language === "ta"
-                        ? "bg-blue-500 text-white"
+                        ? "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0]  text-white"
                         : "bg-gray-200 text-gray-700"
                     }`}
                     onClick={() => {
@@ -526,7 +525,7 @@ const ChatAI = () => {
               <button
                 onClick={handleBuyNow}
                 disabled={isPurchasing}
-                className="px-3 py-1 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition flex items-center justify-center"
+                className="px-3 py-1 text-xs sm:text-sm bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0]  text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center"
               >
                 {isPurchasing ? (
                   language === "ta" ? (
@@ -543,7 +542,7 @@ const ChatAI = () => {
               </button>
               <button
                 onClick={handleContactUs}
-                className="px-3 py-1 text-xs sm:text-sm bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white rounded-full font-semibold hover:opacity-90 transition"
+                className="px-3 py-1 text-xs sm:text-sm bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0]  text-white rounded-lg font-semibold hover:opacity-90 transition"
               >
                 {language === "ta" ? "தொடர்பு கொள்ள" : "Contact Us"}
               </button>
@@ -564,7 +563,7 @@ const ChatAI = () => {
             </div>
             <div className="w-full flex flex-col items-stretch">
               <div className="relative w-full">
-                <div className="flex items-center w-full border border-gray-300 rounded-2xl bg-white shadow-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
+                <div className="flex items-center w-full border border-gray-300 rounded-2xl bg-gray-100 shadow-sm bg-opacity-70 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
                   <textarea
                     className="flex-1 px-2 py-2 text-gray-800 bg-transparent border-none outline-none rounded-2xl text-base min-w-0 resize-none h-14 sm:h-16 max-h-40 hide-scrollbar"
                     placeholder={
@@ -616,7 +615,7 @@ const ChatAI = () => {
                   </button>
                   <button
                     onClick={sendQuery}
-                    className="ml-2 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition flex items-center justify-center"
+                    className="ml-2  bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition flex items-center justify-center"
                   >
                     <FontAwesomeIcon
                       icon={faQuestionCircle}
@@ -717,12 +716,17 @@ const ChatAI = () => {
               )}
             </div>
             <div className="relative">
-              {/* Answer box with dynamic height based on selected size */}
+              {/* Answer box with default height and flexible expansion for desktop/tablet, mobile uses SizeSelector */}
               <div
-                className={`p-4 border border-gray-600 shadow-2xl relative flex flex-col justify-between bg-gray-50 bg-opacity-70 backdrop-blur-sm rounded-[30px] ${getAnswerBoxHeight()}`}
+                className={`p-4 border border-gray-600 shadow-2xl relative flex flex-col justify-between bg-gray-100 bg-opacity-70 backdrop-blur-sm rounded-[30px] ${
+                  // On mobile, use SizeSelector logic
+                  typeof window !== "undefined" && window.innerWidth < 640
+                    ? getAnswerBoxHeight()
+                    : "min-h-[200px] max-h-[600px] h-[400px] overflow-y-auto transition-all"
+                }`}
               >
                 {loading ? (
-                  <div className="flex h-full text-gray-400 italic items-center justify-center">
+                  <div className="flex h-full text-gray-800 italic items-center justify-center">
                     {language === "ta"
                       ? "உங்கள் பதில் தயாராகிறது..."
                       : "Preparing your answer..."}
@@ -732,7 +736,7 @@ const ChatAI = () => {
                     <ParseText text={answer} isTamil={language === "ta"} />
                   </div>
                 ) : (
-                  <div className="flex h-full text-gray-400 italic items-center justify-center">
+                  <div className="flex h-full text-gray-800 italic items-center justify-center">
                     {language === "ta"
                       ? "உங்கள் பதில் இங்கே தோன்றும்..."
                       : "Your answer will appear here..."}
@@ -741,47 +745,47 @@ const ChatAI = () => {
 
                 {/* Copy and Share buttons at the bottom */}
                 {answer && (
-                  <div className="flex justify-center space-x-4 mt-4 pt-4 border-t border-gray-300">
-                    {/* Copy confirmation message */}
-                    <AnimatePresence>
-                      {copyClicked && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
-                        >
-                          {language === "ta"
-                            ? "உரை நகலெடுக்கப்பட்டது"
-                            : "Text copied"}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
+                  <div className="flex justify-center space-x-4 mt-4 pt-4 border-t border-gray-300 items-center">
                     {/* Share button */}
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleShare}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
+                      className="flex items-center space-x-2  bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
                     >
                       <FontAwesomeIcon icon={faShareAlt} />
                       <span>{language === "ta" ? "பகிர்" : "Share"}</span>
                     </motion.button>
 
-                    {/* Copy button */}
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        navigator.clipboard.writeText(answer);
-                        setCopyClicked(true);
-                      }}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-700 text-white px-4 py-2 rounded-full shadow-md hover:shadow-lg transition-all"
-                    >
-                      <FontAwesomeIcon icon={faCopy} />
-                      <span>{language === "ta" ? "நகலெடு" : "Copy"}</span>
-                    </motion.button>
+                    {/* Copy button and message */}
+                    <div className="flex items-center space-x-2 relative">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          navigator.clipboard.writeText(answer);
+                          setCopyClicked(true);
+                        }}
+                        className="flex items-center space-x-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
+                      >
+                        <FontAwesomeIcon icon={faCopy} />
+                        <span>{language === "ta" ? "நகலெடு" : "Copy"}</span>
+                      </motion.button>
+                      <AnimatePresence>
+                        {copyClicked && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="ml-2 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
+                          >
+                            {language === "ta"
+                              ? "உரை நகலெடுக்கப்பட்டது"
+                              : "Text copied"}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 )}
               </div>

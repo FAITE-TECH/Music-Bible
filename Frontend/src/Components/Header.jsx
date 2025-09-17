@@ -120,7 +120,7 @@ export default function Header() {
                 navigate("/bible/ai");
                 setMenuOpen(false);
               }}
-              className={`flex items-center space-x-2 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-lg text-sm ${
+              className={`flex items-center space-x-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-2 rounded-lg text-sm ${
                 location.pathname === "/bible/ai" ? "border border-white" : ""
               }`}
             >
@@ -133,7 +133,7 @@ export default function Header() {
                 navigate("/reading");
                 setMenuOpen(false);
               }}
-              className={`flex items-center space-x-2 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-2 rounded-lg font-bold text-sm ${
+              className={`flex items-center space-x-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-2 rounded-lg font-bold text-sm ${
                 location.pathname === "/reading" ? "border border-white" : ""
               }`}
             >
@@ -204,18 +204,18 @@ export default function Header() {
 
   return (
     <div className="pt-14">
-      <header className="bg-black text-white shadow-lg w-full fixed top-0 left-0 z-50 h-14">
+      <header className="bg-black text-white shadow-lg w-full fixed top-0 left-0 z-50 h-16">
         <div className="container mx-auto flex items-center justify-between h-full px-4">
           <motion.div className="flex items-center gap-x-4 md:gap-x-6">
             <NavLink
               to="/"
               className="flex items-center text-2xl font-bold text-white"
             >
-              <img src={logo} alt="MusicBible logo" className="h-8 w-auto" />
+              <img src={logo} alt="MusicBible logo" className="h-16 w-auto" />
               <img
                 src={txtLogo}
                 alt="MusicBible logo"
-                className="h-8 mt-1 ml-2"
+                className="h-10 mt-4 ml-2"
               />
             </NavLink>
           </motion.div>
@@ -249,12 +249,12 @@ export default function Header() {
                 >
                   {hoveredNav === item.name ? (
                     <motion.span
-                      className="text-base font-semibold text-white px-3 py-1 rounded-lg shadow-lg bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] h-6 flex items-center justify-center"
+                      className="text-base text-white px-3 py-1 rounded-lg shadow-lg bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] h-6 flex items-center justify-center"
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.8, opacity: 0 }}
                     >
-                      {item.name}
+                      <span>{item.name}</span>
                     </motion.span>
                   ) : (
                     <span className="bg-gray-700 rounded-full p-2 flex items-center justify-center">
@@ -313,7 +313,7 @@ export default function Header() {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white p-2 rounded-full shadow-lg flex items-center justify-center h-8 w-8"
+                    className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white p-2 rounded-full shadow-lg flex items-center justify-center h-8 w-8"
                     title="Sign In"
                   >
                     <HiUser size={18} />
@@ -328,7 +328,7 @@ export default function Header() {
                 navigate("/bible/ai");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`flex items-center space-x-1 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
+              className={`flex items-center space-x-1 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
                 location.pathname === "/bible/ai" ? "border border-white" : ""
               }`}
             >
@@ -341,7 +341,7 @@ export default function Header() {
                 navigate("/reading");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className={`flex items-center space-x-1 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
+              className={`flex items-center space-x-1 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1 rounded-lg shadow-lg text-sm h-8 transition-all duration-300 ml-2 ${
                 location.pathname === "/reading" ? "border border-white" : ""
               }`}
             >

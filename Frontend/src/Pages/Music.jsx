@@ -8,6 +8,7 @@ import {
   faDownload,
   faPlay,
   faPause,
+  faPlayCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
@@ -26,6 +27,7 @@ export default function Music() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayingAll, setIsPlayingAll] = useState(false);
   const audioRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -92,7 +94,69 @@ export default function Music() {
     }
   }, [searchTerm, musicList]);
 
+  // Handle play all functionality
+  const handlePlayAll = () => {
+    if (filteredMusicList.length === 0) return;
+
+    if (isPlayingAll) {
+      // Stop playing all
+      setIsPlayingAll(false);
+      setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      setCurrentSongIndex(null);
+    } else {
+      // Start playing all from the beginning
+      setIsPlayingAll(true);
+      setCurrentSongIndex(0);
+      setIsPlaying(true);
+    }
+  };
+
+  // Effect to handle automatic playback of next song
+  useEffect(() => {
+    if (!isPlayingAll || currentSongIndex === null) return;
+
+    const playNextSong = () => {
+      if (currentSongIndex < filteredMusicList.length - 1) {
+        setCurrentSongIndex(currentSongIndex + 1);
+      } else {
+        // Reached the end of the list
+        setIsPlayingAll(false);
+        setCurrentSongIndex(null);
+      }
+    };
+
+    const handleAudioEnd = () => {
+      playNextSong();
+    };
+
+    if (audioRef.current) {
+      audioRef.current.addEventListener("ended", handleAudioEnd);
+
+      // Auto-play the current song
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch((error) => {
+            console.error("Auto-play failed:", error);
+          });
+        }
+      }, 100);
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener("ended", handleAudioEnd);
+      }
+    };
+  }, [currentSongIndex, isPlayingAll, filteredMusicList.length]);
+
   const handlePlaySong = (index) => {
+    if (isPlayingAll) {
+      setIsPlayingAll(false);
+    }
+
     if (currentSongIndex === index) {
       setIsPlaying(!isPlaying);
       if (isPlaying) {
@@ -104,7 +168,9 @@ export default function Music() {
       setCurrentSongIndex(index);
       setIsPlaying(true);
       setTimeout(() => {
-        audioRef.current.play();
+        if (audioRef.current) {
+          audioRef.current.play();
+        }
       }, 0);
     }
   };
@@ -149,68 +215,88 @@ export default function Music() {
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
-      {/* All Music Title Top Center */}
+      {/* Title centered at top */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-bold mb-6 bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent text-center"
+        className="text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent text-center mb-4"
       >
-        All Music
+        Explore Songs
       </motion.h1>
 
-      {/* Centered Search Bar Under Title */}
-      <motion.form
-        className="flex justify-center mb-8 w-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            className="w-full p-3 pl-10 pr-20 rounded-lg bg-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Search songs by title ..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <div className="absolute left-3 top-3 text-gray-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+      {/* Search and Play All controls below title */}
+      <div className="flex flex-row justify-between items-center mb-8 gap-4 w-full">
+        {/* Search Bar on Left */}
+        <motion.form
+          className="flex-1 max-w-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <div className="relative w-full">
+            <input
+              type="text"
+              className="w-full p-2 pl-9 pr-4 rounded-lg bg-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              placeholder="Search songs by title ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ minWidth: "140px", maxWidth: "100%" }}
+            />
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
           </div>
-          <button
-            type="submit"
-            className="absolute right-2 top-2 px-3 py-1 rounded-lg bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white font-semibold shadow hover:opacity-90 transition"
-          >
-            Search
-          </button>
-        </div>
-      </motion.form>
+        </motion.form>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        {/* Play All Button on Right */}
+        {filteredMusicList.length > 0 && (
+          <motion.button
+            onClick={handlePlayAll}
+            className={`px-6 py-1 rounded-lg  shadow transition flex items-center justify-center space-x-2  ${
+              isPlayingAll
+                ? "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white"
+                : "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] hover:opacity-90 text-white"
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FontAwesomeIcon
+              icon={isPlayingAll ? faPause : faPlayCircle}
+              className="text-xl"
+            />
+            <span>{isPlayingAll ? "Stop All" : "Play All"}</span>
+          </motion.button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-10">
         {paginatedMusic.map((music, i) => {
-          const index = filteredMusicList.indexOf(music);
+          const index = (currentPage - 1) * cardsPerPage + i;
+          const isCurrentSong = index === currentSongIndex;
+
           return (
             <motion.div
               key={music._id}
-              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-[#0093FF] to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto border border-white ${
-                index === currentSongIndex
+              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-[#0093FF] to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto border ${
+                isCurrentSong
                   ? "border-2 border-blue-500 expanded-card"
-                  : ""
+                  : "border-white"
               }`}
               whileInView={{ opacity: 1, rotate: 0, translateY: 0 }}
               transition={{ duration: 0.5 }}
@@ -226,7 +312,7 @@ export default function Music() {
                 </div>
 
                 {/* Song Info */}
-                <div className=" flex-grow flex flex-col items-center">
+                <div className="flex-grow flex flex-col items-center">
                   <p className="text-gray-300 text-xs mb-0.5 text-center">
                     {music.category}
                   </p>
@@ -239,7 +325,7 @@ export default function Music() {
                 </div>
 
                 {/* Audio Player */}
-                {index === currentSongIndex && (
+                {isCurrentSong && (
                   <div className="mt-2 flex justify-center items-center">
                     <audio
                       controls
@@ -258,26 +344,29 @@ export default function Music() {
                     <button
                       onClick={() => handleDownload(music)}
                       className="text-gray-400 hover:text-[#0119FF]"
+                      title="Download"
                     >
                       <FontAwesomeIcon icon={faDownload} />
                     </button>
                     <button
                       onClick={() => handleShare(music)}
                       className="text-gray-400 hover:text-[#0119FF]"
+                      title="Share"
                     >
                       <FontAwesomeIcon icon={faShareAlt} />
                     </button>
                   </div>
                   <button
                     onClick={() => handlePlaySong(index)}
-                    className="text-white bg-blue-600 rounded-full p-1.5 w-7 h-7 flex items-center justify-center"
+                    className={`rounded-full p-1.5 w-7 h-7 flex items-center justify-center ${
+                      isCurrentSong && isPlaying
+                        ? "bg-blue-600 text-white"
+                        : "bg-blue-600 text-white"
+                    }`}
+                    title={isCurrentSong && isPlaying ? "Pause" : "Play"}
                   >
                     <FontAwesomeIcon
-                      icon={
-                        currentSongIndex === index && isPlaying
-                          ? faPause
-                          : faPlay
-                      }
+                      icon={isCurrentSong && isPlaying ? faPause : faPlay}
                       className="text-xs"
                     />
                   </button>
