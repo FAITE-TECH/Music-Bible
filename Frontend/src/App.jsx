@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./Components/Header";
 import Home from "./Pages/Home";
+import NotFound from "./Pages/NotFound";
+import ServerError from "./Pages/ServerError";
 import SignUp from "./Pages/SignUp";
 import SignIn from "./Pages/SignIn";
 import ForgetPassword from "./Pages/ForgetPassword";
@@ -17,13 +19,13 @@ import CheckoutSuccess from "./Pages/CheckoutSuccess";
 import AddAlbum from "./Pages/AddAlbum";
 import Membership from "./Pages/Membership";
 import ContactUs from "./Pages/ContactUs";
-import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute'
-import ChatAI from './Pages/ChatAI'
-import PayButton from './Components/PayButton'
-import UpdateAlbum from './Pages/UpdateAlbum'
-import AIOrderSuccess from './Pages/AIOrderSuccess'
-import AddBlog from './Pages/AddBlogs'
-import UpdateBlogs from './Pages/UpdateBlogs'
+import OnlyAdminPrivateRoute from "./Components/OnlyAdminPrivateRoute";
+import ChatAI from "./Pages/ChatAI";
+import PayButton from "./Components/PayButton";
+import UpdateAlbum from "./Pages/UpdateAlbum";
+import AIOrderSuccess from "./Pages/AIOrderSuccess";
+import AddBlog from "./Pages/AddBlogs";
+import UpdateBlogs from "./Pages/UpdateBlogs";
 import Blog from "./Pages/Blog";
 import BlogPost from "./Pages/BlogPost";
 import Footer from "./Components/Footer";
@@ -32,23 +34,23 @@ import ReadingBible from "./Pages/ReadingBible";
 // Create a component to conditionally render the Footer
 const FooterWrapper = () => {
   const location = useLocation();
-  
+
   // List of paths where we DON'T want to show the footer
   const noFooterPaths = [
-    '/dashboard',
-    '/order-summary',
-    '/order-pay-success',
-    '/ai-order-success',
-    '/addmusic',
-    '/addblogs',
-    '/addalbum',
-    '/update-music',
-    '/update-album',
-    '/edit-blog'
+    "/dashboard",
+    "/order-summary",
+    "/order-pay-success",
+    "/ai-order-success",
+    "/addmusic",
+    "/addblogs",
+    "/addalbum",
+    "/update-music",
+    "/update-album",
+    "/edit-blog",
   ];
 
   // Check if current path starts with any of the noFooterPaths
-  const shouldShowFooter = !noFooterPaths.some(path => 
+  const shouldShowFooter = !noFooterPaths.some((path) =>
     location.pathname.startsWith(path)
   );
 
@@ -71,25 +73,34 @@ export default function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/bible/ai" element={<ChatAI />} />
-        <Route path="/reading" element={<ReadingBible/>} />
+        <Route path="/reading" element={<ReadingBible />} />
         <Route path="/forgetPassword" element={<ForgetPassword />} />
         <Route path="/resetpassword/:id/:token" element={<ResetPassword />} />
 
-        <Route element={<PrivateRoute/>}>
-          <Route path="/dashboard" element={<DashBoard/>}/> 
-          <Route path="/order-summary" element={<OrderSummary/>}/>
-          <Route path="/order-pay-success/:musicId/:userId" element={<CheckoutSuccess/>}/>
-          <Route path="/ai-order-success/:userId" element={<AIOrderSuccess/>}/>
-        </Route> 
-
-        <Route element={<OnlyAdminPrivateRoute/>}>
-          <Route path="/addmusic" element={<AddMusic/>}/>
-          <Route path="/addblogs" element={<AddBlog/>}/>
-          <Route path="/addalbum" element={<AddAlbum/>}/>
-          <Route path="/update-music/:musicId" element={<UpdateMusic/>}/>
-          <Route path="/update-album/:albumId" element={<UpdateAlbum/>}/>
-          <Route path="/edit-blog/:id" element={<UpdateBlogs/>} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/order-summary" element={<OrderSummary />} />
+          <Route
+            path="/order-pay-success/:musicId/:userId"
+            element={<CheckoutSuccess />}
+          />
+          <Route
+            path="/ai-order-success/:userId"
+            element={<AIOrderSuccess />}
+          />
         </Route>
+
+        <Route element={<OnlyAdminPrivateRoute />}>
+          <Route path="/addmusic" element={<AddMusic />} />
+          <Route path="/addblogs" element={<AddBlog />} />
+          <Route path="/addalbum" element={<AddAlbum />} />
+          <Route path="/update-music/:musicId" element={<UpdateMusic />} />
+          <Route path="/update-album/:albumId" element={<UpdateAlbum />} />
+          <Route path="/edit-blog/:id" element={<UpdateBlogs />} />
+        </Route>
+        <Route path="/500" element={<ServerError />} />
+        <Route path="/error" element={<ServerError />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <FooterWrapper />
     </BrowserRouter>

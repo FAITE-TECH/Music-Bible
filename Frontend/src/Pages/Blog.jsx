@@ -26,9 +26,9 @@ const FilterTabs = ({ categories, selectedCategory, setSelectedCategory }) => (
       <button
         key={category}
         onClick={() => setSelectedCategory(category)}
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+        className={`px-4 py-1 rounded-lg text-sm font-medium transition-colors ${
           selectedCategory === category
-            ? "bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white"
+            ? "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white"
             : "bg-gray-800 text-gray-300 hover:bg-gray-700"
         }`}
       >

@@ -169,15 +169,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Logos */}
-          <div
-            className="absolute top-6 left-6 flex items-center"
-            data-aos="fade-right"
-          >
-            <img src={logo} alt="Logo" className="h-12 mr-1 ml-2" />
-            <img src={txtLogo} alt="Logo" className="h-10 mr-4 ml-1 mt-5 " />
-          </div>
-
           {/* Text Content */}
           <div
             className="w-full md:w-1/2 text-center md:text-left"
@@ -193,7 +184,7 @@ export default function Home() {
             </p>
             <motion.a
               href="/album"
-              className="inline-block bg-orange-500 text-white py-3 px-8 rounded-full text-lg shadow-lg hover:bg-orange-600 transition duration-300"
+              className="inline-block bg-gradient-to-br  from-orange-600 to-blue-800 text-white px-3 py-1  rounded-lg  shadow-lg hover:from-blue-800 hover:to-orange-600  transition duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -240,7 +231,7 @@ export default function Home() {
             </p>
             <motion.a
               href="/membership"
-              className="absolute bottom-4 right-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white py-3 px-6 md:px-8 rounded-full text-sm md:text-lg shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300"
+              className="absolute bottom-4 right-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-3 py-2  md:px-8 rounded-lg text-sm  shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-transform duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
