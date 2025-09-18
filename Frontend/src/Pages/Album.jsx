@@ -694,7 +694,7 @@ export default function Album() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center  lg:pr-6 lg:pl-6">
           <h3 className="text-xl font-semibold text-purple-300">Songs</h3>
           <button
             onClick={toggleShowFavorites}
@@ -782,7 +782,7 @@ export default function Album() {
               </div>
 
               {/* Progress Bar - Mobile */}
-              <div className="flex items-center gap-2 w-full mb-2">
+              <div className="flex items-center gap-2 w-full mb-2 pr-2">
                 <span className="text-xxs text-gray-400 w-6">
                   {formatTime(index === currentSongIndex ? currentTime : 0)}
                 </span>
@@ -1072,7 +1072,7 @@ export default function Album() {
             </div>
 
             {/* Desktop View */}
-            <div className="hidden lg:flex flex-row items-center gap-4">
+            <div className="hidden lg:flex flex-row items-center gap-4 pr-5 pl-5">
               {/* Title and Description side by side */}
               <div className="flex flex-row items-center w-full sm:w-1/4 max-w-xs text-left gap-2">
                 <span className="tamil-font text-base sm:text-lg text-white truncate block lg:w-auto">

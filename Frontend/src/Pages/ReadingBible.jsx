@@ -260,7 +260,8 @@ export default function ReadingBible() {
     book: "புத்தகம்",
     verse: "வசனம்",
     footnotes: "அடிக்குறிப்புகள்",
-    footnoteExample: "உரையைப் பற்றி ஏதாவது ஒன்றை விளக்கும் எடுத்துக்காட்டு அடிக்குறிப்பு.",
+    footnoteExample:
+      "உரையைப் பற்றி ஏதாவது ஒன்றை விளக்கும் எடுத்துக்காட்டு அடிக்குறிப்பு.",
     readAloud: "சத்தமாக வாசி",
     settings: "அமைப்புகள்",
     bookmark: "புத்தகக்குறி",
@@ -2005,7 +2006,7 @@ export default function ReadingBible() {
         {/* Mobile Search */}
         <div className="md:hidden px-4 py-2 relative" ref={searchRef}>
           <form onSubmit={handleSearch} className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
               <FiSearch className="text-blue-400" />
             </div>
             <input
@@ -2048,13 +2049,15 @@ export default function ReadingBible() {
                   setShowSearchResults(true);
                 }
               }}
-              className="block w-full pl-10 pr-20 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
+              className={`block w-full  pl-6 pr-32 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white shadow ${
+                isTamilUI() ? "text-xs md:text-xl text-center" : "text-sm"
+              }`}
             />
             <div className="absolute right-14 top-1/2 transform -translate-y-1/2">
               <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                className="bg-white border border-gray-300 rounded-md px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                className="bg-white border border-gray-300 rounded-lg px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
               >
                 <option value="books">
                   {isTamilUI() ? tamilTranslations.book : "Books"}
@@ -2066,7 +2069,7 @@ export default function ReadingBible() {
             </div>
             <button
               type="submit"
-              className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-1 py-1 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {isTamilUI() ? tamilTranslations.go : "Go"}
             </button>
@@ -2184,6 +2187,33 @@ export default function ReadingBible() {
 
           {/* Desktop: Version selection and buttons on the right side */}
           <div className="hidden md:flex items-center gap-2 min-w-max">
+            {/* Move parallel version select to left when parallel view is active */}
+            {showParallel && (
+              <div className="flex items-center justify-center gap-2 px-3 py-3 md:gap-8 md:px-8 scroll-hide overflow-x-auto">
+                <span className="text-base font-semibold">
+                  {isTamilUI()
+                    ? tamilTranslations.ttsParallelVersion
+                    : "Parallel Version:"}
+                </span>
+                <select
+                  value={parallelVersion || ""}
+                  onChange={(e) => setParallelVersion(e.target.value)}
+                  className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
+                    theme === "dark" ? "text-gray-900" : "text-blue-900"
+                  }`}
+                  style={{ minWidth: "160px" }}
+                >
+                  {versions
+                    .filter((v) => v.id !== version)
+                    .map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.displayName}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
+
             <select
               value={version}
               onChange={handleVersionChange}
@@ -2191,6 +2221,7 @@ export default function ReadingBible() {
                 theme === "dark" ? "text-gray-900" : "text-blue-900"
               }`}
               disabled={loading}
+              style={{ minWidth: "160px" }}
             >
               {versions.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -2252,6 +2283,33 @@ export default function ReadingBible() {
 
           {/* Mobile: Version selection and buttons in separate rows */}
           <div className="md:hidden w-full">
+            {/* Parallel version selection for mobile view */}
+            {showParallel && (
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-base font-semibold">
+                  {isTamilUI()
+                    ? tamilTranslations.ttsParallelVersion
+                    : "Parallel Version:"}
+                </span>
+                <select
+                  value={parallelVersion || ""}
+                  onChange={(e) => setParallelVersion(e.target.value)}
+                  className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg flex-1 ${
+                    theme === "dark" ? "text-gray-900" : "text-blue-900"
+                  }`}
+                  style={{ minWidth: "120px" }}
+                >
+                  {versions
+                    .filter((v) => v.id !== version)
+                    .map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.displayName}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
+
             {/* Version selection row */}
             <div className="flex items-center gap-2 min-w-max mb-2">
               <select
@@ -2324,35 +2382,6 @@ export default function ReadingBible() {
             </div>
           </div>
         </div>
-
-        {showParallel && (
-          <div
-            className={`flex items-center justify-center gap-4 px-4 py-3 border-t ${
-              theme === "dark"
-                ? "bg-blue-900 border-gray-700"
-                : theme === "sepia"
-                ? "bg-amber-200 border-amber-300"
-                : "bg-blue-100 border-blue-200"
-            } md:gap-8 md:px-8`}
-          >
-            <span className="text-base font-semibold">{isTamilUI() ? tamilTranslations.ttsParallelVersion : "Parallel Version:"}</span>
-            <select
-              value={parallelVersion || ""}
-              onChange={(e) => setParallelVersion(e.target.value)}
-              className={`bg-white shadow outline-none px-3 py-2 font-semibold text-base rounded-lg ${
-                theme === "dark" ? "text-gray-900" : "text-blue-900"
-              }`}
-            >
-              {versions
-                .filter((v) => v.id !== version)
-                .map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.displayName}
-                  </option>
-                ))}
-            </select>
-          </div>
-        )}
       </header>
 
       {showChapterModal && selectedBook && (
@@ -2457,9 +2486,13 @@ export default function ReadingBible() {
           style={getTextSettingsStyles()}
         >
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 animate-pulse mb-4"></div>
-              <span className="text-xl font-semibold text-blue-600">
+            <div
+              className={`flex flex-col items-center justify-center py-16 ${
+                isTamilUI() ? "text-center w-full" : ""
+              }`}
+            >
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 animate-pulse mb-4 mx-auto"></div>
+              <span className="text-xl font-semibold text-blue-600 block mx-auto">
                 {isTamilUI()
                   ? "பைபிள் உள்ளடக்கம் ஏற்றுகிறது..."
                   : "Loading Bible content..."}
@@ -2485,7 +2518,13 @@ export default function ReadingBible() {
                   <span className="text-blue-500">{chapter}</span>
                 </h2>
 
-                <div className="flex flex-col md:flex-row gap-8 mt-6">
+                <div
+                  className={`flex flex-col md:flex-row gap-8 mt-6 ${
+                    isTamilVersion
+                      ? "items-center justify-center text-center"
+                      : ""
+                  }`}
+                >
                   {renderBibleContent(verses, version)}
                   {showParallel && parallelVersion && (
                     <>

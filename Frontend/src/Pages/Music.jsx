@@ -219,9 +219,9 @@ export default function Music() {
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent text-center mb-4"
+        className="text-3xl font-bold bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] bg-clip-text text-transparent text-center mb-4"
       >
-        Explore Songs
+        Discover and Explore a Wide Collection of Songs
       </motion.h1>
 
       {/* Search and Play All controls below title */}
@@ -293,7 +293,7 @@ export default function Music() {
           return (
             <motion.div
               key={music._id}
-              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black via-[#0093FF] to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto border ${
+              className={`p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-black  to-black text-white max-w-[170px] w-full h-64 flex flex-col justify-between mx-auto border ${
                 isCurrentSong
                   ? "border-2 border-blue-500 expanded-card"
                   : "border-white"

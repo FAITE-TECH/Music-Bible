@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import logo from "../assets/Logo/newlogo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import GooglePlay from "../assets/Logo/GooglePlay.png";
+import AppStore from "../assets/Logo/AppStore.png";
+import App from "../assets/Logo/App.png";
+import mic from "../assets/Logo/mic.png";
+import Ask from "../assets/Logo/ask.png";
 import {
   faShoppingCart,
   faMicrophone,
@@ -24,6 +29,25 @@ const TamilFontStyle = () => (
     }
   `}</style>
 );
+
+// Default questions to show as suggestions
+const defaultQuestions = [
+  "How to be a good Christian?",
+  "What does the Bible say about forgiveness?",
+  "How to pray effectively?",
+  "What is the meaning of salvation?",
+  "How to overcome fear according to the Bible?",
+  "What does the Bible say about marriage?",
+];
+
+const TamilDefaultQuestions = [
+  "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?",
+  "மன்னிப்பு பற்றி பைபிள் என்ன சொல்கிறது?",
+  "எப்படி பிரார்த்தனை செய்ய வேண்டும்?",
+  "ரட்சிப்பு என்றால் என்ன?",
+  "பயத்தை எவ்வாறு சமாளிப்பது?",
+  "திருமணம் பற்றி பைபிள் என்ன சொல்கிறது?",
+];
 
 // SizeSelector component for mobile view
 const SizeSelector = ({ selectedSize, setSelectedSize }) => {
@@ -69,9 +93,9 @@ const ChatAI = () => {
   // Custom style for hiding textarea scrollbar
   const HideScrollbarStyle = () => (
     <style>{`
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-      .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-    `}</style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  `}</style>
   );
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
@@ -90,6 +114,8 @@ const ChatAI = () => {
     tamilVoice: false,
     tamilRecognition: false,
   });
+  const [showDefaultQuestions, setShowDefaultQuestions] = useState(true);
+  const answerBoxRef = useRef(null);
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -333,6 +359,7 @@ const ChatAI = () => {
 
     setLoading(true);
     setAnswer("");
+    setShowDefaultQuestions(false);
 
     try {
       const response = await fetch("https://api.amusicbible.com/api/ai/ask", {
@@ -431,7 +458,13 @@ const ChatAI = () => {
     );
   };
 
-  // Get the height class based on selected size
+  // Handle question selection from default questions
+  const handleQuestionSelect = (question) => {
+    setQuery(question);
+    setShowDefaultQuestions(false);
+  };
+
+  // Get the height class based on selected size for mobile
   const getAnswerBoxHeight = () => {
     switch (selectedSize) {
       case "Square":
@@ -446,7 +479,9 @@ const ChatAI = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#061937] to-[#020713] ">
+    
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#021e4b] via-50% via-black  to-[#021e4b] to-100%">
+      {/* bg-[linear-gradient(to_bottom,#021e4b_0%,#021e4b_8%,#0b1830_16%,#000_50%,#0b1830_84%,#021e4b_92%,#021e4b_100%)] */}
       <TamilFontStyle />
       <HideScrollbarStyle />
 
@@ -553,19 +588,19 @@ const ChatAI = () => {
 
       {/* Main Content - Scrollable Area */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-2 sm:pt-3 md:pt-4 mb-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Ask your thoughts and Search Input column-wise */}
-          <div className="flex flex-col gap-2 w-full max-w-2xl mx-auto mb-4 sm:mb-6">
-            <div className="text-gray-500 text-start text-sm sm:text-base">
+          <div className="flex flex-col gap-2 w-full max-w-4xl mx-auto mb-4 sm:mb-6">
+            <div className="text-gray-300 text-start text-sm sm:text-base">
               {language === "ta"
                 ? "உங்கள் எண்ணங்களைக் கேளுங்கள்"
                 : "Ask your thoughts"}
             </div>
             <div className="w-full flex flex-col items-stretch">
               <div className="relative w-full">
-                <div className="flex items-center w-full border border-gray-300 rounded-2xl bg-gray-100 shadow-sm bg-opacity-70 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
+                <div className="flex items-center w-full border rounded-2xl bg-transparent border-[#3AF7F0] shadow-sm bg-opacity-70 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
                   <textarea
-                    className="flex-1 px-2 py-2 text-gray-800 bg-transparent border-none outline-none rounded-2xl text-base min-w-0 resize-none h-14 sm:h-16 max-h-40 hide-scrollbar"
+                    className="flex-1 px-2 py-2 text-gray-300 bg-transparent border-none outline-none rounded-2xl text-base min-w-0 resize-none h-14 sm:h-16 max-h-40 hide-scrollbar"
                     placeholder={
                       language === "ta"
                         ? "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?"
@@ -588,7 +623,9 @@ const ChatAI = () => {
                   <button
                     onClick={isListening ? stopListening : startListening}
                     className={`ml-2 w-10 h-10 flex items-center justify-center rounded-full ${
-                      isListening ? "bg-red-500 animate-pulse" : "bg-blue-500"
+                      isListening
+                        ? "bg-blue-500 animate-pulse"
+                        : "bg-transparent"
                     }`}
                     disabled={
                       !voiceSupport.recognition ||
@@ -606,42 +643,73 @@ const ChatAI = () => {
                         : "Voice input"
                     }
                   >
-                    <FontAwesomeIcon
-                      icon={faMicrophone}
-                      className={`text-white ${
-                        isListening ? "text-lg" : "text-md"
+                    <img
+                      src={mic}
+                      alt="Microphone"
+                      className={`w-6 h-7 mb-1 ${
+                        isListening ? "filter brightness-0 invert" : ""
                       }`}
                     />
                   </button>
                   <button
                     onClick={sendQuery}
-                    className="ml-2  bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition flex items-center justify-center"
+                    className="ml-2  text-white px-2 py-2 rounded-full text-lg font-semibold hover:opacity-90 transition flex items-center justify-center"
+                    aria-label={
+                      language === "ta" ? "கேள்வி அனுப்பவும்" : "Send Question"
+                    }
                   >
-                    <FontAwesomeIcon
-                      icon={faQuestionCircle}
-                      className="text-sm"
+                    <img
+                      src={Ask}
+                      alt="Send Arrow"
+                      className="w-14 h-10 mt-1"
                     />
-                    <span className="hidden sm:inline ml-2">Ask Question</span>
                   </button>
                 </div>
               </div>
+
+              {/* Default Questions - Only show when no answer is displayed */}
+              {showDefaultQuestions && (
+                <div className="mt-4">
+                  {/* <p className="text-gray-500 text-sm mb-2">
+                    {language === "ta"
+                      ? "பொதுவான கேள்விகள்"
+                      : "Common questions"}
+                  </p> */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
+                    {(language === "ta"
+                      ? TamilDefaultQuestions
+                      : defaultQuestions
+                    ).map((question, index) => (
+                      <motion.div
+                        key={index}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="bg-gray-800 bg-opacity-50 rounded-full p-3 cursor-pointer hover:bg-gray-700 transition-colors"
+                        onClick={() => handleQuestionSelect(question)}
+                      >
+                        <p className="text-white text-sm">{question}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {/* App Store Buttons: only show on mobile (block on xs, hidden on sm+) */}
-            <div className="flex sm:hidden flex-col gap-3 mt-6 mb-4 justify-center items-center">
+            <div className="flex sm:hidden flex-row gap-4 mt-4 mb-4 justify-center items-center">
               <a
                 href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full"
+                className="w-[150px]"
               >
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
+                    src={GooglePlay}
                     alt="Google Play"
-                    className="h-10 w-auto mx-auto"
+                    className="w-full h-auto"
                   />
                 </motion.div>
               </a>
@@ -649,184 +717,186 @@ const ChatAI = () => {
                 href="https://apps.apple.com/app/id6618135650"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full"
+                className="w-[130px]"
               >
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   <img
-                    src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
+                    src="https://cdn.freebiesupply.com/logos/large/2x/download-on-the-app-store-apple-logo-png-transparent.png"
                     alt="Apple Store"
-                    className="h-10 w-auto mx-auto"
+                    className="w-full h-auto"
                   />
                 </motion.div>
               </a>
             </div>
-            {/* SizeSelector only on mobile view, under answer section */}
-            <div className="block sm:hidden">
-              <SizeSelector
-                selectedSize={selectedSize}
-                setSelectedSize={setSelectedSize}
-              />
-            </div>
+            {/* SizeSelector only on mobile view, show after question is entered (i.e., after answer or loading) */}
+            {(answer || loading) && (
+              <div className="block sm:hidden mt-4">
+                <SizeSelector
+                  selectedSize={selectedSize}
+                  setSelectedSize={setSelectedSize}
+                />
+              </div>
+            )}
           </div>
 
-          {/* Answer Section */}
-          <div className="relative w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-gray-500 text-start text-sm md:text-base">
-                {language === "ta" ? "பதில்" : "Answer"}
-              </p>
-              {answer && (
-                <button
-                  onClick={isSpeaking ? stopSpeaking : () => speakText(answer)}
-                  className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${
-                    isSpeaking
-                      ? "bg-red-500 text-white"
-                      : "bg-blue-500 text-white"
-                  }`}
-                  disabled={
-                    !voiceSupport.synthesis ||
-                    (language === "ta" && !voiceSupport.tamilVoice)
-                  }
-                  title={
-                    !voiceSupport.synthesis
-                      ? language === "ta"
-                        ? "குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
-                        : "Voice output not supported"
-                      : language === "ta" && !voiceSupport.tamilVoice
-                      ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
-                      : language === "ta"
-                      ? "குரல் வெளியீடு"
-                      : "Voice output"
-                  }
-                >
-                  <FontAwesomeIcon icon={faVolumeUp} />
-                  <span>
-                    {isSpeaking
-                      ? language === "ta"
-                        ? "நிறுத்து"
-                        : "Stop"
-                      : language === "ta"
-                      ? "கேளுங்கள்"
-                      : "Listen"}
-                  </span>
-                </button>
-              )}
-            </div>
-            <div className="relative">
-              {/* Answer box with default height and flexible expansion for desktop/tablet, mobile uses SizeSelector */}
-              <div
-                className={`p-4 border border-gray-600 shadow-2xl relative flex flex-col justify-between bg-gray-100 bg-opacity-70 backdrop-blur-sm rounded-[30px] ${
-                  // On mobile, use SizeSelector logic
-                  typeof window !== "undefined" && window.innerWidth < 640
-                    ? getAnswerBoxHeight()
-                    : "min-h-[200px] max-h-[600px] h-[400px] overflow-y-auto transition-all"
-                }`}
-              >
-                {loading ? (
-                  <div className="flex h-full text-gray-800 italic items-center justify-center">
-                    {language === "ta"
-                      ? "உங்கள் பதில் தயாராகிறது..."
-                      : "Preparing your answer..."}
-                  </div>
-                ) : answer ? (
-                  <div className="h-full overflow-y-auto">
-                    <ParseText text={answer} isTamil={language === "ta"} />
-                  </div>
-                ) : (
-                  <div className="flex h-full text-gray-800 italic items-center justify-center">
-                    {language === "ta"
-                      ? "உங்கள் பதில் இங்கே தோன்றும்..."
-                      : "Your answer will appear here..."}
-                  </div>
-                )}
-
-                {/* Copy and Share buttons at the bottom */}
+          {/* Answer Section - Only show when there's an answer or loading */}
+          {(answer || loading) && (
+            <div className="relative w-full max-w-4xl mx-auto">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-gray-500 text-start text-sm md:text-base">
+                  {language === "ta" ? "பதில்" : "Answer"}
+                </p>
                 {answer && (
-                  <div className="flex justify-center space-x-4 mt-4 pt-4 border-t border-gray-300 items-center">
-                    {/* Share button */}
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleShare}
-                      className="flex items-center space-x-2  bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
-                    >
-                      <FontAwesomeIcon icon={faShareAlt} />
-                      <span>{language === "ta" ? "பகிர்" : "Share"}</span>
-                    </motion.button>
+                  <button
+                    onClick={
+                      isSpeaking ? stopSpeaking : () => speakText(answer)
+                    }
+                    className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${
+                      isSpeaking
+                        ? "bg-red-500 text-white"
+                        : "bg-blue-500 text-white"
+                    }`}
+                    disabled={
+                      !voiceSupport.synthesis ||
+                      (language === "ta" && !voiceSupport.tamilVoice)
+                    }
+                    title={
+                      !voiceSupport.synthesis
+                        ? language === "ta"
+                          ? "குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
+                          : "Voice output not supported"
+                        : language === "ta" && !voiceSupport.tamilVoice
+                        ? "தமிழ் குரல் வெளியீடு ஆதரிக்கப்படவில்லை"
+                        : language === "ta"
+                        ? "குரல் வெளியீடு"
+                        : "Voice output"
+                    }
+                  >
+                    <FontAwesomeIcon icon={faVolumeUp} />
+                    <span>
+                      {isSpeaking
+                        ? language === "ta"
+                          ? "நிறுத்து"
+                          : "Stop"
+                        : language === "ta"
+                        ? "கேளுங்கள்"
+                        : "Listen"}
+                    </span>
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                {/* Answer box with dynamic height for desktop, fixed for mobile */}
+                <div
+                  ref={answerBoxRef}
+                  className={`p-4 border shadow-2xl relative flex text-gray-300 flex-col justify-between bg-transparent border-[#3AF7F0] bg-opacity-70 backdrop-blur-sm rounded-[30px] ${
+                    // On mobile, use SizeSelector logic
+                    typeof window !== "undefined" && window.innerWidth < 640
+                      ? getAnswerBoxHeight()
+                      : "min-h-[200px] max-h-[80vh] overflow-y-auto transition-all" // Dynamic height for desktop
+                  }`}
+                >
+                  {loading ? (
+                    <div className="flex h-full text-gray-300 italic items-center justify-center">
+                      {language === "ta"
+                        ? "உங்கள் பதில் தயாராகிறது..."
+                        : "Preparing your answer..."}
+                    </div>
+                  ) : answer ? (
+                    <div className="h-full overflow-y-auto">
+                      <ParseText text={answer} isTamil={language === "ta"} />
+                    </div>
+                  ) : null}
 
-                    {/* Copy button and message */}
-                    <div className="flex items-center space-x-2 relative">
+                  {/* Copy and Share buttons at the bottom */}
+                  {answer && (
+                    <div className="flex justify-center space-x-4 mt-4 pt-4 border-t border-gray-300 items-center">
+                      {/* Share button */}
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          navigator.clipboard.writeText(answer);
-                          setCopyClicked(true);
-                        }}
-                        className="flex items-center space-x-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
+                        onClick={handleShare}
+                        className="flex items-center space-x-2  bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
                       >
-                        <FontAwesomeIcon icon={faCopy} />
-                        <span>{language === "ta" ? "நகலெடு" : "Copy"}</span>
+                        <FontAwesomeIcon icon={faShareAlt} />
+                        <span>{language === "ta" ? "பகிர்" : "Share"}</span>
                       </motion.button>
-                      <AnimatePresence>
-                        {copyClicked && (
-                          <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 20 }}
-                            className="ml-2 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
-                          >
-                            {language === "ta"
-                              ? "உரை நகலெடுக்கப்பட்டது"
-                              : "Text copied"}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+
+                      {/* Copy button and message */}
+                      <div className="flex items-center space-x-2 relative">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            navigator.clipboard.writeText(answer);
+                            setCopyClicked(true);
+                          }}
+                          className="flex items-center space-x-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all"
+                        >
+                          <FontAwesomeIcon icon={faCopy} />
+                          <span>{language === "ta" ? "நகலெடு" : "Copy"}</span>
+                        </motion.button>
+                        <AnimatePresence>
+                          {copyClicked && (
+                            <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
+                              className="ml-2 bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg"
+                            >
+                              {language === "ta"
+                                ? "உரை நகலெடுக்கப்பட்டது"
+                                : "Text copied"}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-            {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
-            <div className="hidden sm:flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 mb-4 justify-center items-center">
-              <a
-                href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
+          )}
+
+          {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
+          <div className="hidden sm:flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 mb-4 justify-center items-center">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
-                    alt="Google Play"
-                    className="h-10 sm:h-12 w-auto mx-auto"
-                  />
-                </motion.div>
-              </a>
-              <a
-                href="https://apps.apple.com/app/id6618135650"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1200px-Google_Play_Store_badge_EN.svg.png"
+                  alt="Google Play"
+                  className="h-10 sm:h-12 w-auto mx-auto"
+                />
+              </motion.div>
+            </a>
+            <a
+              href="https://apps.apple.com/app/id6618135650"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <img
-                    src="https://p7.hiclipart.com/preview/422/842/453/app-store-android-google-play-get-started-now-button.jpg"
-                    alt="Apple Store"
-                    className="h-10 sm:h-12 w-auto mx-auto"
-                  />
-                </motion.div>
-              </a>
-            </div>
+                <img
+                  src="https://cdn.freebiesupply.com/logos/large/2x/download-on-the-app-store-apple-logo-png-transparent.png"
+                  alt="Apple Store"
+                  className="h-10 sm:h-12 w-auto mx-auto "
+                />
+              </motion.div>
+            </a>
           </div>
         </div>
       </div>

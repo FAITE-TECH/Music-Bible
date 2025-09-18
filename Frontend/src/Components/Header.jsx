@@ -249,7 +249,7 @@ export default function Header() {
                 >
                   {hoveredNav === item.name ? (
                     <motion.span
-                      className="text-base text-white px-3 py-1 rounded-lg shadow-lg bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] h-6 flex items-center justify-center"
+                      className="text-sm text-white px-3 py-1 h-6 rounded-lg shadow-lg bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0]  flex items-center justify-center"
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.8, opacity: 0 }}
