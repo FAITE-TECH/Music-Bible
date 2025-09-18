@@ -575,7 +575,7 @@ export default function Album() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] bg-clip-text text-transparent">
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] bg-clip-text text-transparent">
           Music Album
         </h1>
 
@@ -638,7 +638,7 @@ export default function Album() {
                   handleAlbumShare();
                 }
               }}
-              className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
+              className={`bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
                 category === "BOOK OF JAMES - ஞான மொழிகள்"
                   ? "opacity-50 cursor-not-allowed"
                   : ""
@@ -668,7 +668,7 @@ export default function Album() {
                   // Handle download
                 }
               }}
-              className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
+              className={`bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 ${
                 category === "BOOK OF JAMES - ஞான மொழிகள்"
                   ? "opacity-50 cursor-not-allowed"
                   : ""
@@ -701,7 +701,7 @@ export default function Album() {
             className={`px-3 py-1 rounded-lg text-sm ${
               showFavoritesForAlbum === category
                 ? "bg-blue-600 text-white"
-                : "bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white"
+                : "bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white"
             }`}
           >
             {showFavoritesForAlbum === category ? "Show All" : "Show Favorites"}
@@ -720,10 +720,6 @@ export default function Album() {
           <motion.div
             key={music._id}
             className={`p-2 pt-1 pb-1 rounded-lg ${
-              index === currentSongIndex
-                ? "bg-gray-900 border-l-4 border-blue-500"
-                : "bg-gray-800"
-            } ${
               category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                 ? "opacity-70 cursor-not-allowed"
                 : ""
@@ -733,7 +729,7 @@ export default function Album() {
             transition={{ delay: index * 0.1 }}
           >
             {/* Mobile View - Single Line Layout */}
-            <div className="flex flex-col sm:hidden">
+            <div className="flex flex-col sm:hidden bg-gray-800 p-2 pt-1 pb-1 rounded-lg">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex-1 min-w-0">
                   <span className="tamil-font text-sm text-white truncate block">
@@ -898,13 +894,13 @@ export default function Album() {
                 <div className="flex flex-1 justify-end gap-1">
                   <button
                     onClick={() => handleDownload(music)}
-                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white p-1 rounded"
+                    className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white p-1 rounded"
                   >
                     <FontAwesomeIcon icon={faDownload} size="xs" />
                   </button>
                   <button
                     onClick={() => handleShare(music)}
-                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white p-1 rounded"
+                    className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white p-1 rounded"
                   >
                     <FontAwesomeIcon icon={faShareAlt} size="xs" />
                   </button>
@@ -913,7 +909,7 @@ export default function Album() {
             </div>
 
             {/* Tablet View (641px - 1023px) */}
-            <div className="hidden sm:flex lg:hidden flex-col">
+            <div className="hidden sm:flex lg:hidden flex-col bg-gray-800 p-2 pt-1 pb-1 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex-1 min-w-0">
                   <p className="tamil-font text-base text-white truncate">
@@ -943,13 +939,13 @@ export default function Album() {
                   </button>
                   <button
                     onClick={() => handleDownload(music)}
-                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded text-sm"
+                    className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-1 px-2 rounded text-sm"
                   >
                     <FontAwesomeIcon icon={faDownload} size="sm" />
                   </button>
                   <button
                     onClick={() => handleShare(music)}
-                    className="bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-1 px-2 rounded text-sm"
+                    className="bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-1 px-2 rounded text-sm"
                   >
                     <FontAwesomeIcon icon={faShareAlt} size="sm" />
                   </button>
@@ -1027,7 +1023,7 @@ export default function Album() {
                   />
                 </div>
 
-                {/* Progress Bar */}
+                {/* Progress Bar*/}
                 <div className="flex-1 flex items-center gap-2 mx-2">
                   <span className="text-xs text-gray-400 w-8">
                     {formatTime(index === currentSongIndex ? currentTime : 0)}
@@ -1073,6 +1069,11 @@ export default function Album() {
                   <FontAwesomeIcon icon={faRandom} size="sm" />
                 </button>
               </div>
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden lg:flex flex-row items-center gap-4">
+              {/* Title and Description side by side */}
               <div className="flex flex-row items-center w-full sm:w-1/4 max-w-xs text-left gap-2">
                 <span className="tamil-font text-base sm:text-lg text-white truncate block lg:w-auto">
                   {music.title}
@@ -1085,7 +1086,7 @@ export default function Album() {
               </div>
 
               {/* Player Controls with Background - Only on Desktop */}
-              <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4 bg-gray-800 p-3 rounded-lg h-14">
+              <div className="flex flex-wrap justify-center items-center gap-2 w-full sm:w-2/4 bg-gray-800 rounded-lg h-8">
                 {/* Previous Track Button */}
                 <motion.button
                   onClick={() => {
@@ -1418,7 +1419,7 @@ export default function Album() {
                 </div>
 
                 {/* Volume Controls */}
-                <div className="relative flex items-center group">
+                <div className="relative flex items-center group gap-2">
                   <motion.button
                     onClick={() => {
                       if (
@@ -1445,6 +1446,41 @@ export default function Album() {
                       size="sm"
                     />
                   </motion.button>
+
+                  {/* Favorite Button - default position next to volume icon */}
+                  {hoveredVolumeIndex !== index && (
+                    <motion.button
+                      onClick={() => toggleFavorite(music._id)}
+                      className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                        favorites[music._id]
+                          ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
+                          : "text-gray-200 bg-gray-700"
+                      } ${
+                        category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                        index !== 0
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      whileHover={{
+                        scale:
+                          category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                          index !== 0
+                            ? 1
+                            : 1.05,
+                      }}
+                      disabled={
+                        category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                        index !== 0
+                      }
+                    >
+                      <FontAwesomeIcon
+                        icon={
+                          favorites[music._id] ? faHeartSolid : faHeartOutline
+                        }
+                        size="xs"
+                      />
+                    </motion.button>
+                  )}
 
                   {hoveredVolumeIndex === index && (
                     <motion.div
@@ -1490,43 +1526,48 @@ export default function Album() {
                           outline: "none",
                         }}
                       />
+                      {/* Favorite Button - moves next to tracker when hovered */}
+                      <motion.button
+                        onClick={() => toggleFavorite(music._id)}
+                        className={`ml-2 py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
+                          favorites[music._id]
+                            ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
+                            : "text-gray-200 bg-gray-700"
+                        } ${
+                          category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                          index !== 0
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        whileHover={{
+                          scale:
+                            category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                            index !== 0
+                              ? 1
+                              : 1.05,
+                        }}
+                        disabled={
+                          category === "BOOK OF JAMES - ஞான மொழிகள்" &&
+                          index !== 0
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={
+                            favorites[music._id] ? faHeartSolid : faHeartOutline
+                          }
+                          size="xs"
+                        />
+                      </motion.button>
                     </motion.div>
                   )}
                 </div>
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-1/4 justify-end mt-2 sm:mt-0">
-                <motion.button
-                  onClick={() => toggleFavorite(music._id)}
-                  className={`py-1 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 ${
-                    favorites[music._id]
-                      ? "text-[#0093FF] bg-[#0119FF] bg-opacity-20"
-                      : "text-gray-200 bg-gray-700"
-                  } ${
-                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                  whileHover={{
-                    scale:
-                      category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
-                        ? 1
-                        : 1.05,
-                  }}
-                  disabled={
-                    category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
-                  }
-                >
-                  <FontAwesomeIcon
-                    icon={favorites[music._id] ? faHeartSolid : faHeartOutline}
-                    size="xs"
-                  />
-                </motion.button>
-
                 {/* Download button */}
                 <motion.button
                   onClick={() => handleDownload(music, index)}
-                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-0.5 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
+                  className={`bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-1 px-3 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1549,7 +1590,7 @@ export default function Album() {
                 {/* Share button */}
                 <motion.button
                   onClick={() => handleShare(music, index)}
-                  className={`bg-gradient-to-r from-[#0119FF] via-[#0093FF] to-[#3AF7F0] text-white py-0.5 px-2 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
+                  className={`bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white py-1 px-3 rounded-lg text-xs sm:text-sm flex items-center gap-2 h-6 ${
                     category === "BOOK OF JAMES - ஞான மொழிகள்" && index !== 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -1571,7 +1612,6 @@ export default function Album() {
               </div>
             </div>
           </motion.div>
-
         ))}
       </motion.div>
 

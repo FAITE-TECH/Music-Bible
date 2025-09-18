@@ -244,6 +244,76 @@ export default function ReadingBible() {
     setShowHighlightPalette(false);
   };
 
+  // Add this function near the other helper functions
+  const isTamilUI = () => {
+    return ["TBSI", "TAMBL98", "TAMOVR"].includes(version);
+  };
+
+  // Tamil translations object
+  const tamilTranslations = {
+    go: "செல்",
+    chapter: "அதிகாரம்",
+    searchBooks: "புத்தகம் மூலம் தேடவும்...",
+    searchVerses: "வசனங்கள் மூலம் தேடவும்...",
+    parallel: "இணைநோக்கு",
+    viewBookmarks: "புத்தகக்குறியை காண்க",
+    book: "புத்தகம்",
+    verse: "வசனம்",
+    footnotes: "அடிக்குறிப்புகள்",
+    footnoteExample: "உரையைப் பற்றி ஏதாவது ஒன்றை விளக்கும் எடுத்துக்காட்டு அடிக்குறிப்பு.",
+    readAloud: "சத்தமாக வாசி",
+    settings: "அமைப்புகள்",
+    bookmark: "புத்தகக்குறி",
+    bookmarked: "புத்தகக்குறியிடப்பட்டது",
+    share: "பகிர்",
+    notes: "குறிப்புகள்",
+    addNote: "குறிப்பை சேர்",
+    updateNote: "குறிப்பை புதுப்பி",
+    cancel: "ரத்து",
+    noNotes: "இந்த அதிகாரத்திற்கு இன்னும் குறிப்புகள் இல்லை",
+    addFirstNote: "முதல் குறிப்பை சேர்",
+    noBookmarks: "இன்னும் புத்தகக்குறிகள் இல்லை",
+    selectChapter: "அதிகாரத்தை தேர்ந்தெடு",
+    close: "மூடு",
+    textSettings: "உரை அமைப்புகள்",
+    fontSize: "எழுத்து அளவு",
+    fontFamily: "எழுத்துரு",
+    lineHeight: "வரி உயரம்",
+    theme: "தீம்",
+    highlightColor: "எடுப்பான நிறம்",
+    showFootnotes: "அடிக்குறிப்புகளை காட்டு",
+    showVerseNumbers: "வசன எண்களை காட்டு",
+    ttsSettings: "உரை-பேச்சு அமைப்புகள்",
+    // voice: "குரல்",
+    // speed: "வேகம்",
+    // pitch: "சுருதி",
+    // volume: "ஒலி",
+    stopReading: "வாசிப்பை நிறுத்து",
+    done: "முடிந்தது",
+    compact: "கச்சிதமான",
+    normal: "சாதாரண",
+    spacious: "விசாலமான",
+    light: "வெளிர்",
+    sepia: "செபியா",
+    dark: "இருண்ட",
+    bookmarksModal: "புத்தகக்குறிகள் குறிப்பு",
+    textToSpeechSettings: "உரை-பேச்சு அமைப்புகள்",
+    sans: "சான்ஸ்",
+    serif: "செரிஃப்",
+    dyslexic: "டிஸ்லெக்சிக்",
+    legible: "வாசிக்கக்கூடிய",
+    highlightSelection: "தேர்ந்தெடுத்ததை வண்ணம்",
+    ttsNotAvailable: "தமிழ் பதிப்புகளுக்கு உரை-பேச்சு கிடைக்கவில்லை.",
+    ttsVoice: "குரல்",
+    ttsSpeed: "வேகம்",
+    ttsPitch: "சுருதி",
+    ttsVolume: "ஒலி",
+    ttsParallelVersion: "இணைநோக்கு பதிப்பு :",
+    noBooksFound: "புத்தகங்கள் எதுவும் கிடைக்கவில்லை",
+    noVersesFound: "வசனங்கள் எதுவும் கிடைக்கவில்லை",
+    loadingBooks: "புத்தகங்கள் ஏற்றப்படுகின்றன...",
+    loadingContent: "பைபிள் உள்ளடக்கம் ஏற்றுகிறது...",
+  };
   // Save highlights to localStorage
   useEffect(() => {
     localStorage.setItem("bible-highlights", JSON.stringify(highlights));
@@ -1178,7 +1248,9 @@ export default function ReadingBible() {
             }}
           >
             <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-              Highlight selection:
+              {isTamilUI()
+                ? tamilTranslations.highlightSelection
+                : "Highlight selection:"}
             </span>
             <div className="flex gap-1">
               {Object.entries(highlightColors).map(([color, colorInfo]) => (
@@ -1259,18 +1331,24 @@ export default function ReadingBible() {
   const renderTTSSettings = () => (
     <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
       <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
-        Text-to-Speech Settings
+        {isTamilUI()
+          ? tamilTranslations.textToSpeechSettings
+          : "Text-to-Speech Settings"}
       </h3>
 
       {isTamilVersion ? (
         <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-          <p>Text-to-Speech is not available for Tamil versions.</p>
+          <p>
+            {isTamilUI()
+              ? tamilTranslations.ttsNotAvailable
+              : "Text-to-Speech is not available for Tamil versions."}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-              Voice
+              {isTamilUI() ? tamilTranslations.ttsVoice : "Voice"}
             </label>
             <select
               value={selectedVoice ? selectedVoice.name : ""}
@@ -1290,7 +1368,9 @@ export default function ReadingBible() {
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-              Speed: {ttsRate.toFixed(1)}
+              {isTamilUI()
+                ? `${tamilTranslations.ttsSpeed}: ${ttsRate.toFixed(1)}`
+                : `Speed: ${ttsRate.toFixed(1)}`}
             </label>
             <input
               type="range"
@@ -1305,7 +1385,9 @@ export default function ReadingBible() {
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-              Pitch: {ttsPitch.toFixed(1)}
+              {isTamilUI()
+                ? `${tamilTranslations.ttsPitch}: ${ttsPitch.toFixed(1)}`
+                : `Pitch: ${ttsPitch.toFixed(1)}`}
             </label>
             <input
               type="range"
@@ -1320,7 +1402,9 @@ export default function ReadingBible() {
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-              Volume: {ttsVolume.toFixed(1)}
+              {isTamilUI()
+                ? `${tamilTranslations.ttsVolume}: ${ttsVolume.toFixed(1)}`
+                : `Volume: ${ttsVolume.toFixed(1)}`}
             </label>
             <input
               type="range"
@@ -1339,10 +1423,16 @@ export default function ReadingBible() {
               className={`px-4 py-2 rounded-md font-medium ${
                 isPlayingTTS
                   ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-blue-500 hover:blue-600 text-white"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
               }`}
             >
-              {isPlayingTTS ? "Stop Reading" : "Read Aloud"}
+              {isPlayingTTS
+                ? isTamilUI()
+                  ? tamilTranslations.stopReading
+                  : "Stop Reading"
+                : isTamilUI()
+                ? tamilTranslations.readAloud
+                : "Read Aloud"}
             </button>
           </div>
         </div>
@@ -1396,7 +1486,7 @@ export default function ReadingBible() {
               onClick={() => setShowModal(false)}
               className="w-full mt-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
             >
-              Cancel
+              {isTamilUI() ? tamilTranslations.cancel : "Cancel"}
             </button>
           </div>
         </div>
@@ -1407,7 +1497,9 @@ export default function ReadingBible() {
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b p-4">
-              <h3 className="text-lg font-bold">Bookmarks</h3>
+              <h3 className="text-lg font-bold">
+                {isTamilUI() ? "புத்தகக்குறிகள்" : "Bookmarks"}
+              </h3>
               <button
                 onClick={() => setShowBookmarks(false)}
                 className="p-1 rounded-full hover:bg-gray-100"
@@ -1455,7 +1547,7 @@ export default function ReadingBible() {
                 onClick={() => setShowBookmarks(false)}
                 className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
               >
-                Close
+                {isTamilUI() ? tamilTranslations.close : "Close"}
               </button>
             </div>
           </div>
@@ -1468,7 +1560,7 @@ export default function ReadingBible() {
           <div className="bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-gray-900 dark:via-slate-800 dark:to-black rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-gray-800">
             <div className="flex justify-between items-center border-b border-slate-200 dark:border-gray-700 p-6 pb-4 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-2xl">
               <h3 className="text-xl font-extrabold bg-gradient-to-r from-gray-700 via-slate-500 to-gray-300 bg-clip-text text-transparent">
-                Text Settings
+                {isTamilUI() ? tamilTranslations.textSettings : "Text Settings"}
               </h3>
               <button
                 onClick={() => setOpenSettings(false)}
@@ -1480,7 +1572,7 @@ export default function ReadingBible() {
 
             <div className="p-6">
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
-                FONT SIZE
+                {isTamilUI() ? tamilTranslations.fontSize : "FONT SIZE"}
               </h4>
               <div className="grid grid-cols-3 gap-2 mb-6">
                 <button
@@ -1516,7 +1608,7 @@ export default function ReadingBible() {
               </div>
 
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
-                FONT FAMILY
+                {isTamilUI() ? tamilTranslations.fontFamily : "FONT FAMILY"}
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
                 <button
@@ -1572,7 +1664,7 @@ export default function ReadingBible() {
               </div>
 
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
-                LINE HEIGHT
+                {isTamilUI() ? tamilTranslations.lineHeight : "LINE HEIGHT"}
               </h4>
               <div className="grid grid-cols-3 gap-2 mb-6">
                 <button
@@ -1608,7 +1700,7 @@ export default function ReadingBible() {
               </div>
 
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
-                THEME
+                {isTamilUI() ? tamilTranslations.theme : "THEME"}
               </h4>
 
               <div className="grid grid-cols-3 gap-2 mb-6">
@@ -1645,7 +1737,9 @@ export default function ReadingBible() {
               </div>
 
               <h4 className="text-xs font-bold text-gray-700 dark:text-gray-200 mb-3 tracking-wide">
-                HIGHLIGHT COLOR
+                {isTamilUI()
+                  ? tamilTranslations.highlightColor
+                  : "HIGHLIGHT COLOR"}
               </h4>
               <div className="grid grid-cols-4 gap-2 mb-6">
                 {["yellow", "blue", "green", "pink", "purple", "orange"].map(
@@ -1678,7 +1772,9 @@ export default function ReadingBible() {
                     className="rounded accent-slate-700 w-5 h-5"
                   />
                   <span className="font-semibold text-gray-700 dark:text-gray-200">
-                    Show Footnotes
+                    {isTamilUI()
+                      ? tamilTranslations.showFootnotes
+                      : "Show Footnotes"}
                   </span>
                 </label>
                 <label className="flex items-center gap-3">
@@ -1689,7 +1785,9 @@ export default function ReadingBible() {
                     className="rounded accent-slate-700 w-5 h-5"
                   />
                   <span className="font-semibold text-gray-700 dark:text-gray-200">
-                    Show Verse Numbers
+                    {isTamilUI()
+                      ? tamilTranslations.showVerseNumbers
+                      : "Show Verse Numbers"}
                   </span>
                 </label>
               </div>
@@ -1702,7 +1800,7 @@ export default function ReadingBible() {
                 onClick={() => setOpenSettings(false)}
                 className="px-6 py-2 bg-gradient-to-r from-gray-700 via-slate-500 to-gray-300 text-white rounded-lg font-bold shadow hover:scale-105 transition"
               >
-                Done
+                {isTamilUI() ? tamilTranslations.done : "Done"}
               </button>
             </div>
           </div>
@@ -1738,7 +1836,11 @@ export default function ReadingBible() {
                 type="text"
                 placeholder={
                   searchType === "books"
-                    ? "Search Bible books..."
+                    ? isTamilUI()
+                      ? tamilTranslations.searchBooks
+                      : "Search Bible books..."
+                    : isTamilUI()
+                    ? tamilTranslations.searchVerses
                     : "Search verses..."
                 }
                 value={search}
@@ -1772,21 +1874,25 @@ export default function ReadingBible() {
                 }}
                 className="block w-full pl-10 pr-20 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-base bg-white shadow"
               />
-              <div className="absolute right-14 top-1/2 transform -translate-y-1/2">
+              <div className="absolute right-14 top-1/2 transform -translate-y-1/2 pr-4">
                 <select
                   value={searchType}
                   onChange={(e) => setSearchType(e.target.value)}
                   className="bg-white border border-gray-300 rounded-md px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
                 >
-                  <option value="books">Books</option>
-                  <option value="verses">Verses</option>
+                  <option value="books">
+                    {isTamilUI() ? tamilTranslations.book : "Books"}
+                  </option>
+                  <option value="verses">
+                    {isTamilUI() ? tamilTranslations.verse : "Verses"}
+                  </option>
                 </select>
               </div>
               <button
                 type="submit"
-                className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1 rounded-lg text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 "
               >
-                Go
+                {isTamilUI() ? tamilTranslations.go : "Go"}
               </button>
             </form>
 
@@ -1820,7 +1926,9 @@ export default function ReadingBible() {
               search.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
                   <div className="text-gray-500">
-                    No books found matching "{search}"
+                    {isTamilUI()
+                      ? tamilTranslations.noBooksFound
+                      : 'No books found matching "' + search + '"'}
                   </div>
                 </div>
               )}
@@ -1857,14 +1965,15 @@ export default function ReadingBible() {
               search.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
                   <div className="text-gray-500">
-                    No verses found matching "{search}"
+                    {isTamilUI()
+                      ? tamilTranslations.noVersesFound
+                      : 'No verses found matching "' + search + '"'}
                   </div>
                 </div>
               )}
           </div>
 
           <div className="flex gap-3 items-center">
-            
             <a
               href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player"
               target="_blank"
@@ -1903,7 +2012,11 @@ export default function ReadingBible() {
               type="text"
               placeholder={
                 searchType === "books"
-                  ? "Search Bible books..."
+                  ? isTamilUI()
+                    ? tamilTranslations.searchBooks
+                    : "Search Bible books..."
+                  : isTamilUI()
+                  ? tamilTranslations.searchVerses
                   : "Search verses..."
               }
               value={search}
@@ -1943,15 +2056,19 @@ export default function ReadingBible() {
                 onChange={(e) => setSearchType(e.target.value)}
                 className="bg-white border border-gray-300 rounded-md px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
               >
-                <option value="books">Books</option>
-                <option value="verses">Verses</option>
+                <option value="books">
+                  {isTamilUI() ? tamilTranslations.book : "Books"}
+                </option>
+                <option value="verses">
+                  {isTamilUI() ? tamilTranslations.verse : "Verses"}
+                </option>
               </select>
             </div>
             <button
               type="submit"
               className="absolute right-1.5 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Go
+              {isTamilUI() ? tamilTranslations.go : "Go"}
             </button>
           </form>
 
@@ -1983,7 +2100,9 @@ export default function ReadingBible() {
             search.trim() && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
                 <div className="text-gray-500">
-                  No books found matching "{search}"
+                  {isTamilUI()
+                    ? tamilTranslations.noBooksFound
+                    : 'No books found matching "' + search + '"'}
                 </div>
               </div>
             )}
@@ -2020,7 +2139,9 @@ export default function ReadingBible() {
             search.trim() && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
                 <div className="text-gray-500">
-                  No verses found matching "{search}"
+                  {isTamilUI()
+                    ? tamilTranslations.noVersesFound
+                    : 'No verses found matching "' + search + '"'}
                 </div>
               </div>
             )}
@@ -2056,7 +2177,9 @@ export default function ReadingBible() {
               )}
             </select>
 
-            <span className="font-semibold text-base">Chapter {chapter}</span>
+            <span className="font-semibold text-base">
+              {isTamilUI() ? tamilTranslations.chapter : "Chapter"} {chapter}
+            </span>
           </div>
 
           {/* Desktop: Version selection and buttons on the right side */}
@@ -2088,7 +2211,8 @@ export default function ReadingBible() {
                   : "bg-blue-100 text-blue-700 hover:bg-blue-200"
               } transition`}
             >
-              <span className="hidden md:inline">📑</span> Parallel
+              <span className="hidden md:inline">📑</span>{" "}
+              {isTamilUI() ? tamilTranslations.parallel : "Parallel"}
             </button>
 
             <button
@@ -2107,7 +2231,11 @@ export default function ReadingBible() {
               } transition`}
               title={
                 isTamilVersion
-                  ? "TTS not available for Tamil versions"
+                  ? isTamilUI()
+                    ? "தமிழ் பதிப்புகளுக்கு TTS கிடைக்கவில்லை"
+                    : "TTS not available for Tamil versions"
+                  : isTamilUI()
+                  ? tamilTranslations.readAloud
                   : "Read aloud"
               }
             >
@@ -2156,7 +2284,8 @@ export default function ReadingBible() {
                     : "bg-blue-100 text-blue-700 hover:bg-blue-200"
                 } transition`}
               >
-                <span className="hidden md:inline">📑</span> Parallel
+                <span className="hidden md:inline">📑</span>{" "}
+                {isTamilUI() ? tamilTranslations.parallel : "Parallel"}
               </button>
 
               <button
@@ -2175,7 +2304,11 @@ export default function ReadingBible() {
                 } transition`}
                 title={
                   isTamilVersion
-                    ? "TTS not available for Tamil versions"
+                    ? isTamilUI()
+                      ? "தமிழ் பதிப்புகளுக்கு TTS கிடைக்கவில்லை"
+                      : "TTS not available for Tamil versions"
+                    : isTamilUI()
+                    ? tamilTranslations.readAloud
                     : "Read aloud"
                 }
               >
@@ -2202,7 +2335,7 @@ export default function ReadingBible() {
                 : "bg-blue-100 border-blue-200"
             } md:gap-8 md:px-8`}
           >
-            <span className="text-base font-semibold">Parallel Version:</span>
+            <span className="text-base font-semibold">{isTamilUI() ? tamilTranslations.ttsParallelVersion : "Parallel Version:"}</span>
             <select
               value={parallelVersion || ""}
               onChange={(e) => setParallelVersion(e.target.value)}
@@ -2227,7 +2360,10 @@ export default function ReadingBible() {
           <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b p-4">
               <h3 className="text-lg font-bold">
-                Select Chapter - {selectedBook.name}
+                {isTamilUI()
+                  ? tamilTranslations.selectChapter
+                  : "Select Chapter"}{" "}
+                - {selectedBook.name}
               </h3>
               <button
                 onClick={() => setShowChapterModal(false)}
@@ -2256,7 +2392,7 @@ export default function ReadingBible() {
                 onClick={() => setShowChapterModal(false)}
                 className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
               >
-                Cancel
+                {isTamilUI() ? tamilTranslations.cancel : "Cancel"}
               </button>
             </div>
           </div>
@@ -2324,7 +2460,9 @@ export default function ReadingBible() {
             <div className="flex flex-col items-center justify-center py-16">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 via-blue-600 to-blue-800 animate-pulse mb-4"></div>
               <span className="text-xl font-semibold text-blue-600">
-                Loading Bible content...
+                {isTamilUI()
+                  ? "பைபிள் உள்ளடக்கம் ஏற்றுகிறது..."
+                  : "Loading Bible content..."}
               </span>
             </div>
           ) : error ? (
@@ -2359,9 +2497,14 @@ export default function ReadingBible() {
 
                 {showFootnotes && (
                   <div className="mt-8 border-t pt-4 text-sm text-blue-700 dark:text-blue-200">
-                    <h4 className="font-bold mb-2">Footnotes</h4>
+                    <h4 className="font-bold mb-2">
+                      {isTamilUI() ? tamilTranslations.footnotes : "Footnotes"}
+                    </h4>
                     <p>
-                      1: Example footnote explaining something about the text.
+                      1:{" "}
+                      {isTamilUI()
+                        ? tamilTranslations.footnoteExample
+                        : "Example footnote explaining something about the text."}
                     </p>
                   </div>
                 )}
@@ -2377,7 +2520,8 @@ export default function ReadingBible() {
                   >
                     <FiEdit className="text-sm md:text-base" />
                     <span className="hidden xs:inline">
-                      Notes ({getCurrentChapterNotes().length})
+                      {isTamilUI() ? tamilTranslations.notes : "Notes"} (
+                      {getCurrentChapterNotes().length})
                     </span>
                   </button>
                   <button
@@ -2388,7 +2532,13 @@ export default function ReadingBible() {
                   >
                     <FiBookmark className="text-sm md:text-base" />
                     <span className="hidden xs:inline">
-                      {isCurrentBookmarked() ? "Bookmarked" : "Bookmark"}
+                      {isCurrentBookmarked()
+                        ? isTamilUI()
+                          ? tamilTranslations.bookmarked
+                          : "Bookmarked"
+                        : isTamilUI()
+                        ? tamilTranslations.bookmark
+                        : "Bookmark"}
                     </span>
                   </button>
 
@@ -2409,7 +2559,12 @@ export default function ReadingBible() {
                         d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
                       />
                     </svg>
-                    <span className="hidden sm:inline">View Bookmarks</span>
+                    <span className="hidden sm:inline">
+                      {" "}
+                      {isTamilUI()
+                        ? tamilTranslations.viewBookmarks
+                        : "View Bookmarks"}
+                    </span>
                   </button>
 
                   <button
@@ -2417,7 +2572,9 @@ export default function ReadingBible() {
                     className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white font-semibold shadow hover:scale-105 transition"
                   >
                     <FiShare2 className="text-sm md:text-base" />
-                    <span className="hidden xs:inline">Share</span>
+                    <span className="hidden xs:inline">
+                      {isTamilUI() ? tamilTranslations.share : "Share"}
+                    </span>
                   </button>
                 </div>
 
@@ -2425,7 +2582,9 @@ export default function ReadingBible() {
                   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
                       <div className="flex justify-between items-center border-b p-4 sticky top-0 bg-white">
-                        <h3 className="text-lg font-bold">Chapter Notes</h3>
+                        <h3 className="text-lg font-bold">
+                          {isTamilUI() ? "அதிகார குறிப்புகள்" : "Chapter Notes"}{" "}
+                        </h3>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setShowAddNote(true)}
@@ -2449,7 +2608,11 @@ export default function ReadingBible() {
                           <textarea
                             value={newNoteText}
                             onChange={(e) => setNewNoteText(e.target.value)}
-                            placeholder="Type your note here..."
+                            placeholder={
+                              isTamilUI()
+                                ? "உங்கள் குறிப்பை இங்கே தட்டச்சு செய்க..."
+                                : "Type your note here..."
+                            }
                             className="w-full p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
                             rows={3}
                           />
@@ -2466,7 +2629,9 @@ export default function ReadingBible() {
                               onClick={cancelNoteEdit}
                               className="px-4 py-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white rounded-lg hover:opacity-90"
                             >
-                              Cancel
+                              {isTamilUI()
+                                ? tamilTranslations.cancel
+                                : "Cancel"}
                             </button>
                           </div>
                         </div>
@@ -2476,12 +2641,18 @@ export default function ReadingBible() {
                         {getCurrentChapterNotes().length === 0 ? (
                           <div className="text-center py-8 text-gray-500">
                             <FiEdit className="text-4xl mx-auto mb-4 text-gray-300" />
-                            <p>No notes yet for this chapter</p>
+                            <p>
+                              {isTamilUI()
+                                ? tamilTranslations.noNotes
+                                : "No notes yet for this chapter"}
+                            </p>
                             <button
                               onClick={() => setShowAddNote(true)}
                               className="mt-4 px-4 py-2 bg-gradient-to-r from-[#0979F0] via-[#00CCFF] to-[#0979F0] text-white rounded-lg hover:opacity-90"
                             >
-                              Add First Note
+                              {isTamilUI()
+                                ? tamilTranslations.addFirstNote
+                                : "Add First Note"}
                             </button>
                           </div>
                         ) : (
@@ -2539,7 +2710,7 @@ export default function ReadingBible() {
                           onClick={() => setShowFooterNotes(false)}
                           className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
                         >
-                          Close
+                          {isTamilUI() ? "மூடு" : "Close"}
                         </button>
                       </div>
                     </div>
@@ -2550,7 +2721,9 @@ export default function ReadingBible() {
                   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto mx-4">
                       <div className="flex justify-between items-center border-b p-4 sticky top-0 bg-white">
-                        <h3 className="text-lg font-bold">Bookmarks</h3>
+                        <h3 className="text-lg font-bold">
+                          {isTamilUI() ? "புத்தகக்குறிகள்" : "Bookmarks"}
+                        </h3>
                         <button
                           onClick={() => setShowBookmarks(false)}
                           className="p-1 rounded-full hover:bg-gray-100"
@@ -2561,7 +2734,9 @@ export default function ReadingBible() {
                       <div className="p-4">
                         {bookmarks.length === 0 ? (
                           <p className="text-gray-500 text-center py-4">
-                            No bookmarks yet
+                            {isTamilUI()
+                              ? tamilTranslations.noBookmarks
+                              : "No bookmarks yet"}
                           </p>
                         ) : (
                           <div className="space-y-2">
@@ -2599,7 +2774,7 @@ export default function ReadingBible() {
                           onClick={() => setShowBookmarks(false)}
                           className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium"
                         >
-                          Close
+                          {isTamilUI() ? "மூடு" : "Close"}
                         </button>
                       </div>
                     </div>
