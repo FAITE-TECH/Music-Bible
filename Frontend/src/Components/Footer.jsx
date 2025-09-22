@@ -110,7 +110,7 @@ const Footer = () => {
                   href="#"
                   className="text-blue-400 hover:text-white transition"
                 >
-                  Komahan Washington
+                  Homahan Washington
                 </a>
               </li>
               <li className="flex items-start">
@@ -273,7 +273,7 @@ const Footer = () => {
             </span>{" "}
             All rights reserved.
             <br />
-            <span className=" text-blue-400">Komahan Washington</span>
+            <span className=" text-blue-400">Homahan Washington</span>
           </p>
         </div>
       </div>
