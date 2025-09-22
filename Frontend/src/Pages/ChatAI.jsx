@@ -32,21 +32,23 @@ const TamilFontStyle = () => (
 
 // Default questions to show as suggestions
 const defaultQuestions = [
-  "How to be a good Christian?",
-  "What does the Bible say about forgiveness?",
-  "How to pray effectively?",
-  "What is the meaning of salvation?",
-  "How to overcome fear according to the Bible?",
-  "What does the Bible say about marriage?",
+  "How can I find peace?",
+  "How to pray?",
+  "Psalm 23",
+  "Philippians 4:6–7",
+  "Why does God allow suffering?",
+  "Bible verses for anxiety",
+  "What does the Bible say about love?",
 ];
 
 const TamilDefaultQuestions = [
-  "ஒரு நல்ல கிறிஸ்தவராக எப்படி இருக்க வேண்டும்?",
-  "மன்னிப்பு பற்றி பைபிள் என்ன சொல்கிறது?",
-  "எப்படி பிரார்த்தனை செய்ய வேண்டும்?",
-  "ரட்சிப்பு என்றால் என்ன?",
-  "பயத்தை எவ்வாறு சமாளிப்பது?",
-  "திருமணம் பற்றி பைபிள் என்ன சொல்கிறது?",
+  "நான் எப்படி அமைதியை பெறலாம்?",
+  "  எப்படி பிரார்த்தனை செய்ய வேண்டும்?  ",
+  "சங்கீதம் 23",
+  "பிலிப்பியர் 4:6–7",
+  " ஏன் கடவுள் துன்பத்தை அனுமதிக்கிறார்? ",
+  "கவலைக்கான பைபிள் வசனங்கள்",
+  "பைபிள் காதல் பற்றி என்ன சொல்கிறது?",
 ];
 
 // SizeSelector component for mobile view
@@ -479,7 +481,6 @@ const ChatAI = () => {
   };
 
   return (
-    
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#021e4b] via-50% via-black  to-[#021e4b] to-100%">
       {/* bg-[linear-gradient(to_bottom,#021e4b_0%,#021e4b_8%,#0b1830_16%,#000_50%,#0b1830_84%,#021e4b_92%,#021e4b_100%)] */}
       <TamilFontStyle />
@@ -598,7 +599,10 @@ const ChatAI = () => {
             </div>
             <div className="w-full flex flex-col items-stretch">
               <div className="relative w-full">
-                <div className="flex items-center w-full border rounded-2xl bg-transparent border-[#3AF7F0] shadow-sm bg-opacity-70 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2">
+                <div
+                  className="flex items-center w-full border rounded-2xl bg-transparent
+                 border-[#3AF7F0] shadow-sm bg-opacity-70 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 px-2 py-2"
+                >
                   <textarea
                     className="flex-1 px-2 py-2 text-gray-300 bg-transparent border-none outline-none rounded-2xl text-base min-w-0 resize-none h-14 sm:h-16 max-h-40 hide-scrollbar"
                     placeholder={
@@ -669,33 +673,102 @@ const ChatAI = () => {
 
               {/* Default Questions - Only show when no answer is displayed */}
               {showDefaultQuestions && (
-                <div className="mt-4">
-                  {/* <p className="text-gray-500 text-sm mb-2">
-                    {language === "ta"
-                      ? "பொதுவான கேள்விகள்"
-                      : "Common questions"}
-                  </p> */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
+                <div className="mt-4 px-3 sm:px-8">
+                  {/* Mobile: show all questions at once, wrap to multiple lines */}
+                  <div className="sm:hidden flex flex-wrap gap-3 pb-2 justify-center">
                     {(language === "ta"
                       ? TamilDefaultQuestions
                       : defaultQuestions
-                    ).map((question, index) => (
-                      <motion.div
-                        key={index}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="bg-gray-800 bg-opacity-50 rounded-full p-3 cursor-pointer hover:bg-gray-700 transition-colors"
-                        onClick={() => handleQuestionSelect(question)}
-                      >
-                        <p className="text-white text-sm">{question}</p>
-                      </motion.div>
-                    ))}
+                    ).map((question, index, arr) =>
+                      index === arr.length - 1 ? (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                          className={`bg-gray-800 bg-opacity-70 rounded-full ${
+                            language === "ta" ? "py-2" : "px-4 py-2"
+                          } cursor-pointer hover:bg-blue-100 transition-colors border border-blue-400 text-center w-full mx-auto`}
+                          onClick={() => handleQuestionSelect(question)}
+                        >
+                          <p
+                            className={`text-white ${
+                              language === "ta" ? "text-xs" : "text-sm"
+                            }`}
+                          >
+                            {question}
+                          </p>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                          className={`bg-gray-800 bg-opacity-70 rounded-full ${
+                            language === "ta" ? "py-2" : "px-4 py-2"
+                          } cursor-pointer hover:bg-blue-100 transition-colors border border-blue-400 text-center`}
+                          onClick={() => handleQuestionSelect(question)}
+                        >
+                          <p
+                            className={`text-white ${
+                              language === "ta" ? "text-xs" : "text-sm"
+                            }`}
+                          >
+                            {question}
+                          </p>
+                        </motion.div>
+                      )
+                    )}
+                  </div>
+                  {/* Desktop: grid layout */}
+                  <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {(language === "ta"
+                      ? TamilDefaultQuestions
+                      : defaultQuestions
+                    ).map((question, index, arr) =>
+                      index === arr.length - 1 ? (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          className={`bg-gray-800 bg-opacity-70 rounded-full p-0 ${
+                            language === "ta" ? "py-3" : "px-4 py-3"
+                          } cursor-pointer hover:bg-gray-500 border border-blue-400 col-span-2 md:col-span-3 justify-self-center w-3/4`}
+                          onClick={() => handleQuestionSelect(question)}
+                        >
+                          <p
+                            className={`text-white text-center ${
+                              language === "ta" ? "text-xs" : "text-sm"
+                            }`}
+                          >
+                            {question}
+                          </p>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                          className={`bg-gray-800 bg-opacity-70 rounded-full p-0 ${
+                            language === "ta" ? "py-3" : "px-4 py-3"
+                          } cursor-pointer hover:bg-gray-500 border border-blue-400`}
+                          onClick={() => handleQuestionSelect(question)}
+                        >
+                          <p
+                            className={`text-white text-center ${
+                              language === "ta" ? "text-xs" : "text-sm"
+                            }`}
+                          >
+                            {question}
+                          </p>
+                        </motion.div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
             </div>
             {/* App Store Buttons: only show on mobile (block on xs, hidden on sm+) */}
-            <div className="flex sm:hidden flex-row gap-4 mt-4 mb-4 justify-center items-center">
+            <div className="flex sm:hidden flex-row gap-4 mt-10 mb-4 justify-center items-center">
               <a
                 href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
                 target="_blank"
@@ -862,7 +935,7 @@ const ChatAI = () => {
           )}
 
           {/* App Store Buttons: only show on tab/desktop (sm+) and below answer section */}
-          <div className="hidden sm:flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 mb-4 justify-center items-center">
+          <div className="hidden sm:flex flex-col sm:flex-row gap-3 sm:gap-4 lg:mt-24 mb-4 justify-center items-center">
             <a
               href="https://play.google.com/store/apps/details?id=com.faite.project.music_bible_music_player&pcampaignid=web_share"
               target="_blank"
