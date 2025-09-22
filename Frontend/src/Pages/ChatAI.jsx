@@ -686,7 +686,7 @@ const ChatAI = () => {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.97 }}
                           className={`bg-gray-800 bg-opacity-70 rounded-full ${
-                            language === "ta" ? "py-2" : "px-4 py-2"
+                            language === "ta" ? "py-2 px-1" : "px-4 py-2"
                           } cursor-pointer hover:bg-blue-100 transition-colors border border-blue-400 text-center w-full mx-auto`}
                           onClick={() => handleQuestionSelect(question)}
                         >
@@ -704,7 +704,7 @@ const ChatAI = () => {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.97 }}
                           className={`bg-gray-800 bg-opacity-70 rounded-full ${
-                            language === "ta" ? "py-2" : "px-4 py-2"
+                            language === "ta" ? "py-2 px-1" : "px-4 py-2"
                           } cursor-pointer hover:bg-blue-100 transition-colors border border-blue-400 text-center`}
                           onClick={() => handleQuestionSelect(question)}
                         >
